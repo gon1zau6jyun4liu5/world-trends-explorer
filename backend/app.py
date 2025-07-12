@@ -134,11 +134,12 @@ def health_check():
         return jsonify({
             'status': 'healthy',
             'timestamp': datetime.now().isoformat(),
-            'service': 'World Trends Explorer API',
+            'service': 'World Trends Explorer API (Real Google Trends)',
             'pytrends_status': pytrends_status,
             'google_trends_accessible': google_trends_accessible,
             'countries_available': len(COUNTRY_CODES),
-            'version': '2.0.0'
+            'version': '2.0.0',
+            'port': 5000
         })
     except Exception as e:
         logger.error(f"Health check failed: {e}")
@@ -428,11 +429,12 @@ def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5555))
+    port = int(os.environ.get('PORT', 5000))  # 🔧 Changed from 5555 to 5000
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
-    logger.info(f"Starting World Trends Explorer API server on port {port}")
-    logger.info(f"Supporting {len(COUNTRY_CODES)} countries")
-    logger.info(f"Debug mode: {debug}")
+    logger.info(f"🌍 Starting World Trends Explorer REAL API server on port {port}")
+    logger.info(f"📊 Supporting {len(COUNTRY_CODES)} countries")
+    logger.info(f"🔍 Debug mode: {debug}")
+    logger.info(f"🚀 Google Trends API: Real data mode")
     
     app.run(host='0.0.0.0', port=port, debug=debug)

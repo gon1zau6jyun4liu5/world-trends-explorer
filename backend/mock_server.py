@@ -172,8 +172,10 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.datetime.now().isoformat(),
-        'service': 'World Trends Explorer API (Mock Mode)',
-        'note': 'Using realistic test data for demonstration'
+        'service': 'World Trends Explorer API (Mock Test Mode)',
+        'note': 'Using realistic test data for demonstration',
+        'version': '2.0.0',
+        'port': 5001
     })
 
 @app.route('/api/trends/trending')
@@ -254,8 +256,8 @@ def internal_error(error):
 if __name__ == '__main__':
     print("🌍 Starting World Trends Explorer Mock Server...")
     print("📊 Using realistic test data for demonstration")
-    print("🚀 Server will be available at: http://localhost:5555")
+    print("🚀 Server will be available at: http://localhost:5001")  # 🔧 Changed from 5555 to 5001
     print("🔍 Try searching for: AI, Olympics, Climate Change, K-pop")
     print("")
     
-    app.run(host='0.0.0.0', port=5555, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)  # 🔧 Changed from 5555 to 5001
