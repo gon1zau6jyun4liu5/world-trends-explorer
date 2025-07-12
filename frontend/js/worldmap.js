@@ -14,6 +14,7 @@ class WorldMap {
         this.height = options.height || 400;
         this.data = null;
         this.worldData = null;
+        this.availableCountries = new Set();
         
         // Color scale for intensity
         this.colorScale = d3.scaleThreshold()
@@ -102,7 +103,7 @@ class WorldMap {
             .append('path')
             .attr('class', 'country')
             .attr('d', this.path)
-            .attr('fill', '#e1e5e9')
+            .attr('fill', (d) => this.getCountryColor(d))
             .attr('stroke', '#fff')
             .attr('stroke-width', 0.5)
             .style('cursor', 'pointer')
@@ -110,6 +111,47 @@ class WorldMap {
             .on('mousemove', (event, d) => this.moveTooltip(event, d))
             .on('mouseout', () => this.hideTooltip())
             .on('click', (event, d) => this.onCountryClick(d));
+    }
+
+    getCountryColor(countryFeature) {
+        const countryCode = this.getCountryCode(countryFeature);
+        
+        // Check if country has available data
+        if (this.availableCountries.has(countryCode)) {
+            // Check if we have search result data for this country
+            if (this.data && this.data.interest_by_region) {
+                const countryData = this.data.interest_by_region.find(
+                    item => item.geoCode === countryCode
+                );
+                
+                if (countryData) {
+                    return this.colorScale(countryData.value);
+                }
+            }
+            
+            return '#667eea'; // Blue for available data
+        }
+        
+        return '#e1e5e9'; // Default gray for no data
+    }
+
+    /**
+     * Set available countries that have data
+     */
+    setAvailableCountries(countriesSet) {
+        this.availableCountries = countriesSet;
+        
+        // Update map colors
+        if (this.svg) {
+            this.svg.selectAll('.country')
+                .attr('fill', (d) => this.getCountryColor(d))
+                .classed('has-data', (d) => {
+                    const countryCode = this.getCountryCode(d);
+                    return this.availableCountries.has(countryCode);
+                });
+        }
+        
+        console.log(`🎨 Updated map with ${this.availableCountries.size} available countries`);
     }
 
     updateData(trendsData) {
@@ -120,37 +162,13 @@ class WorldMap {
             return;
         }
 
-        // Create country code to data mapping
-        const dataMap = new Map();
-        if (trendsData && trendsData.interest_by_region) {
-            trendsData.interest_by_region.forEach(item => {
-                if (item.geoCode && item.value > 0) {
-                    dataMap.set(item.geoCode, {
-                        value: item.value,
-                        name: item.geoName
-                    });
-                }
-            });
-        }
-
-        // Update country colors based on data
+        // Update country colors based on search data
         this.svg.selectAll('.country')
             .transition()
             .duration(750)
-            .attr('fill', (d) => {
-                const countryCode = this.getCountryCode(d);
-                const countryData = dataMap.get(countryCode);
-                
-                if (countryData) {
-                    return this.colorScale(countryData.value);
-                }
-                return '#e1e5e9'; // Default color for no data
-            })
-            .attr('class', (d) => {
-                const countryCode = this.getCountryCode(d);
-                const countryData = dataMap.get(countryCode);
-                return countryData ? 'country has-data' : 'country';
-            });
+            .attr('fill', (d) => this.getCountryColor(d));
+        
+        console.log('🗺️ Map updated with trends data');
     }
 
     getCountryCode(countryFeature) {
@@ -180,17 +198,25 @@ class WorldMap {
         
         let content = `<strong>${countryName}</strong>`;
         
-        if (this.data && this.data.interest_by_region) {
-            const countryData = this.data.interest_by_region.find(
-                item => item.geoCode === countryCode
-            );
+        // Check if country has available data
+        const hasData = this.availableCountries.has(countryCode);
+        
+        if (hasData) {
+            content += '<br>✅ Data Available - Click to explore';
             
-            if (countryData) {
-                content += `<br>Interest: ${countryData.value}`;
-                content += `<br>Keyword: "${this.data.keyword}"`;
-            } else {
-                content += '<br>No data available';
+            // Show search data if available
+            if (this.data && this.data.interest_by_region) {
+                const countryData = this.data.interest_by_region.find(
+                    item => item.geoCode === countryCode
+                );
+                
+                if (countryData) {
+                    content += `<br>Interest: ${countryData.value}`;
+                    content += `<br>Keyword: "${this.data.keyword}"`;
+                }
             }
+        } else {
+            content += '<br>❌ No data available';
         }
         
         this.tooltip
@@ -219,6 +245,12 @@ class WorldMap {
         const countryName = this.getCountryName(countryFeature);
         
         console.log('Country clicked:', countryName, countryCode);
+        
+        // Only allow clicks on countries with data
+        if (!this.availableCountries.has(countryCode)) {
+            console.warn(`No data available for ${countryName} (${countryCode})`);
+            return;
+        }
         
         // Highlight clicked country
         this.svg.selectAll('.country')
@@ -275,8 +307,8 @@ class WorldMap {
         this.svg.selectAll('.country')
             .transition()
             .duration(500)
-            .attr('fill', '#e1e5e9')
-            .attr('class', 'country');
+            .attr('fill', (d) => this.getCountryColor(d))
+            .classed('highlighted', false);
     }
 }
 
