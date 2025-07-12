@@ -560,7 +560,7 @@ class WorldTrendsApp {
             // Auto-hide after 5 seconds
             setTimeout(() => {
                 this.hideError();
-            }, 5000);
+            }, 5555);
         }
     }
 
