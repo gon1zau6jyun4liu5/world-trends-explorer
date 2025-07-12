@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 World Trends Explorer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    
+    <!-- External libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="title">
+                <span class="icon">🌍</span>
+                World Trends Explorer
+            </h1>
+            <p class="subtitle">Real-time Google Trends analysis with interactive world map</p>
+        </div>
+    </header>
+
+    <!-- Main container -->
+    <main class="main">
+        <div class="container">
+            <!-- Search section -->
+            <section class="search-section">
+                <div class="search-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Enter a keyword to explore trends..."
+                            autocomplete="off"
+                        >
+                        <select id="countrySelect">
+                            <option value="US">🇺🇸 United States</option>
+                            <option value="GB">🇬🇧 United Kingdom</option>
+                            <option value="DE">🇩🇪 Germany</option>
+                            <option value="FR">🇫🇷 France</option>
+                            <option value="IT">🇮🇹 Italy</option>
+                            <option value="ES">🇪🇸 Spain</option>
+                            <option value="CA">🇨🇦 Canada</option>
+                            <option value="AU">🇦🇺 Australia</option>
+                            <option value="JP">🇯🇵 Japan</option>
+                            <option value="KR">🇰🇷 South Korea</option>
+                            <option value="IN">🇮🇳 India</option>
+                            <option value="BR">🇧🇷 Brazil</option>
+                        </select>
+                        <button id="searchBtn" type="button">
+                            <span class="search-icon">🔍</span>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2 id="resultsTitle">Trends for "<span id="searchKeyword"></span>"</h2>
+                    <div class="stats" id="searchStats"></div>
+                </div>
+
+                <!-- Chart container -->
+                <div class="chart-container">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+
+                <!-- Regional interest -->
+                <div class="regional-section">
+                    <h3>Interest by Region</h3>
+                    <div class="regional-grid" id="regionalGrid">
+                        <!-- Regional data will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Related queries -->
+                <div class="related-section">
+                    <h3>Related Queries</h3>
+                    <div class="related-grid">
+                        <div class="related-column">
+                            <h4>🔥 Top Queries</h4>
+                            <ul id="topQueries" class="queries-list">
+                                <!-- Top queries will be populated here -->
+                            </ul>
+                        </div>
+                        <div class="related-column">
+                            <h4>📈 Rising Queries</h4>
+                            <ul id="risingQueries" class="queries-list">
+                                <!-- Rising queries will be populated here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trending section -->
+            <section class="trending-section">
+                <h3>
+                    <span class="trending-icon">🔥</span>
+                    Currently Trending
+                </h3>
+                <div class="trending-grid" id="trendingGrid">
+                    <!-- Trending searches will be populated here -->
+                </div>
+            </section>
+
+            <!-- Loading indicator -->
+            <div class="loading" id="loadingIndicator" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading trends data...</p>
+            </div>
+
+            <!-- Error message -->
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <span class="error-icon">⚠️</span>
+                <span id="errorText"></span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 World Trends Explorer | Powered by Google Trends & Pytrends</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
