@@ -22,57 +22,122 @@
                 <span class="icon">🌍</span>
                 World Trends Explorer
             </h1>
-            <p class="subtitle">Real-time Google Trends analysis with interactive world map</p>
+            <p class="subtitle">Click on any country to explore its trending topics</p>
         </div>
     </header>
 
     <!-- Main container -->
     <main class="main">
         <div class="container">
-            <!-- Search section -->
-            <section class="search-section">
-                <div class="search-form">
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            placeholder="Enter a keyword to explore trends..."
-                            autocomplete="off"
-                        >
-                        <select id="countrySelect">
-                            <option value="">🌍 Worldwide</option>
-                            <option value="US">🇺🇸 United States</option>
-                            <option value="GB">🇬🇧 United Kingdom</option>
-                            <option value="DE">🇩🇪 Germany</option>
-                            <option value="FR">🇫🇷 France</option>
-                            <option value="IT">🇮🇹 Italy</option>
-                            <option value="ES">🇪🇸 Spain</option>
-                            <option value="CA">🇨🇦 Canada</option>
-                            <option value="AU">🇦🇺 Australia</option>
-                            <option value="JP">🇯🇵 Japan</option>
-                            <option value="KR">🇰🇷 South Korea</option>
-                            <option value="IN">🇮🇳 India</option>
-                            <option value="BR">🇧🇷 Brazil</option>
-                            <option value="MX">🇲🇽 Mexico</option>
-                            <option value="RU">🇷🇺 Russia</option>
-                            <option value="CN">🇨🇳 China</option>
-                        </select>
-                        <button id="searchBtn" type="button">
-                            <span class="search-icon">🔍</span>
-                            Search
+            <!-- Interactive World Map Section (Main Feature) -->
+            <section class="world-map-section">
+                <div class="map-header">
+                    <h2>🗺️ Interactive World Map</h2>
+                    <p>Click on any country to see its trending searches and popular topics</p>
+                </div>
+                
+                <div class="world-map-container-main">
+                    <svg id="worldMap"></svg>
+                    
+                    <!-- Map tooltip -->
+                    <div id="mapTooltip" class="map-tooltip"></div>
+                    
+                    <!-- Map controls -->
+                    <div class="map-controls">
+                        <button id="resetMapBtn" class="map-control-btn">
+                            🔄 Reset View
                         </button>
+                        <button id="zoomInBtn" class="map-control-btn">
+                            🔍 Zoom In
+                        </button>
+                        <button id="zoomOutBtn" class="map-control-btn">
+                            🔍 Zoom Out
+                        </button>
+                    </div>
+                    
+                    <!-- Map legend -->
+                    <div class="map-legend">
+                        <div class="legend-title">Click Countries to Explore</div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #667eea;"></div>
+                            <span>Available Data</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #e1e5e9;"></div>
+                            <span>No Data</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Results section -->
+            <!-- Country Info Panel (Initially Hidden) -->
+            <section class="country-info-panel" id="countryInfoPanel" style="display: none;">
+                <div class="country-header">
+                    <h2 id="countryTitle">Country Trends</h2>
+                    <button id="closeCountryPanel" class="close-btn">✕</button>
+                </div>
+                
+                <div class="country-content">
+                    <!-- Country Stats -->
+                    <div class="country-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="trendingCount">-</div>
+                                <div class="stat-label">Trending Topics</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dataAvailable">-</div>
+                                <div class="stat-label">Data Points</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🌍</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="countryCode">-</div>
+                                <div class="stat-label">Country Code</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending Topics for Selected Country -->
+                    <div class="trending-topics">
+                        <h3>🔥 Currently Trending</h3>
+                        <div class="trending-grid" id="countryTrendingGrid">
+                            <!-- Country-specific trending topics will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Search for Country -->
+                    <div class="country-search">
+                        <h3>🔍 Search Trends in This Country</h3>
+                        <div class="search-form">
+                            <input 
+                                type="text" 
+                                id="countrySearchInput" 
+                                placeholder="Enter a keyword to explore in this country..."
+                                autocomplete="off"
+                            >
+                            <button id="countrySearchBtn" type="button">
+                                <span class="search-icon">🔍</span>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Results Section (Initially Hidden) -->
             <section class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
-                    <h2 id="resultsTitle">Trends for "<span id="searchKeyword"></span>"</h2>
+                    <h2 id="resultsTitle">Search Results</h2>
                     <div class="stats" id="searchStats"></div>
                 </div>
 
-                <!-- Charts and Map Layout -->
+                <!-- Charts Layout -->
                 <div class="charts-layout">
                     <!-- Time series chart -->
                     <div class="chart-container">
@@ -80,94 +145,43 @@
                         <canvas id="trendsChart"></canvas>
                     </div>
 
-                    <!-- Interactive World Map -->
-                    <div class="world-map-container">
-                        <h3>🗺️ Interest by Country</h3>
-                        <svg id="worldMap"></svg>
-                        
-                        <!-- Map tooltip -->
-                        <div id="mapTooltip" class="map-tooltip"></div>
-                        
-                        <!-- Map legend -->
-                        <div class="map-legend">
-                            <div class="legend-title">Interest Level</div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #08519c;"></div>
-                                <span>100 (Peak)</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #2171b5;"></div>
-                                <span>80-99</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #4292c6;"></div>
-                                <span>60-79</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #6baed6;"></div>
-                                <span>40-59</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #9ecae1;"></div>
-                                <span>20-39</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #c6dbef;"></div>
-                                <span>1-19</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #e1e5e9;"></div>
-                                <span>No data</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Display Section -->
-                <div class="data-display">
-                    <!-- Regional interest table -->
+                    <!-- Regional data -->
                     <div class="regional-data">
-                        <h4>
-                            <span>📊</span>
-                            Top Countries by Interest
-                        </h4>
+                        <h3>📊 Top Regions</h3>
                         <div class="regional-table" id="regionalTable">
                             <!-- Regional data will be populated here -->
                         </div>
                     </div>
+                </div>
 
-                    <!-- Related queries -->
-                    <div class="related-section">
-                        <h4>
-                            <span>🔗</span>
-                            Related Searches
-                        </h4>
-                        <div class="related-grid">
-                            <div class="related-column">
-                                <h4>🔥 Top Queries</h4>
-                                <ul id="topQueries" class="queries-list">
-                                    <!-- Top queries will be populated here -->
-                                </ul>
-                            </div>
-                            <div class="related-column">
-                                <h4>📈 Rising Queries</h4>
-                                <ul id="risingQueries" class="queries-list">
-                                    <!-- Rising queries will be populated here -->
-                                </ul>
-                            </div>
+                <!-- Related queries -->
+                <div class="related-section">
+                    <h3>🔗 Related Searches</h3>
+                    <div class="related-grid">
+                        <div class="related-column">
+                            <h4>🔥 Top Queries</h4>
+                            <ul id="topQueries" class="queries-list">
+                                <!-- Top queries will be populated here -->
+                            </ul>
+                        </div>
+                        <div class="related-column">
+                            <h4>📈 Rising Queries</h4>
+                            <ul id="risingQueries" class="queries-list">
+                                <!-- Rising queries will be populated here -->
+                            </ul>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Trending section -->
-            <section class="trending-section">
+            <!-- Global Trending Section -->
+            <section class="global-trending-section">
                 <h3>
-                    <span class="trending-icon">🔥</span>
-                    Currently Trending
+                    <span class="trending-icon">🌍</span>
+                    Global Trending Topics
                 </h3>
-                <div class="trending-controls" style="margin-bottom: 1rem;">
-                    <select id="trendingCountrySelect" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
+                <div class="trending-controls">
+                    <select id="globalTrendingCountrySelect">
                         <option value="US">🇺🇸 United States</option>
                         <option value="GB">🇬🇧 United Kingdom</option>
                         <option value="DE">🇩🇪 Germany</option>
@@ -178,8 +192,8 @@
                         <option value="BR">🇧🇷 Brazil</option>
                     </select>
                 </div>
-                <div class="trending-grid" id="trendingGrid">
-                    <!-- Trending searches will be populated here -->
+                <div class="trending-grid" id="globalTrendingGrid">
+                    <!-- Global trending searches will be populated here -->
                 </div>
             </section>
 
@@ -200,7 +214,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 World Trends Explorer | Powered by Google Trends & Pytrends</p>
+            <p>&copy; 2025 World Trends Explorer | Click any country to explore trends</p>
         </div>
     </footer>
 
