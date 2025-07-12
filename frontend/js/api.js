@@ -4,7 +4,7 @@
  */
 
 class TrendsAPI {
-    constructor(baseURL = 'http://localhost:5555/api/trends') {
+    constructor(baseURL = 'http://localhost:5000/api/trends') {  // 🔧 Changed from 5555 to 5000
         this.baseURL = baseURL;
         this.cache = new Map();
         this.requestTimeout = 30000; // 30 seconds
@@ -218,6 +218,31 @@ class TrendsAPI {
     }
 
     /**
+     * Switch to Mock API for testing
+     */
+    switchToMockAPI() {
+        this.baseURL = 'http://localhost:5001/api/trends';  // 🔧 Changed from 5555 to 5001
+        this.clearCache();
+        console.log('🔄 Switched to Mock API (port 5001) for testing');
+    }
+
+    /**
+     * Switch to Real API
+     */
+    switchToRealAPI() {
+        this.baseURL = 'http://localhost:5000/api/trends';
+        this.clearCache();
+        console.log('🔄 Switched to Real API (port 5000) with Google Trends');
+    }
+
+    /**
+     * Get current API mode
+     */
+    getCurrentMode() {
+        return this.baseURL.includes('5001') ? 'Mock' : 'Real';
+    }
+
+    /**
      * Clear cache
      */
     clearCache() {
@@ -368,7 +393,7 @@ const TrendsUtils = {
     }
 };
 
-// Initialize global API instance
+// Initialize global API instance (defaults to Real API on port 5000)
 window.trendsAPI = new TrendsAPI();
 window.TrendsUtils = TrendsUtils;
 
