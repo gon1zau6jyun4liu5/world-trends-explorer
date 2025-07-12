@@ -1,6 +1,6 @@
 /**
  * Improved Main Application JavaScript for World Trends Explorer
- * Enhanced country selection and responsive UI
+ * Enhanced country selection and responsive UI with proper country data visualization
  */
 
 class ImprovedWorldTrendsApp {
@@ -12,18 +12,28 @@ class ImprovedWorldTrendsApp {
         this.selectedCountry = null;
         this.isLoading = false;
         
+        // Available countries that have trending data
+        this.availableCountries = new Set([
+            'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'CA', 'AU', 
+            'JP', 'KR', 'IN', 'BR', 'MX', 'RU', 'CN', 'NL',
+            'SE', 'NO', 'DK', 'FI', 'BE', 'CH', 'AT', 'IE',
+            'PT', 'GR', 'PL', 'CZ', 'HU', 'SK', 'SI', 'HR',
+            'BG', 'RO', 'LT', 'LV', 'EE', 'MT', 'CY', 'LU'
+        ]);
+        
         // DOM elements
         this.elements = {
             searchInput: document.getElementById('searchInput'),
             countrySelect: document.getElementById('countrySelect'),
             searchBtn: document.getElementById('searchBtn'),
+            trendingCountrySelect: document.getElementById('trendingCountrySelect'),
             resultsSection: document.getElementById('resultsSection'),
             searchKeyword: document.getElementById('searchKeyword'),
             searchStats: document.getElementById('searchStats'),
             regionalTable: document.getElementById('regionalTable'),
             topQueries: document.getElementById('topQueries'),
             risingQueries: document.getElementById('risingQueries'),
-            globalTrendingGrid: document.getElementById('globalTrendingGrid'),
+            trendingGrid: document.getElementById('trendingGrid'),
             trendingCountryName: document.getElementById('trendingCountryName'),
             selectedCountryInfo: document.getElementById('selectedCountryInfo'),
             selectedCountryName: document.getElementById('selectedCountryName'),
@@ -43,16 +53,24 @@ class ImprovedWorldTrendsApp {
             this.chart = new TrendsChart('trendsChart');
             this.worldMap = new WorldMap('worldMap');
             
+            // Set available countries for map visualization
+            if (this.worldMap) {
+                this.worldMap.setAvailableCountries(this.availableCountries);
+            }
+            
             // Set up event listeners
             this.setupEventListeners();
             
-            // Load initial trending data for Korea
-            await this.loadTrendingSearches('KR');
+            // Load initial trending data
+            await this.loadTrendingSearches('US');
+            
+            // Check API health
+            await this.checkAPIHealth();
             
             console.log('✅ Improved World Trends Explorer initialized successfully');
         } catch (error) {
             console.error('❌ Failed to initialize app:', error);
-            this.showError('애플리케이션 초기화에 실패했습니다');
+            this.showError('Failed to initialize application');
         }
     }
 
@@ -62,6 +80,13 @@ class ImprovedWorldTrendsApp {
         this.elements.searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.handleSearch();
         });
+        
+        // Trending country selection
+        if (this.elements.trendingCountrySelect) {
+            this.elements.trendingCountrySelect.addEventListener('change', (e) => {
+                this.loadTrendingSearches(e.target.value);
+            });
+        }
         
         // Country selection from map
         document.addEventListener('countrySelected', (e) => {
@@ -73,6 +98,22 @@ class ImprovedWorldTrendsApp {
             if (this.chart) this.chart.resize();
             if (this.worldMap) this.worldMap.resize();
         }, 250));
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'k':
+                        e.preventDefault();
+                        this.elements.searchInput.focus();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        this.handleRefresh();
+                        break;
+                }
+            }
+        });
     }
 
     async handleSearch() {
@@ -80,7 +121,7 @@ class ImprovedWorldTrendsApp {
         const geo = this.elements.countrySelect.value;
         
         if (!keyword) {
-            this.showError('키워드를 입력해주세요');
+            this.showError('Please enter a keyword to search');
             return;
         }
         
@@ -101,12 +142,12 @@ class ImprovedWorldTrendsApp {
                 this.currentData = data;
                 this.displaySearchResults(data);
             } else {
-                throw new Error('API에서 유효하지 않은 데이터를 받았습니다');
+                throw new Error('Invalid data received from API');
             }
             
         } catch (error) {
             console.error('Search failed:', error);
-            this.showError(error.message || '트렌드 검색에 실패했습니다');
+            this.showError(error.message || 'Failed to search trends');
         } finally {
             this.setLoading(false);
         }
@@ -120,8 +161,11 @@ class ImprovedWorldTrendsApp {
             name: countryDetail.name
         };
         
-        // Show selected country info
-        this.showSelectedCountryInfo(countryDetail);
+        // Check if country has data available
+        if (!this.availableCountries.has(countryDetail.code)) {
+            this.showError(`No data available for ${countryDetail.name}. Try selecting a different country.`);
+            return;
+        }
         
         // Update country selector if available
         if (countryDetail.code && this.elements.countrySelect) {
@@ -133,23 +177,24 @@ class ImprovedWorldTrendsApp {
         }
         
         // Load trending for selected country
-        this.loadTrendingSearches(countryDetail.code || 'KR');
+        this.loadTrendingSearches(countryDetail.code);
+        
+        // Re-search with selected country if we have current data
+        if (this.currentData && this.currentData.keyword) {
+            this.handleSearch();
+        }
     }
 
-    showSelectedCountryInfo(countryDetail) {
-        if (!this.elements.selectedCountryInfo || !this.elements.selectedCountryName) return;
-        
-        const flag = this.getCountryFlag(countryDetail.code);
-        this.elements.selectedCountryName.textContent = `${flag} ${countryDetail.name}`;
-        this.elements.selectedCountryInfo.classList.add('visible');
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-            this.elements.selectedCountryInfo.classList.remove('visible');
-        }, 3000);
+    async handleRefresh() {
+        if (this.currentData && this.currentData.keyword) {
+            this.api.clearCache();
+            await this.handleSearch();
+        } else {
+            await this.loadTrendingSearches();
+        }
     }
 
-    async loadTrendingSearches(geo = 'KR') {
+    async loadTrendingSearches(geo = 'US') {
         try {
             console.log(`🔥 Loading trending searches for: ${geo}`);
             
@@ -163,27 +208,9 @@ class ImprovedWorldTrendsApp {
     }
 
     displayTrendingSearches(data, geo) {
-        if (!this.elements.globalTrendingGrid) return;
+        if (!this.elements.trendingGrid) return;
         
-        // Update country name in heading
-        if (this.elements.trendingCountryName) {
-            const countryNames = {
-                'KR': '한국',
-                'US': '미국',
-                'JP': '일본',
-                'CN': '중국',
-                'GB': '영국',
-                'DE': '독일',
-                'FR': '프랑스',
-                'CA': '캐나다',
-                'AU': '호주',
-                'IN': '인도',
-                'BR': '브라질'
-            };
-            this.elements.trendingCountryName.textContent = countryNames[geo] || '전 세계';
-        }
-        
-        this.elements.globalTrendingGrid.innerHTML = '';
+        this.elements.trendingGrid.innerHTML = '';
         
         if (!data || !data.trending_searches || !Array.isArray(data.trending_searches)) {
             this.displayTrendingError();
@@ -203,20 +230,20 @@ class ImprovedWorldTrendsApp {
                 this.handleSearch();
             });
             
-            this.elements.globalTrendingGrid.appendChild(element);
+            this.elements.trendingGrid.appendChild(element);
         });
     }
 
     displayTrendingError() {
-        if (!this.elements.globalTrendingGrid) return;
+        if (!this.elements.trendingGrid) return;
         
-        this.elements.globalTrendingGrid.innerHTML = `
+        this.elements.trendingGrid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 2rem;">
                 <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
-                <div>인기 검색어를 불러올 수 없습니다</div>
-                <button onclick="app.loadTrendingSearches('${this.selectedCountry?.code || 'KR'}')" 
+                <div>Failed to load trending searches</div>
+                <button onclick="app.loadTrendingSearches('${this.selectedCountry?.code || 'US'}')" 
                         style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                    다시 시도
+                    Retry
                 </button>
             </div>
         `;
@@ -226,7 +253,7 @@ class ImprovedWorldTrendsApp {
         // Update result header
         this.elements.searchKeyword.textContent = data.keyword;
         this.elements.searchStats.textContent = 
-            `업데이트: ${this.formatRelativeTime(data.timestamp)} | 지역: ${data.geo || '전 세계'}`;
+            `Updated: ${this.formatRelativeTime(data.timestamp)} | Region: ${data.geo || 'Worldwide'}`;
         
         // Show results section
         this.elements.resultsSection.style.display = 'block';
@@ -237,7 +264,7 @@ class ImprovedWorldTrendsApp {
             this.chart.updateChart(data);
         }
         
-        // Update world map
+        // Update world map with new data
         if (this.worldMap) {
             this.worldMap.updateData(data);
         }
@@ -262,7 +289,7 @@ class ImprovedWorldTrendsApp {
         
         if (!regionalData || !Array.isArray(regionalData) || regionalData.length === 0) {
             this.elements.regionalTable.innerHTML = 
-                '<div style="text-align: center; color: #666; padding: 2rem;">지역별 데이터가 없습니다</div>';
+                '<div style="text-align: center; color: #666; padding: 2rem;">No regional data available</div>';
             return;
         }
         
@@ -298,8 +325,8 @@ class ImprovedWorldTrendsApp {
         this.elements.risingQueries.innerHTML = '';
         
         if (!relatedQueries) {
-            this.elements.topQueries.innerHTML = '<li style="color: #666;">데이터가 없습니다</li>';
-            this.elements.risingQueries.innerHTML = '<li style="color: #666;">데이터가 없습니다</li>';
+            this.elements.topQueries.innerHTML = '<li style="color: #666;">No data available</li>';
+            this.elements.risingQueries.innerHTML = '<li style="color: #666;">No data available</li>';
             return;
         }
         
@@ -315,7 +342,7 @@ class ImprovedWorldTrendsApp {
                 this.elements.topQueries.appendChild(li);
             });
         } else {
-            this.elements.topQueries.innerHTML = '<li style="color: #666;">인기 검색어가 없습니다</li>';
+            this.elements.topQueries.innerHTML = '<li style="color: #666;">No top queries available</li>';
         }
         
         // Display rising queries
@@ -330,7 +357,7 @@ class ImprovedWorldTrendsApp {
                 this.elements.risingQueries.appendChild(li);
             });
         } else {
-            this.elements.risingQueries.innerHTML = '<li style="color: #666;">급상승 검색어가 없습니다</li>';
+            this.elements.risingQueries.innerHTML = '<li style="color: #666;">No rising queries available</li>';
         }
     }
 
@@ -338,6 +365,20 @@ class ImprovedWorldTrendsApp {
         if (query && typeof query === 'string') {
             this.elements.searchInput.value = query;
             this.handleSearch();
+        }
+    }
+
+    async checkAPIHealth() {
+        try {
+            const health = await this.api.healthCheck();
+            if (health) {
+                console.log('✅ API is healthy:', health);
+            } else {
+                console.warn('⚠️ API health check failed');
+            }
+        } catch (error) {
+            console.error('❌ API health check error:', error);
+            this.showError('Unable to connect to trends API. Please check your connection.');
         }
     }
 
@@ -349,7 +390,7 @@ class ImprovedWorldTrendsApp {
             this.elements.searchBtn.disabled = true;
             this.elements.searchBtn.innerHTML = `
                 <div style="width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>
-                검색 중...
+                Searching...
             `;
             
             if (this.chart) {
@@ -358,7 +399,7 @@ class ImprovedWorldTrendsApp {
         } else {
             this.elements.loadingIndicator.style.display = 'none';
             this.elements.searchBtn.disabled = false;
-            this.elements.searchBtn.innerHTML = '<span class="search-icon">🔍</span>검색';
+            this.elements.searchBtn.innerHTML = '<span class="search-icon">🔍</span>Search';
         }
     }
 
@@ -383,7 +424,9 @@ class ImprovedWorldTrendsApp {
             'IT': '🇮🇹', 'ES': '🇪🇸', 'CA': '🇨🇦', 'AU': '🇦🇺',
             'JP': '🇯🇵', 'KR': '🇰🇷', 'IN': '🇮🇳', 'BR': '🇧🇷',
             'MX': '🇲🇽', 'RU': '🇷🇺', 'CN': '🇨🇳', 'NL': '🇳🇱',
-            'SE': '🇸🇪', 'NO': '🇳🇴', 'DK': '🇩🇰', 'FI': '🇫🇮'
+            'SE': '🇸🇪', 'NO': '🇳🇴', 'DK': '🇩🇰', 'FI': '🇫🇮',
+            'BE': '🇧🇪', 'CH': '🇨🇭', 'AT': '🇦🇹', 'IE': '🇮🇪',
+            'PT': '🇵🇹', 'GR': '🇬🇷', 'PL': '🇵🇱', 'CZ': '🇨🇿'
         };
         return flags[countryCode] || '🌍';
     }
@@ -398,11 +441,11 @@ class ImprovedWorldTrendsApp {
             const diffMins = Math.floor(diffMs / 60000);
             const diffHours = Math.floor(diffMins / 60);
 
-            if (diffMins < 1) return '방금 전';
-            if (diffMins < 60) return `${diffMins}분 전`;
-            if (diffHours < 24) return `${diffHours}시간 전`;
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
             
-            return date.toLocaleDateString('ko-KR');
+            return date.toLocaleDateString('en-US');
         } catch (error) {
             return dateString;
         }
@@ -432,6 +475,31 @@ class ImprovedWorldTrendsApp {
             timeout = setTimeout(later, wait);
         };
     }
+
+    // Export methods
+    exportData() {
+        if (!this.currentData) {
+            this.showError('No data to export');
+            return;
+        }
+        
+        const dataStr = JSON.stringify(this.currentData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `trends-${this.currentData.keyword}-${Date.now()}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+    }
+
+    exportChart() {
+        if (this.chart) {
+            this.chart.exportAsImage(`trends-chart-${Date.now()}.png`);
+        }
+    }
 }
 
 // Initialize app when DOM is loaded
@@ -443,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('error', (event) => {
     console.error('Global error:', event.error);
     if (window.app) {
-        window.app.showError('예상치 못한 오류가 발생했습니다');
+        window.app.showError('An unexpected error occurred');
     }
 });
 
@@ -451,6 +519,6 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled promise rejection:', event.reason);
     if (window.app) {
-        window.app.showError('예상치 못한 오류가 발생했습니다');
+        window.app.showError('An unexpected error occurred');
     }
 });
