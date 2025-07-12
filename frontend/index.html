@@ -9,6 +9,7 @@
     <!-- External libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
     
     <!-- Custom styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -39,6 +40,7 @@
                             autocomplete="off"
                         >
                         <select id="countrySelect">
+                            <option value="">🌍 Worldwide</option>
                             <option value="US">🇺🇸 United States</option>
                             <option value="GB">🇬🇧 United Kingdom</option>
                             <option value="DE">🇩🇪 Germany</option>
@@ -51,6 +53,9 @@
                             <option value="KR">🇰🇷 South Korea</option>
                             <option value="IN">🇮🇳 India</option>
                             <option value="BR">🇧🇷 Brazil</option>
+                            <option value="MX">🇲🇽 Mexico</option>
+                            <option value="RU">🇷🇺 Russia</option>
+                            <option value="CN">🇨🇳 China</option>
                         </select>
                         <button id="searchBtn" type="button">
                             <span class="search-icon">🔍</span>
@@ -67,34 +72,89 @@
                     <div class="stats" id="searchStats"></div>
                 </div>
 
-                <!-- Chart container -->
-                <div class="chart-container">
-                    <canvas id="trendsChart"></canvas>
-                </div>
+                <!-- Charts and Map Layout -->
+                <div class="charts-layout">
+                    <!-- Time series chart -->
+                    <div class="chart-container">
+                        <h3>📈 Interest Over Time</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
 
-                <!-- Regional interest -->
-                <div class="regional-section">
-                    <h3>Interest by Region</h3>
-                    <div class="regional-grid" id="regionalGrid">
-                        <!-- Regional data will be populated here -->
+                    <!-- Interactive World Map -->
+                    <div class="world-map-container">
+                        <h3>🗺️ Interest by Country</h3>
+                        <svg id="worldMap"></svg>
+                        
+                        <!-- Map tooltip -->
+                        <div id="mapTooltip" class="map-tooltip"></div>
+                        
+                        <!-- Map legend -->
+                        <div class="map-legend">
+                            <div class="legend-title">Interest Level</div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #08519c;"></div>
+                                <span>100 (Peak)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #2171b5;"></div>
+                                <span>80-99</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #4292c6;"></div>
+                                <span>60-79</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #6baed6;"></div>
+                                <span>40-59</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #9ecae1;"></div>
+                                <span>20-39</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #c6dbef;"></div>
+                                <span>1-19</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #e1e5e9;"></div>
+                                <span>No data</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Related queries -->
-                <div class="related-section">
-                    <h3>Related Queries</h3>
-                    <div class="related-grid">
-                        <div class="related-column">
-                            <h4>🔥 Top Queries</h4>
-                            <ul id="topQueries" class="queries-list">
-                                <!-- Top queries will be populated here -->
-                            </ul>
+                <!-- Data Display Section -->
+                <div class="data-display">
+                    <!-- Regional interest table -->
+                    <div class="regional-data">
+                        <h4>
+                            <span>📊</span>
+                            Top Countries by Interest
+                        </h4>
+                        <div class="regional-table" id="regionalTable">
+                            <!-- Regional data will be populated here -->
                         </div>
-                        <div class="related-column">
-                            <h4>📈 Rising Queries</h4>
-                            <ul id="risingQueries" class="queries-list">
-                                <!-- Rising queries will be populated here -->
-                            </ul>
+                    </div>
+
+                    <!-- Related queries -->
+                    <div class="related-section">
+                        <h4>
+                            <span>🔗</span>
+                            Related Searches
+                        </h4>
+                        <div class="related-grid">
+                            <div class="related-column">
+                                <h4>🔥 Top Queries</h4>
+                                <ul id="topQueries" class="queries-list">
+                                    <!-- Top queries will be populated here -->
+                                </ul>
+                            </div>
+                            <div class="related-column">
+                                <h4>📈 Rising Queries</h4>
+                                <ul id="risingQueries" class="queries-list">
+                                    <!-- Rising queries will be populated here -->
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,6 +166,18 @@
                     <span class="trending-icon">🔥</span>
                     Currently Trending
                 </h3>
+                <div class="trending-controls" style="margin-bottom: 1rem;">
+                    <select id="trendingCountrySelect" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
+                        <option value="US">🇺🇸 United States</option>
+                        <option value="GB">🇬🇧 United Kingdom</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="FR">🇫🇷 France</option>
+                        <option value="JP">🇯🇵 Japan</option>
+                        <option value="KR">🇰🇷 South Korea</option>
+                        <option value="IN">🇮🇳 India</option>
+                        <option value="BR">🇧🇷 Brazil</option>
+                    </select>
+                </div>
                 <div class="trending-grid" id="trendingGrid">
                     <!-- Trending searches will be populated here -->
                 </div>
@@ -134,6 +206,7 @@
 
     <!-- JavaScript -->
     <script src="js/api.js"></script>
+    <script src="js/worldmap.js"></script>
     <script src="js/chart.js"></script>
     <script src="js/app.js"></script>
 </body>
