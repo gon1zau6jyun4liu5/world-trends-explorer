@@ -12,6 +12,15 @@ class WorldTrendsApp {
         this.selectedCountry = null;
         this.isLoading = false;
         
+        // Available countries that have trending data
+        this.availableCountries = new Set([
+            'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'CA', 'AU', 
+            'JP', 'KR', 'IN', 'BR', 'MX', 'RU', 'CN', 'NL',
+            'SE', 'NO', 'DK', 'FI', 'BE', 'CH', 'AT', 'IE',
+            'PT', 'GR', 'PL', 'CZ', 'HU', 'SK', 'SI', 'HR',
+            'BG', 'RO', 'LT', 'LV', 'EE', 'MT', 'CY', 'LU'
+        ]);
+        
         // DOM elements
         this.elements = {
             // Country info panel
@@ -37,17 +46,6 @@ class WorldTrendsApp {
             globalTrendingCountrySelect: document.getElementById('globalTrendingCountrySelect'),
             globalTrendingGrid: document.getElementById('globalTrendingGrid'),
             
-            // Version display elements
-            versionBadge: document.getElementById('versionBadge'),
-            versionDetailsBtn: document.getElementById('versionDetailsBtn'),
-            versionModal: document.getElementById('versionModal'),
-            closeVersionModal: document.getElementById('closeVersionModal'),
-            modalVersion: document.getElementById('modalVersion'),
-            modalBranch: document.getElementById('modalBranch'),
-            modalBuildDate: document.getElementById('modalBuildDate'),
-            modalEnvironment: document.getElementById('modalEnvironment'),
-            footerVersion: document.getElementById('footerVersion'),
-            
             // UI elements
             loadingIndicator: document.getElementById('loadingIndicator'),
             errorMessage: document.getElementById('errorMessage'),
@@ -58,15 +56,18 @@ class WorldTrendsApp {
     }
 
     async init() {
-        console.log('🌍 Initializing World Trends Explorer - Interactive Map First...');
+        console.log('🌍 Initializing World Trends Explorer v1.0.3 - Interactive Map First...');
         
         try {
-            // Initialize version display first
-            this.initializeVersionDisplay();
-            
             // Initialize components
             this.chart = new TrendsChart('trendsChart');
             this.worldMap = new WorldMap('worldMap');
+            
+            // Set available countries for the world map - THIS IS CRUCIAL!
+            if (this.worldMap && this.worldMap.setAvailableCountries) {
+                this.worldMap.setAvailableCountries(this.availableCountries);
+                console.log(`🎨 Set ${this.availableCountries.size} available countries for world map`);
+            }
             
             // Set up event listeners
             this.setupEventListeners();
@@ -77,53 +78,10 @@ class WorldTrendsApp {
             // Check API health
             await this.checkAPIHealth();
             
-            console.log('✅ World Trends Explorer initialized successfully');
+            console.log('✅ World Trends Explorer v1.0.3 initialized successfully');
         } catch (error) {
             console.error('❌ Failed to initialize app:', error);
             this.showError('Failed to initialize application');
-        }
-    }
-
-    initializeVersionDisplay() {
-        try {
-            if (window.AppVersion) {
-                // Update version badge
-                if (this.elements.versionBadge) {
-                    this.elements.versionBadge.textContent = window.AppVersion.getDisplayInfo();
-                }
-                
-                // Update footer version
-                if (this.elements.footerVersion) {
-                    this.elements.footerVersion.textContent = window.AppVersion.getBuildInfo();
-                }
-                
-                // Populate modal with version details
-                if (this.elements.modalVersion) {
-                    this.elements.modalVersion.textContent = window.AppVersion.version;
-                }
-                if (this.elements.modalBranch) {
-                    this.elements.modalBranch.textContent = window.AppVersion.branch;
-                }
-                if (this.elements.modalBuildDate) {
-                    const buildDate = new Date(window.AppVersion.buildDate).toLocaleString();
-                    this.elements.modalBuildDate.textContent = buildDate;
-                }
-                if (this.elements.modalEnvironment) {
-                    this.elements.modalEnvironment.textContent = window.AppVersion.environment;
-                }
-                
-                console.log('✅ Version display initialized:', window.AppVersion.getFullInfo());
-            } else {
-                console.warn('⚠️ AppVersion not available');
-                if (this.elements.versionBadge) {
-                    this.elements.versionBadge.textContent = 'v1.1.0 • version-display-v1.1.0';
-                }
-                if (this.elements.footerVersion) {
-                    this.elements.footerVersion.textContent = 'Development Build - v1.1.0';
-                }
-            }
-        } catch (error) {
-            console.error('❌ Failed to initialize version display:', error);
         }
     }
 
@@ -160,28 +118,6 @@ class WorldTrendsApp {
             });
         }
         
-        // Version modal functionality
-        if (this.elements.versionDetailsBtn) {
-            this.elements.versionDetailsBtn.addEventListener('click', () => {
-                this.showVersionModal();
-            });
-        }
-        
-        if (this.elements.closeVersionModal) {
-            this.elements.closeVersionModal.addEventListener('click', () => {
-                this.hideVersionModal();
-            });
-        }
-        
-        // Close modal when clicking outside
-        if (this.elements.versionModal) {
-            this.elements.versionModal.addEventListener('click', (e) => {
-                if (e.target === this.elements.versionModal) {
-                    this.hideVersionModal();
-                }
-            });
-        }
-        
         // Window resize
         window.addEventListener('resize', TrendsUtils.debounce(() => {
             if (this.chart) this.chart.resize();
@@ -202,34 +138,15 @@ class WorldTrendsApp {
                         e.preventDefault();
                         this.handleRefresh();
                         break;
-                    case 'i':
-                        e.preventDefault();
-                        this.showVersionModal();
-                        break;
                 }
             }
             
             // Escape key handling
             if (e.key === 'Escape') {
-                this.hideVersionModal();
                 this.hideCountryPanel();
                 this.hideSearchResults();
             }
         });
-    }
-
-    showVersionModal() {
-        if (this.elements.versionModal) {
-            this.elements.versionModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    hideVersionModal() {
-        if (this.elements.versionModal) {
-            this.elements.versionModal.style.display = 'none';
-            document.body.style.overflow = '';
-        }
     }
 
     async handleCountrySelection(countryDetail) {
@@ -237,6 +154,12 @@ class WorldTrendsApp {
         
         if (!countryDetail || !countryDetail.code) {
             console.warn('Invalid country selection');
+            return;
+        }
+        
+        // Check if country has data available
+        if (!this.availableCountries.has(countryDetail.code)) {
+            this.showError(`No data available for ${countryDetail.name}. Please select a different country.`);
             return;
         }
         
@@ -432,6 +355,11 @@ class WorldTrendsApp {
             this.chart.updateChart(data);
         }
         
+        // Update world map with search results
+        if (this.worldMap) {
+            this.worldMap.updateData(data);
+        }
+        
         // Update regional data
         this.displayRegionalData(data.interest_by_region, data.keyword);
         
@@ -482,7 +410,7 @@ class WorldTrendsApp {
             
             // Add click handler to select country
             element.addEventListener('click', () => {
-                if (item.geoCode) {
+                if (item.geoCode && this.availableCountries.has(item.geoCode)) {
                     this.handleCountrySelection({
                         code: item.geoCode,
                         name: item.geoName
@@ -620,7 +548,6 @@ class WorldTrendsApp {
             }
         } catch (error) {
             console.error('❌ API health check error:', error);
-            // Don't show error for API health check failures - just use demo data
             console.log('🔄 Using demo data mode');
         }
     }
@@ -661,7 +588,7 @@ class WorldTrendsApp {
             // Auto-hide after 5 seconds
             setTimeout(() => {
                 this.hideError();
-            }, 5555);
+            }, 5000);
         }
     }
 
@@ -698,9 +625,9 @@ class WorldTrendsApp {
 
     // Version management method
     getVersionInfo() {
-        return window.AppVersion ? window.AppVersion.getFullInfo() : {
-            version: '1.1.0',
-            branch: 'feature/version-display-v1.1.0',
+        return {
+            version: '1.0.3',
+            branch: 'v1.0.3-fixes',
             environment: 'development'
         };
     }
@@ -728,9 +655,4 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 // Add version info to console on load
-console.log('🔖 World Trends Explorer Version Info:');
-if (window.AppVersion) {
-    console.table(window.AppVersion.getFullInfo());
-} else {
-    console.log('Version: 1.1.0 (Development Build)');
-}
+console.log('🔖 World Trends Explorer Version Info: v1.0.3');
