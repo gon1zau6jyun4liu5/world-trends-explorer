@@ -171,3 +171,30 @@ stop.sh
 .env.local
 .env.development
 .env.production
+
+# Backup files
+backup/
+*.backup
+*.bak
+
+# Prevent duplicate files
+*_complete.*
+*_improved.*
+*_focused.*
+*_fixed.*
+*_old.*
+*_backup.*
+*.orig
+
+# Test artifacts
+test-results/
+coverage/
+.nyc_output/
+
+# Version control
+.git/
+!.gitignore
+
+# Deployment
+deploy.log
+deployment/

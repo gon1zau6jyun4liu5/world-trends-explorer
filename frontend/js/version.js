@@ -4,8 +4,8 @@
  */
 
 window.AppVersion = {
-    version: "1.1.0",
-    branch: "feature/version-display-v1.1.0",
+    version: "1.0.3",
+    branch: "fix/cleanup-unnecessary-files-v1.0.3",
     buildDate: new Date().toISOString(),
     commit: "latest",
     environment: "development",
@@ -17,7 +17,7 @@ window.AppVersion = {
     
     // Get branch display name
     getBranchDisplay() {
-        return this.branch.replace("feature/", "").replace("bugfix/", "").replace("hotfix/", "");
+        return this.branch.replace("feature/", "").replace("bugfix/", "").replace("hotfix/", "").replace("fix/", "");
     },
     
     // Get full version info

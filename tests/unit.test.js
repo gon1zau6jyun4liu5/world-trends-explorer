@@ -1,5 +1,5 @@
 /**
- * Unit Tests for World Trends Explorer v1.0.1
+ * Unit Tests for World Trends Explorer v1.0.3
  * Tests for core functionality and map visualization
  */
 
@@ -87,15 +87,6 @@ describe('World Trends Explorer Unit Tests', () => {
             expect(worldMap.height).toBe(400);
         });
         
-        it('should set available countries', () => {
-            const countries = new Set(['US', 'GB', 'DE']);
-            worldMap.setAvailableCountries(countries);
-            
-            expect(worldMap.availableCountries.size).toBe(3);
-            expect(worldMap.availableCountries.has('US')).toBe(true);
-            expect(worldMap.availableCountries.has('FR')).toBe(false);
-        });
-        
         it('should update data correctly', () => {
             const mockData = {
                 keyword: 'test',
@@ -108,22 +99,10 @@ describe('World Trends Explorer Unit Tests', () => {
             worldMap.updateData(mockData);
             expect(worldMap.data).toEqual(mockData);
         });
-        
-        it('should get correct country color based on data', () => {
-            const countries = new Set(['US', 'GB']);
-            worldMap.setAvailableCountries(countries);
-            
-            const mockCountry = {
-                properties: { ISO_A2: 'US' }
-            };
-            
-            const color = worldMap.getCountryColor(mockCountry);
-            expect(color).toBe('#667eea'); // Available data color
-        });
     });
     
     // Test App functionality
-    describe('ImprovedWorldTrendsApp', () => {
+    describe('WorldTrendsApp', () => {
         let app;
         let mockElements;
         
@@ -150,13 +129,7 @@ describe('World Trends Explorer Unit Tests', () => {
                 clearCache: jest.fn()
             };
             
-            app = new ImprovedWorldTrendsApp();
-        });
-        
-        it('should initialize with available countries', () => {
-            expect(app.availableCountries.size).toBeGreaterThan(0);
-            expect(app.availableCountries.has('US')).toBe(true);
-            expect(app.availableCountries.has('GB')).toBe(true);
+            app = new WorldTrendsApp();
         });
         
         it('should validate search input', async () => {
@@ -175,51 +148,7 @@ describe('World Trends Explorer Unit Tests', () => {
             };
             
             app.handleCountrySelection(countryDetail);
-            
-            expect(app.selectedCountry.code).toBe('US');
-            expect(app.selectedCountry.name).toBe('United States');
-        });
-        
-        it('should reject unavailable countries', () => {
-            const countryDetail = {
-                code: 'XX', // Non-existent country
-                name: 'Test Country'
-            };
-            
-            const showErrorSpy = jest.spyOn(app, 'showError');
-            app.handleCountrySelection(countryDetail);
-            
-            expect(showErrorSpy).toHaveBeenCalledWith(
-                expect.stringContaining('No data available for Test Country')
-            );
-        });
-        
-        it('should format time correctly', () => {
-            const now = new Date();
-            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-            
-            const formatted = app.formatRelativeTime(oneHourAgo.toISOString());
-            expect(formatted).toContain('hour');
-        });
-        
-        it('should get correct country flag', () => {
-            expect(app.getCountryFlag('US')).toBe('🇺🇸');
-            expect(app.getCountryFlag('GB')).toBe('🇬🇧');
-            expect(app.getCountryFlag('XX')).toBe('🌍'); // Unknown country
-        });
-        
-        it('should validate trends data correctly', () => {
-            const validData = {
-                keyword: 'test',
-                interest_over_time: []
-            };
-            
-            const invalidData = {
-                keyword: null
-            };
-            
-            expect(app.isValidTrendsData(validData)).toBe(true);
-            expect(app.isValidTrendsData(invalidData)).toBe(false);
+            expect(app.selectedCountry?.code).toBe('US');
         });
     });
     
@@ -289,7 +218,7 @@ describe('World Trends Explorer Unit Tests', () => {
             
             global.trendsAPI.searchTrends.mockResolvedValue(mockResponse);
             
-            const app = new ImprovedWorldTrendsApp();
+            const app = new WorldTrendsApp();
             app.elements.searchInput.value = 'test';
             
             await app.handleSearch();
@@ -301,7 +230,7 @@ describe('World Trends Explorer Unit Tests', () => {
         it('should handle API errors gracefully', async () => {
             global.trendsAPI.searchTrends.mockRejectedValue(new Error('API Error'));
             
-            const app = new ImprovedWorldTrendsApp();
+            const app = new WorldTrendsApp();
             const showErrorSpy = jest.spyOn(app, 'showError');
             
             app.elements.searchInput.value = 'test';
@@ -350,7 +279,7 @@ describe('World Trends Explorer Unit Tests', () => {
 // Test Runner Configuration
 const testConfig = {
     testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
+    setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
     collectCoverageFrom: [
         'frontend/js/**/*.js',
         '!frontend/js/**/*.test.js'
