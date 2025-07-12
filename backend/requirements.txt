@@ -1,15 +1,15 @@
-# World Trends Explorer - Backend Dependencies
+# World Trends Explorer - Backend Dependencies (Python 3.13 Compatible)
 
 # Core web framework
-Flask==2.3.3
+Flask==3.0.0
 Flask-CORS==4.0.0
 
 # Google Trends API
 pytrends==4.9.2
 
-# Data processing
-pandas==2.0.3
-numpy==1.24.3
+# Data processing (Python 3.13 compatible versions)
+pandas==2.1.4
+numpy>=1.25.0
 
 # HTTP requests
 requests==2.31.0
@@ -21,7 +21,7 @@ gunicorn==21.2.0
 python-dotenv==1.0.0
 
 # Caching (optional)
-redis==4.6.0
+redis==5.0.1
 
 # Logging
 colorlog==6.7.0
