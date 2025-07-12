@@ -11,9 +11,6 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     
-    <!-- Version information -->
-    <script src="js/version.js"></script>
-    
     <!-- Custom styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -32,17 +29,11 @@
     <!-- Main container -->
     <main class="main">
         <div class="container">
-            <!-- Interactive World Map Section (Main Feature) -->
+            <!-- Interactive World Map Section -->
             <section class="world-map-section">
                 <div class="map-header">
                     <h2>🗺️ Interactive World Map</h2>
                     <p>Click on any country to see its trending searches and popular topics</p>
-                    
-                    <!-- Version Info Display -->
-                    <div class="version-info">
-                        <span class="version-badge" id="versionBadge">Loading...</span>
-                        <button class="version-details-btn" id="versionDetailsBtn" title="Show version details">ℹ️</button>
-                    </div>
                 </div>
                 
                 <div class="world-map-container-main">
@@ -78,33 +69,6 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Version Details Modal (Initially Hidden) -->
-            <div class="version-modal" id="versionModal" style="display: none;">
-                <div class="version-modal-content">
-                    <div class="version-modal-header">
-                        <h3>🔖 Version Information</h3>
-                        <button class="close-modal-btn" id="closeVersionModal">✕</button>
-                    </div>
-                    <div class="version-modal-body">
-                        <div class="version-detail-item">
-                            <strong>Version:</strong> <span id="modalVersion">-</span>
-                        </div>
-                        <div class="version-detail-item">
-                            <strong>Branch:</strong> <span id="modalBranch">-</span>
-                        </div>
-                        <div class="version-detail-item">
-                            <strong>Build Date:</strong> <span id="modalBuildDate">-</span>
-                        </div>
-                        <div class="version-detail-item">
-                            <strong>Environment:</strong> <span id="modalEnvironment">-</span>
-                        </div>
-                        <div class="version-detail-item">
-                            <strong>SHA Issues:</strong> <span style="color: #27ae60;">Fixed with this version! 🎉</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Country Info Panel (Initially Hidden) -->
             <section class="country-info-panel" id="countryInfoPanel" style="display: none;">
@@ -210,29 +174,6 @@
                 </div>
             </section>
 
-            <!-- Global Trending Section -->
-            <section class="global-trending-section">
-                <h3>
-                    <span class="trending-icon">🌍</span>
-                    Global Trending Topics
-                </h3>
-                <div class="trending-controls">
-                    <select id="globalTrendingCountrySelect">
-                        <option value="US">🇺🇸 United States</option>
-                        <option value="GB">🇬🇧 United Kingdom</option>
-                        <option value="DE">🇩🇪 Germany</option>
-                        <option value="FR">🇫🇷 France</option>
-                        <option value="JP">🇯🇵 Japan</option>
-                        <option value="KR">🇰🇷 South Korea</option>
-                        <option value="IN">🇮🇳 India</option>
-                        <option value="BR">🇧🇷 Brazil</option>
-                    </select>
-                </div>
-                <div class="trending-grid" id="globalTrendingGrid">
-                    <!-- Global trending searches will be populated here -->
-                </div>
-            </section>
-
             <!-- Loading indicator -->
             <div class="loading" id="loadingIndicator" style="display: none;">
                 <div class="spinner"></div>
@@ -250,7 +191,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 World Trends Explorer | <span id="footerVersion">Loading...</span></p>
+            <p>&copy; 2025 World Trends Explorer | Click any country to explore trends</p>
         </div>
     </footer>
 
