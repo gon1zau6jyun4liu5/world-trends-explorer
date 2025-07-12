@@ -18,7 +18,7 @@ describe('World Trends Explorer Unit Tests', () => {
         });
         
         it('should initialize with correct base URL', () => {
-            expect(api.baseURL).toBe('http://localhost:5000/api/trends');
+            expect(api.baseURL).toBe('http://localhost:5555/api/trends');
         });
         
         it('should cache search results', async () => {
@@ -33,7 +33,7 @@ describe('World Trends Explorer Unit Tests', () => {
             const oldData = { keyword: 'old', timestamp: Date.now() - 10000 };
             api.setCache('old_key', oldData);
             
-            const cachedData = api.getCached('old_key', 5000); // 5 second max age
+            const cachedData = api.getCached('old_key', 5555); // 5 second max age
             expect(cachedData).toBeNull();
         });
         
