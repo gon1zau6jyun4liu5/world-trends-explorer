@@ -57,7 +57,7 @@ chmod +x start.sh
 The script will:
 - Create a virtual environment
 - Install Python dependencies
-- Start the Flask server on `http://localhost:5000`
+- Start the Flask server on `http://localhost:5555`
 
 ### 3. Open the Frontend
 ```bash
@@ -118,13 +118,13 @@ The backend provides a comprehensive REST API:
 ### Example API Usage
 ```bash
 # Search for "artificial intelligence" trends in the US
-curl "http://localhost:5000/api/trends/search?keyword=artificial%20intelligence&geo=US"
+curl "http://localhost:5555/api/trends/search?keyword=artificial%20intelligence&geo=US"
 
 # Get trending searches in Japan
-curl "http://localhost:5000/api/trends/trending?geo=JP"
+curl "http://localhost:5555/api/trends/trending?geo=JP"
 
 # Health check
-curl "http://localhost:5000/api/trends/health"
+curl "http://localhost:5555/api/trends/health"
 ```
 
 ## 🛠️ Manual Installation
@@ -166,7 +166,7 @@ npx serve .
 # Build and run with Docker Compose
 docker-compose up --build
 
-# Backend will be available at http://localhost:5000
+# Backend will be available at http://localhost:5555
 # Frontend will be available at http://localhost:80
 ```
 
@@ -196,7 +196,7 @@ Compare multiple terms like "tesla vs bmw" or "python vs javascript" to see rela
 # Backend configuration (optional)
 FLASK_DEBUG=True          # Enable debug mode
 FLASK_ENV=development     # Set environment
-PORT=5000                 # Server port
+PORT=5555                 # Server port
 ```
 
 ### API Configuration
@@ -211,7 +211,7 @@ const baseURL = 'https://your-api-domain.com/api/trends';
 ### Common Issues
 
 **1. "Failed to fetch trends data" Error**
-- Check if the backend server is running on `http://localhost:5000`
+- Check if the backend server is running on `http://localhost:5555`
 - Verify internet connection for Google Trends API access
 - Try different keywords or regions
 

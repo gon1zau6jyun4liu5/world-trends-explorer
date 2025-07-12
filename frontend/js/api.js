@@ -4,7 +4,7 @@
  */
 
 class TrendsAPI {
-    constructor(baseURL = 'http://localhost:5000/api/trends') {
+    constructor(baseURL = 'http://localhost:5555/api/trends') {
         this.baseURL = baseURL;
         this.cache = new Map();
         this.requestTimeout = 30000; // 30 seconds

@@ -20,7 +20,7 @@ cp -r frontend/* dist/
 # 환경별 설정
 if [ "$ENV" = "production" ]; then
     # 프로덕션 API URL로 변경
-    sed -i 's|http://localhost:5000/api/trends|https://your-api-domain.com/api/trends|g' dist/js/api.js
+    sed -i 's|http://localhost:5555/api/trends|https://your-api-domain.com/api/trends|g' dist/js/api.js
 fi
 
 # Docker 빌드 (선택사항)

@@ -17,7 +17,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5555:5555"
     environment:
       - FLASK_ENV=production
       - FLASK_DEBUG=False
@@ -85,14 +85,14 @@ COPY . .
 RUN mkdir -p logs
 
 # 포트 노출
-EXPOSE 5000
+EXPOSE 5555
 
 # 헬스체크 추가
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/api/trends/health || exit 1
+    CMD curl -f http://localhost:5555/api/trends/health || exit 1
 
 # 애플리케이션 실행
-CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "backend_server:app"]
+CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5555", "backend_server:app"]
 ```
 
 ### 프론트엔드 Dockerfile
@@ -146,7 +146,7 @@ server {
 
     # API 요청을 백엔드로 프록시
     location /api/ {
-        proxy_pass http://backend:5000;
+        proxy_pass http://backend:5555;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -208,7 +208,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     ports:
-      - "5000:5000"
+      - "5555:5555"
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=True
@@ -264,9 +264,9 @@ USER app
 # PATH 업데이트
 ENV PATH=/home/app/.local/bin:$PATH
 
-EXPOSE 5000
+EXPOSE 5555
 
-CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "backend_server:app"]
+CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5555", "backend_server:app"]
 ```
 
 ## 모니터링 설정
@@ -350,7 +350,7 @@ docker run --rm -v trends_redis_data:/data -v $(pwd):/backup alpine tar xzf /bac
 1. **포트 충돌**
    ```bash
    # 포트 사용 확인
-   netstat -tulpn | grep :5000
+   netstat -tulpn | grep :5555
    
    # 포트 변경
    docker-compose -p custom_name up

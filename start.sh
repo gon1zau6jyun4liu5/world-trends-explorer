@@ -37,8 +37,8 @@ pip install -r requirements.txt
 
 # Start the backend server
 echo "🚀 Starting backend server..."
-echo "Backend will be available at: http://localhost:5000"
-echo "API documentation: http://localhost:5000/api/trends/health"
+echo "Backend will be available at: http://localhost:5555"
+echo "API documentation: http://localhost:5555/api/trends/health"
 echo ""
 echo "📝 To start the frontend:"
 echo "1. Open a new terminal"
