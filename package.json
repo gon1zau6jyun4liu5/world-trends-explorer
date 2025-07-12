@@ -1,0 +1,38 @@
+{
+  "name": "world-trends-explorer",
+  "version": "1.1.0",
+  "description": "Real-time Google Trends explorer with interactive world map using Pytrends",
+  "main": "frontend/index.html",
+  "scripts": {
+    "start": "./start.sh",
+    "build": "./scripts/deploy.sh",
+    "serve": "cd frontend && python -m http.server 8000",
+    "backend": "cd backend && python app.py",
+    "mock": "cd backend && python mock_server.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gon1zau6jyun4liu5/world-trends-explorer.git"
+  },
+  "keywords": [
+    "google-trends",
+    "data-visualization",
+    "world-map",
+    "pytrends",
+    "d3js",
+    "flask",
+    "interactive-map"
+  ],
+  "author": "World Trends Explorer Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gon1zau6jyun4liu5/world-trends-explorer/issues"
+  },
+  "homepage": "https://github.com/gon1zau6jyun4liu5/world-trends-explorer#readme",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0",
+    "python": ">=3.8.0"
+  }
+}
