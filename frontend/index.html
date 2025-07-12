@@ -11,6 +11,9 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     
+    <!-- Version information -->
+    <script src="js/version.js"></script>
+    
     <!-- Custom styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -34,6 +37,12 @@
                 <div class="map-header">
                     <h2>🗺️ Interactive World Map</h2>
                     <p>Click on any country to see its trending searches and popular topics</p>
+                    
+                    <!-- Version Info Display -->
+                    <div class="version-info">
+                        <span class="version-badge" id="versionBadge">Loading...</span>
+                        <button class="version-details-btn" id="versionDetailsBtn" title="Show version details">ℹ️</button>
+                    </div>
                 </div>
                 
                 <div class="world-map-container-main">
@@ -69,6 +78,33 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Version Details Modal (Initially Hidden) -->
+            <div class="version-modal" id="versionModal" style="display: none;">
+                <div class="version-modal-content">
+                    <div class="version-modal-header">
+                        <h3>🔖 Version Information</h3>
+                        <button class="close-modal-btn" id="closeVersionModal">✕</button>
+                    </div>
+                    <div class="version-modal-body">
+                        <div class="version-detail-item">
+                            <strong>Version:</strong> <span id="modalVersion">-</span>
+                        </div>
+                        <div class="version-detail-item">
+                            <strong>Branch:</strong> <span id="modalBranch">-</span>
+                        </div>
+                        <div class="version-detail-item">
+                            <strong>Build Date:</strong> <span id="modalBuildDate">-</span>
+                        </div>
+                        <div class="version-detail-item">
+                            <strong>Environment:</strong> <span id="modalEnvironment">-</span>
+                        </div>
+                        <div class="version-detail-item">
+                            <strong>SHA Issues:</strong> <span style="color: #27ae60;">Fixed with this version! 🎉</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Country Info Panel (Initially Hidden) -->
             <section class="country-info-panel" id="countryInfoPanel" style="display: none;">
@@ -214,7 +250,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 World Trends Explorer | Click any country to explore trends</p>
+            <p>&copy; 2025 World Trends Explorer | <span id="footerVersion">Loading...</span></p>
         </div>
     </footer>
 
