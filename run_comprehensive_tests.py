@@ -16,7 +16,7 @@ import tempfile
 import webbrowser
 
 # Add backend to Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
 
 class TestReportGenerator:
     def __init__(self):
@@ -49,8 +49,14 @@ class TestReportGenerator:
         """Run all backend test suites"""
         self.log("Starting backend tests...")
         
-        backend_dir = Path(__file__).parent / '..' / 'backend'
+        backend_dir = Path(__file__).parent / 'backend'
         original_dir = os.getcwd()
+        
+        # Check if backend directory exists
+        if not backend_dir.exists():
+            self.log(f"Backend directory not found: {backend_dir}", 'ERROR')
+            return
+            
         os.chdir(backend_dir)
         
         test_files = [
