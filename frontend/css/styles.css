@@ -1,4 +1,4 @@
-/* World Trends Explorer v1.0.4 - Map-Only Interface */
+/* World Trends Explorer v1.0.6 - Enhanced Testing Suite */
 
 /* Reset and base styles */
 * {
@@ -58,7 +58,47 @@ body {
 .subtitle {
     font-size: 1.2rem;
     opacity: 0.9;
-    margin: 0;
+    margin: 0 0 1rem 0;
+}
+
+/* Version Info Section (v1.0.6) */
+.version-info {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.version-badge {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.version-badge:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.version-badge.test-link a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.version-badge.new {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(40, 167, 69, 0.8); }
 }
 
 /* Main content */
@@ -67,7 +107,7 @@ body {
     flex: 1;
 }
 
-/* Main World Map Section (Enhanced for v1.0.4) */
+/* Main World Map Section (Enhanced for v1.0.6) */
 .world-map-section-main {
     background: white;
     border-radius: 20px;
@@ -108,9 +148,31 @@ body {
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-/* World Map Container - Fixed for proper display */
+.stat-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stat-badge.new {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    animation: badge-glow 3s infinite;
+}
+
+@keyframes badge-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
+        transform: scale(1.02);
+    }
+}
+
+/* World Map Container - Enhanced for v1.0.6 */
 .world-map-container-main {
     height: 500px;
     position: relative;
@@ -160,7 +222,7 @@ body {
     font-weight: 500;
 }
 
-/* Map controls */
+/* Map controls - Enhanced for v1.0.6 */
 .map-controls {
     position: absolute;
     top: 15px;
@@ -187,6 +249,17 @@ body {
     background: white;
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.map-control-btn.test-mode {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border-color: #28a745;
+}
+
+.map-control-btn.test-mode:hover {
+    background: linear-gradient(135deg, #218838, #1abc9c);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
 }
 
 /* Enhanced Map country styles for better visibility */
@@ -252,7 +325,7 @@ body {
     opacity: 1;
 }
 
-/* Enhanced Map legend */
+/* Enhanced Map legend - v1.0.6 */
 .map-legend {
     position: absolute;
     bottom: 20px;
@@ -277,6 +350,20 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.legend-item:hover {
+    transform: translateX(2px);
+}
+
+.legend-item.new {
+    animation: legend-highlight 2s infinite;
+}
+
+@keyframes legend-highlight {
+    0%, 100% { background: transparent; }
+    50% { background: rgba(40, 167, 69, 0.1); }
 }
 
 .legend-color {
@@ -357,6 +444,12 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
 .stat-icon {
@@ -378,7 +471,61 @@ body {
     opacity: 0.9;
 }
 
-/* Trending Topics */
+/* Footer - Enhanced for v1.0.6 */
+.footer {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem 0;
+    color: white;
+    opacity: 0.9;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.footer-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.footer-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.footer-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.version-info-footer {
+    font-family: monospace;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Search and interaction styles */
 .trending-topics {
     margin-bottom: 2rem;
 }
@@ -389,7 +536,6 @@ body {
     color: #333;
 }
 
-/* Country Search */
 .country-search h3 {
     font-size: 1.4rem;
     margin-bottom: 1rem;
@@ -665,18 +811,7 @@ body {
     font-size: 1.2rem;
 }
 
-/* Footer */
-.footer {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 1.5rem 0;
-    text-align: center;
-    color: white;
-    opacity: 0.8;
-}
-
-/* Responsive design */
+/* Responsive design - Enhanced for v1.0.6 */
 @media (max-width: 1200px) {
     .charts-layout {
         grid-template-columns: 1fr;
@@ -688,6 +823,11 @@ body {
     
     .country-stats {
         grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 }
 
@@ -713,6 +853,11 @@ body {
     }
     
     .map-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .version-info {
         flex-direction: column;
         align-items: center;
     }
@@ -776,3 +921,34 @@ body {
 .country.intensity-4 { fill: #4292c6; }
 .country.intensity-5 { fill: #2171b5; }
 .country.intensity-6 { fill: #08519c; }
+
+/* v1.0.6 Test-specific styles */
+.test-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1000;
+    display: none;
+}
+
+.test-indicator.active {
+    display: block;
+    animation: test-pulse 2s infinite;
+}
+
+@keyframes test-pulse {
+    0%, 100% { 
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
+        transform: scale(1.05);
+    }
+}
