@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 World Trends Explorer v1.0.4</title>
+    <title>🌍 World Trends Explorer v1.0.6</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
     
     <!-- External libraries -->
@@ -21,9 +21,22 @@
             <h1 class="title">
                 <span class="icon">🌍</span>
                 World Trends Explorer
-                <span class="version">v1.0.4</span>
+                <span class="version">v1.0.6</span>
             </h1>
             <p class="subtitle">Click on any country in the map below to explore its trending topics</p>
+            
+            <!-- Version Info & Test Links -->
+            <div class="version-info">
+                <span class="version-badge">Version 1.0.6</span>
+                <span class="version-badge test-link">
+                    <a href="tests/unit-tests.html" target="_blank" title="Run Frontend Unit Tests">
+                        🧪 Run Tests
+                    </a>
+                </span>
+                <span class="version-badge">
+                    🆕 Enhanced Testing Suite
+                </span>
+            </div>
         </div>
     </header>
 
@@ -39,6 +52,7 @@
                         <span class="stat-badge">40+ Countries Available</span>
                         <span class="stat-badge">Real-time Data</span>
                         <span class="stat-badge">No Dropdowns - Map Only</span>
+                        <span class="stat-badge new">🆕 Unit Tested</span>
                     </div>
                 </div>
                 
@@ -53,6 +67,9 @@
                         <button id="resetMapBtn" class="map-control-btn" title="Reset map view">
                             🔄 Reset View
                         </button>
+                        <button id="testModeBtn" class="map-control-btn test-mode" title="Enable test mode">
+                            🧪 Test Mode
+                        </button>
                     </div>
                     
                     <!-- Map legend -->
@@ -65,6 +82,10 @@
                         <div class="legend-item">
                             <div class="legend-color inactive" style="background: #e1e5e9;"></div>
                             <span>No Data Available</span>
+                        </div>
+                        <div class="legend-item new">
+                            <div class="legend-color" style="background: linear-gradient(45deg, #28a745, #20c997);"></div>
+                            <span>🧪 Test Ready</span>
                         </div>
                     </div>
                     
@@ -199,7 +220,22 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 World Trends Explorer v1.0.4 | Map-only country selection policy</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p>&copy; 2025 World Trends Explorer v1.0.6</p>
+                    <p class="footer-subtitle">Enhanced with comprehensive testing suite</p>
+                </div>
+                <div class="footer-section">
+                    <span class="footer-label">Quick Links:</span>
+                    <a href="tests/unit-tests.html" target="_blank" class="footer-link">🧪 Frontend Tests</a>
+                </div>
+                <div class="footer-section">
+                    <span class="footer-label">Version Info:</span>
+                    <span class="version-info-footer">
+                        Core: v1.0.6 | Tests: Enhanced | Status: Stable
+                    </span>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -208,5 +244,16 @@
     <script src="js/worldmap.js"></script>
     <script src="js/chart.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- Version-specific enhancements -->
+    <script>
+        // v1.0.6 Version-specific features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add version info to console
+            console.log('%c🌍 World Trends Explorer v1.0.6', 'color: #667eea; font-size: 16px; font-weight: bold;');
+            console.log('%c🧪 Enhanced Testing Suite Ready', 'color: #28a745; font-size: 12px;');
+            console.log('%c📊 Frontend tests: /tests/unit-tests.html', 'color: #666; font-size: 10px;');
+        });
+    </script>
 </body>
 </html>
