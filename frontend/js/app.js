@@ -1,6 +1,6 @@
 /**
- * Main Application JavaScript for World Trends Explorer v1.0.4
- * Map-Only Interface - Country selection ONLY through map clicks
+ * Main Application JavaScript for World Trends Explorer v1.2.2
+ * Restored search functionality with Korean trends support
  */
 
 class WorldTrendsApp {
@@ -12,17 +12,16 @@ class WorldTrendsApp {
         this.selectedCountry = null;
         this.isLoading = false;
         
-        // Available countries that have trending data
-        this.availableCountries = new Set([
-            'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'CA', 'AU', 
-            'JP', 'KR', 'IN', 'BR', 'MX', 'RU', 'CN', 'NL',
-            'SE', 'NO', 'DK', 'FI', 'BE', 'CH', 'AT', 'IE',
-            'PT', 'GR', 'PL', 'CZ', 'HU', 'SK', 'SI', 'HR',
-            'BG', 'RO', 'LT', 'LV', 'EE', 'MT', 'CY', 'LU'
-        ]);
-        
-        // DOM elements - Map-only interface
+        // DOM elements - Full feature interface
         this.elements = {
+            // Search elements (restored)
+            searchInput: document.getElementById('searchInput'),
+            countrySelect: document.getElementById('countrySelect'),
+            searchBtn: document.getElementById('searchBtn'),
+            
+            // Quick search buttons
+            quickBtns: document.querySelectorAll('.quick-btn'),
+            
             // Country info panel
             countryInfoPanel: document.getElementById('countryInfoPanel'),
             countryTitle: document.getElementById('countryTitle'),
@@ -37,24 +36,30 @@ class WorldTrendsApp {
             // Search results
             resultsSection: document.getElementById('resultsSection'),
             resultsTitle: document.getElementById('resultsTitle'),
-            searchKeyword: document.getElementById('searchKeyword'),
             searchStats: document.getElementById('searchStats'),
             regionalTable: document.getElementById('regionalTable'),
             topQueries: document.getElementById('topQueries'),
             risingQueries: document.getElementById('risingQueries'),
             
+            // Global trending
+            globalTrendingCountrySelect: document.getElementById('globalTrendingCountrySelect'),
+            globalTrendingGrid: document.getElementById('globalTrendingGrid'),
+            
             // UI elements
             loadingIndicator: document.getElementById('loadingIndicator'),
             errorMessage: document.getElementById('errorMessage'),
             errorText: document.getElementById('errorText'),
-            resetMapBtn: document.getElementById('resetMapBtn')
+            resetMapBtn: document.getElementById('resetMapBtn'),
+            showDataMode: document.getElementById('showDataMode')
         };
         
         this.init();
     }
 
     async init() {
-        console.log('🌍 Initializing World Trends Explorer v1.0.4 - Map-Only Interface...');
+        console.log('🌍 World Trends Explorer v1.2.2 - Enhanced Korean Trends Support');
+        console.log('📅 Build Date: July 14, 2025');
+        console.log('🚀 Features: Full Search + Map Interface, Korean Language Support');
         
         try {
             // Initialize components
@@ -64,11 +69,13 @@ class WorldTrendsApp {
             // Set up event listeners
             this.setupEventListeners();
             
+            // Load initial trending data
+            await this.loadGlobalTrending();
+            
             // Check API health
             await this.checkAPIHealth();
             
-            console.log('✅ World Trends Explorer v1.0.4 initialized successfully');
-            console.log('🗺️ Click on any blue country in the map to start exploring!');
+            console.log('✅ World Trends Explorer v1.2.2 initialized successfully');
         } catch (error) {
             console.error('❌ Failed to initialize app:', error);
             this.showError('Failed to initialize application');
@@ -76,21 +83,48 @@ class WorldTrendsApp {
     }
 
     setupEventListeners() {
-        console.log('🔧 Setting up event listeners for map-only interface...');
+        console.log('🔧 Setting up event listeners for v1.2.2...');
         
-        // Country selection from map - PRIMARY INTERACTION
+        // Primary search functionality (restored)
+        if (this.elements.searchBtn) {
+            this.elements.searchBtn.addEventListener('click', () => this.handleSearch());
+        }
+        
+        if (this.elements.searchInput) {
+            this.elements.searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.handleSearch();
+            });
+            
+            // Search suggestions (debounced)
+            this.elements.searchInput.addEventListener('input', 
+                TrendsUtils.debounce((e) => this.handleSearchInput(e), 300)
+            );
+        }
+        
+        // Quick search buttons
+        this.elements.quickBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const keyword = e.target.dataset.keyword;
+                if (keyword) {
+                    this.elements.searchInput.value = keyword;
+                    this.handleSearch();
+                }
+            });
+        });
+        
+        // Country selection from map
         document.addEventListener('countrySelected', (e) => {
             this.handleCountrySelection(e.detail);
         });
         
-        // Close country panel
+        // Country panel controls
         if (this.elements.closeCountryPanel) {
             this.elements.closeCountryPanel.addEventListener('click', () => {
                 this.hideCountryPanel();
             });
         }
         
-        // Country search within selected country
+        // Country search
         if (this.elements.countrySearchBtn) {
             this.elements.countrySearchBtn.addEventListener('click', () => {
                 this.handleCountrySearch();
@@ -103,10 +137,23 @@ class WorldTrendsApp {
             });
         }
         
-        // Map reset button
+        // Global trending country selection
+        if (this.elements.globalTrendingCountrySelect) {
+            this.elements.globalTrendingCountrySelect.addEventListener('change', (e) => {
+                this.loadGlobalTrending(e.target.value);
+            });
+        }
+        
+        // Map controls
         if (this.elements.resetMapBtn) {
             this.elements.resetMapBtn.addEventListener('click', () => {
                 this.resetMap();
+            });
+        }
+        
+        if (this.elements.showDataMode) {
+            this.elements.showDataMode.addEventListener('change', (e) => {
+                this.toggleMapDataMode(e.target.checked);
             });
         }
         
@@ -122,8 +169,8 @@ class WorldTrendsApp {
                 switch (e.key) {
                     case 'k':
                         e.preventDefault();
-                        if (this.elements.countrySearchInput && this.selectedCountry) {
-                            this.elements.countrySearchInput.focus();
+                        if (this.elements.searchInput) {
+                            this.elements.searchInput.focus();
                         }
                         break;
                     case 'r':
@@ -140,78 +187,122 @@ class WorldTrendsApp {
             }
         });
         
-        console.log('✅ Event listeners set up for v1.0.4');
+        console.log('✅ Event listeners set up for v1.2.2');
+    }
+
+    async handleSearch() {
+        const keyword = this.elements.searchInput.value.trim();
+        const geo = this.elements.countrySelect.value;
+        
+        if (!keyword) {
+            this.showError('Please enter a keyword to search');
+            return;
+        }
+        
+        if (this.isLoading) {
+            console.log('Search already in progress...');
+            return;
+        }
+        
+        try {
+            this.setLoading(true);
+            this.hideError();
+            
+            console.log(`🔍 Searching trends for: "${keyword}" in ${geo || 'worldwide'}`);
+            
+            // Search trends
+            const data = await this.api.searchTrends(keyword, geo);
+            
+            if (TrendsUtils.isValidTrendsData(data)) {
+                this.currentData = data;
+                this.displaySearchResults(data);
+            } else {
+                throw new Error('Invalid data received from API');
+            }
+            
+        } catch (error) {
+            console.error('Search failed:', error);
+            this.showError(error.message || 'Failed to search trends');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    async handleSearchInput(event) {
+        const keyword = event.target.value.trim();
+        if (keyword.length > 2) {
+            try {
+                // Optional: Get suggestions for auto-complete
+                console.log(`🔍 Getting suggestions for: ${keyword}`);
+            } catch (error) {
+                console.warn('Failed to get suggestions:', error);
+            }
+        }
     }
 
     async handleCountrySelection(countryDetail) {
         console.log('🌍 Country selected:', countryDetail);
-        
-        if (!countryDetail || !countryDetail.code) {
-            console.warn('Invalid country selection');
-            return;
-        }
-        
-        // Check if country has data available
-        if (!this.availableCountries.has(countryDetail.code)) {
-            this.showError(`No data available for ${countryDetail.name}. Please select a blue country on the map.`);
-            return;
-        }
         
         this.selectedCountry = {
             code: countryDetail.code,
             name: countryDetail.name
         };
         
+        // Update country selector if available
+        if (countryDetail.code && this.elements.countrySelect) {
+            const option = Array.from(this.elements.countrySelect.options)
+                .find(opt => opt.value === countryDetail.code);
+            if (option) {
+                this.elements.countrySelect.value = countryDetail.code;
+            }
+        }
+        
         // Show country info panel
         this.showCountryPanel(countryDetail);
         
         // Load country-specific trending data
         await this.loadCountryTrending(countryDetail.code);
+        
+        // Re-search with selected country if we have current data
+        if (this.currentData && this.currentData.keyword) {
+            await this.handleSearch();
+        }
     }
 
     async showCountryPanel(countryDetail) {
         const flag = TrendsUtils.getCountryFlag(countryDetail.code);
         
-        // Update panel title
-        this.elements.countryTitle.innerHTML = `${flag} ${countryDetail.name}`;
-        this.elements.countryCode.textContent = countryDetail.code;
+        // Update panel content
+        if (this.elements.countryTitle) {
+            this.elements.countryTitle.innerHTML = `${flag} ${countryDetail.name}`;
+        }
+        if (this.elements.countryCode) {
+            this.elements.countryCode.textContent = countryDetail.code;
+        }
         
         // Show panel with animation
-        this.elements.countryInfoPanel.style.display = 'block';
-        this.elements.countryInfoPanel.classList.add('fade-in');
-        
-        // Scroll to panel
-        setTimeout(() => {
-            this.elements.countryInfoPanel.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
+        if (this.elements.countryInfoPanel) {
+            this.elements.countryInfoPanel.style.display = 'block';
+            this.elements.countryInfoPanel.classList.add('fade-in');
+            
+            // Scroll to panel
+            setTimeout(() => {
+                this.elements.countryInfoPanel.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
         
         console.log(`📱 Country panel shown for ${countryDetail.name}`);
     }
 
     hideCountryPanel() {
-        this.elements.countryInfoPanel.style.display = 'none';
+        if (this.elements.countryInfoPanel) {
+            this.elements.countryInfoPanel.style.display = 'none';
+        }
         this.selectedCountry = null;
-        
-        // Reset map highlighting
-        if (this.worldMap) {
-            this.worldMap.reset();
-        }
-        
         console.log('📱 Country panel hidden');
-    }
-
-    resetMap() {
-        this.hideCountryPanel();
-        this.hideSearchResults();
-        
-        if (this.worldMap) {
-            this.worldMap.reset();
-        }
-        
-        console.log('🔄 Map reset to initial state');
     }
 
     async loadCountryTrending(countryCode) {
@@ -225,7 +316,7 @@ class WorldTrendsApp {
             
         } catch (error) {
             console.error('Failed to load country trending:', error);
-            this.displayCountryTrendingError();
+            this.displayCountryTrendingError(error);
         } finally {
             this.setCountryLoading(false);
         }
@@ -242,8 +333,12 @@ class WorldTrendsApp {
         }
         
         // Update stats
-        this.elements.trendingCount.textContent = data.trending_searches.length;
-        this.elements.dataAvailable.textContent = 'Available';
+        if (this.elements.trendingCount) {
+            this.elements.trendingCount.textContent = data.trending_searches.length;
+        }
+        if (this.elements.dataAvailable) {
+            this.elements.dataAvailable.textContent = 'Available';
+        }
         
         // Display trending topics
         data.trending_searches.slice(0, 8).forEach(item => {
@@ -255,7 +350,10 @@ class WorldTrendsApp {
             `;
             
             element.addEventListener('click', () => {
-                this.searchInCountry(item.query);
+                if (this.elements.searchInput) {
+                    this.elements.searchInput.value = item.query;
+                    this.handleSearch();
+                }
             });
             
             this.elements.countryTrendingGrid.appendChild(element);
@@ -264,16 +362,23 @@ class WorldTrendsApp {
         console.log(`✅ Displayed ${data.trending_searches.length} trending topics`);
     }
 
-    displayCountryTrendingError() {
+    displayCountryTrendingError(error) {
         if (!this.elements.countryTrendingGrid) return;
         
-        this.elements.trendingCount.textContent = '0';
-        this.elements.dataAvailable.textContent = 'Unavailable';
+        if (this.elements.trendingCount) {
+            this.elements.trendingCount.textContent = '0';
+        }
+        if (this.elements.dataAvailable) {
+            this.elements.dataAvailable.textContent = 'Unavailable';
+        }
         
         this.elements.countryTrendingGrid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 2rem;">
                 <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
-                <div>No trending data available for this country</div>
+                <div>Failed to load trending data</div>
+                <div style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;">
+                    ${error ? error.message : 'Unknown error'}
+                </div>
                 <button onclick="app.loadCountryTrending('${this.selectedCountry?.code || 'US'}')" 
                         style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
                     Retry
@@ -308,37 +413,15 @@ class WorldTrendsApp {
             return;
         }
         
-        this.searchInCountry(keyword);
-    }
-
-    async searchInCountry(keyword) {
-        if (!this.selectedCountry) {
-            this.showError('No country selected. Click on a blue country in the map first.');
-            return;
+        // Set the main search with country
+        if (this.elements.searchInput) {
+            this.elements.searchInput.value = keyword;
+        }
+        if (this.elements.countrySelect) {
+            this.elements.countrySelect.value = this.selectedCountry.code;
         }
         
-        try {
-            this.setLoading(true);
-            this.hideError();
-            
-            console.log(`🔍 Searching "${keyword}" in ${this.selectedCountry.name}`);
-            
-            // Search trends for specific country
-            const data = await this.api.searchTrends(keyword, this.selectedCountry.code);
-            
-            if (TrendsUtils.isValidTrendsData(data)) {
-                this.currentData = data;
-                this.displaySearchResults(data);
-            } else {
-                throw new Error('Invalid data received from API');
-            }
-            
-        } catch (error) {
-            console.error('Search failed:', error);
-            this.showError(error.message || 'Failed to search trends');
-        } finally {
-            this.setLoading(false);
-        }
+        await this.handleSearch();
     }
 
     displaySearchResults(data) {
@@ -348,12 +431,12 @@ class WorldTrendsApp {
         }
         
         // Update result header
-        if (this.elements.searchKeyword) {
-            this.elements.searchKeyword.textContent = data.keyword;
+        if (this.elements.resultsTitle) {
+            this.elements.resultsTitle.textContent = `"${data.keyword}" Trends`;
         }
         if (this.elements.searchStats) {
             this.elements.searchStats.textContent = 
-                `Updated: ${TrendsUtils.formatRelativeTime(data.timestamp)} | Country: ${this.selectedCountry?.name || data.geo}`;
+                `Updated: ${TrendsUtils.formatRelativeTime(data.timestamp)} | Region: ${data.geo || 'Worldwide'}`;
         }
         
         // Show results section
@@ -365,7 +448,7 @@ class WorldTrendsApp {
             this.chart.updateChart(data);
         }
         
-        // Update world map with search results
+        // Update world map
         if (this.worldMap) {
             this.worldMap.updateData(data);
         }
@@ -420,15 +503,10 @@ class WorldTrendsApp {
                 <div class="regional-value">${item.value}</div>
             `;
             
-            // Add click handler to select country if available
+            // Add click handler to highlight on map
             element.addEventListener('click', () => {
-                if (item.geoCode && this.availableCountries.has(item.geoCode)) {
-                    this.handleCountrySelection({
-                        code: item.geoCode,
-                        name: item.geoName
-                    });
-                } else {
-                    this.showError(`${item.geoName} data not available for exploration. Try clicking blue countries on the map.`);
+                if (this.worldMap && item.geoCode) {
+                    this.worldMap.highlightCountry(item.geoCode);
                 }
             });
             
@@ -457,7 +535,7 @@ class WorldTrendsApp {
                     <span class="query-text">${TrendsUtils.truncateText(query.query || query, 40)}</span>
                     <span class="query-value">${query.value || ''}</span>
                 `;
-                li.addEventListener('click', () => this.searchInCountry(query.query || query));
+                li.addEventListener('click', () => this.searchRelatedQuery(query.query || query));
                 this.elements.topQueries.appendChild(li);
             });
         } else {
@@ -472,7 +550,7 @@ class WorldTrendsApp {
                     <span class="query-text">${TrendsUtils.truncateText(query.query || query, 40)}</span>
                     <span class="query-value">${query.value || '🔥'}</span>
                 `;
-                li.addEventListener('click', () => this.searchInCountry(query.query || query));
+                li.addEventListener('click', () => this.searchRelatedQuery(query.query || query));
                 this.elements.risingQueries.appendChild(li);
             });
         } else {
@@ -480,13 +558,93 @@ class WorldTrendsApp {
         }
     }
 
-    async handleRefresh() {
-        if (this.selectedCountry) {
-            await this.loadCountryTrending(this.selectedCountry.code);
+    searchRelatedQuery(query) {
+        if (query && typeof query === 'string') {
+            if (this.elements.searchInput) {
+                this.elements.searchInput.value = query;
+                this.handleSearch();
+            }
+        }
+    }
+
+    async loadGlobalTrending(geo = 'US') {
+        try {
+            console.log(`🔥 Loading global trending searches for: ${geo}`);
+            
+            const data = await this.api.getTrendingSearches(geo);
+            this.displayGlobalTrending(data);
+            
+        } catch (error) {
+            console.error('Failed to load global trending:', error);
+            this.displayGlobalTrendingError();
+        }
+    }
+
+    displayGlobalTrending(data) {
+        if (!this.elements.globalTrendingGrid) return;
+        
+        this.elements.globalTrendingGrid.innerHTML = '';
+        
+        if (!data || !data.trending_searches || !Array.isArray(data.trending_searches)) {
+            this.displayGlobalTrendingError();
+            return;
         }
         
-        if (this.currentData && this.selectedCountry) {
-            await this.searchInCountry(this.currentData.keyword);
+        data.trending_searches.slice(0, 12).forEach(item => {
+            const element = document.createElement('div');
+            element.className = 'trending-item';
+            element.innerHTML = `
+                <div class="trending-rank">#${item.rank}</div>
+                <div class="trending-query">${TrendsUtils.truncateText(item.query, 30)}</div>
+            `;
+            
+            element.addEventListener('click', () => {
+                if (this.elements.searchInput) {
+                    this.elements.searchInput.value = item.query;
+                    this.handleSearch();
+                }
+            });
+            
+            this.elements.globalTrendingGrid.appendChild(element);
+        });
+    }
+
+    displayGlobalTrendingError() {
+        if (!this.elements.globalTrendingGrid) return;
+        
+        this.elements.globalTrendingGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 2rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
+                <div>Failed to load trending searches</div>
+                <button onclick="app.loadGlobalTrending()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    Retry
+                </button>
+            </div>
+        `;
+    }
+
+    resetMap() {
+        this.hideCountryPanel();
+        this.hideSearchResults();
+        
+        if (this.worldMap) {
+            this.worldMap.reset();
+        }
+        
+        console.log('🔄 Map reset to initial state');
+    }
+
+    toggleMapDataMode(enabled) {
+        console.log(`🗺️ Map data mode: ${enabled ? 'enabled' : 'disabled'}`);
+        // Map visualization toggle functionality can be implemented here
+    }
+
+    async handleRefresh() {
+        if (this.currentData && this.currentData.keyword) {
+            this.api.clearCache();
+            await this.handleSearch();
+        } else {
+            await this.loadGlobalTrending();
         }
     }
 
@@ -500,7 +658,7 @@ class WorldTrendsApp {
             }
         } catch (error) {
             console.error('❌ API health check error:', error);
-            console.log('🔄 Using demo data mode');
+            this.showError('Unable to connect to trends API. Please check your connection.');
         }
     }
 
@@ -511,12 +669,10 @@ class WorldTrendsApp {
             if (this.elements.loadingIndicator) {
                 this.elements.loadingIndicator.style.display = 'block';
             }
-            
-            if (this.elements.countrySearchBtn) {
-                this.elements.countrySearchBtn.disabled = true;
-                this.elements.countrySearchBtn.innerHTML = '<span class="spinner" style="width: 20px; height: 20px; margin-right: 0.5rem;"></span>Searching...';
+            if (this.elements.searchBtn) {
+                this.elements.searchBtn.disabled = true;
+                this.elements.searchBtn.innerHTML = '<span class="spinner" style="width: 20px; height: 20px; margin-right: 0.5rem;"></span>Searching...';
             }
-            
             if (this.chart) {
                 this.chart.showLoading();
             }
@@ -524,10 +680,9 @@ class WorldTrendsApp {
             if (this.elements.loadingIndicator) {
                 this.elements.loadingIndicator.style.display = 'none';
             }
-            
-            if (this.elements.countrySearchBtn) {
-                this.elements.countrySearchBtn.disabled = false;
-                this.elements.countrySearchBtn.innerHTML = '<span class="search-icon">🔍</span>Search';
+            if (this.elements.searchBtn) {
+                this.elements.searchBtn.disabled = false;
+                this.elements.searchBtn.innerHTML = '<span class="search-icon">🔍</span>Search';
             }
         }
     }
@@ -552,38 +707,13 @@ class WorldTrendsApp {
         }
     }
 
-    // Utility methods
-    exportData() {
-        if (!this.currentData) {
-            this.showError('No data to export');
-            return;
-        }
-        
-        const dataStr = JSON.stringify(this.currentData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `trends-${this.currentData.keyword}-${this.selectedCountry?.code || 'global'}-${Date.now()}.json`;
-        link.click();
-        
-        URL.revokeObjectURL(url);
-    }
-
-    exportChart() {
-        if (this.chart) {
-            this.chart.exportAsImage(`trends-chart-${this.selectedCountry?.code || 'global'}-${Date.now()}.png`);
-        }
-    }
-
     // Version management method
     getVersionInfo() {
         return {
-            version: '1.0.4',
-            branch: 'fix/map-display-and-ui-cleanup-v1.0.4',
+            version: '1.2.2',
+            branch: 'fix/korea-trends-test-v1.2.2',
             environment: 'development',
-            policy: 'Map-only country selection permanently enforced'
+            features: ['Search + Map Interface', 'Korean Language Support', 'Enhanced Error Handling']
         };
     }
 }
@@ -608,8 +738,3 @@ window.addEventListener('unhandledrejection', (event) => {
         window.app.showError('An unexpected error occurred');
     }
 });
-
-// Add version info to console on load
-console.log('🔖 World Trends Explorer Version: v1.0.4 - Map-Only Interface');
-console.log('🚫 Dropdown-based country selection permanently removed');
-console.log('🗺️ Country selection ONLY through interactive map clicks');

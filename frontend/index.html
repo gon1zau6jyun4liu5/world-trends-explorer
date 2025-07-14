@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 World Trends Explorer v1.2.1</title>
+    <title>🌍 World Trends Explorer v1.2.2</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
     
     <!-- External libraries -->
@@ -22,9 +22,9 @@
                 <h1 class="title">
                     <span class="icon">🌍</span>
                     World Trends Explorer
-                    <span class="version-badge">v1.2.1</span>
+                    <span class="version-badge">v1.2.2</span>
                 </h1>
-                <p class="subtitle">Explore global trends with enhanced country-specific data</p>
+                <p class="subtitle">🇰🇷 Enhanced Korean trends support with restored search functionality</p>
                 
                 <!-- Provider Status Indicator -->
                 <div class="provider-status" id="providerStatus">
@@ -39,14 +39,14 @@
     <!-- Main container -->
     <main class="main">
         <div class="container">
-            <!-- Enhanced Search Section -->
+            <!-- Enhanced Search Section with Korean Support -->
             <section class="search-section">
                 <h2>🔍 Search Global Trends</h2>
                 <div class="input-group">
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Enter a keyword (e.g., AI, Olympics, Climate Change)..."
+                        placeholder="Enter a keyword (English or Korean: 인공지능, AI, Olympics)..."
                         autocomplete="off"
                     >
                     <select id="countrySelect">
@@ -78,10 +78,11 @@
                     </button>
                 </div>
                 
-                <!-- Quick Search Suggestions -->
+                <!-- Quick Search Suggestions with Korean Keywords -->
                 <div class="quick-suggestions">
                     <span class="suggestions-label">Quick searches:</span>
                     <button class="suggestion-btn" data-keyword="artificial intelligence">🤖 AI</button>
+                    <button class="suggestion-btn" data-keyword="인공지능">🤖 인공지능</button>
                     <button class="suggestion-btn" data-keyword="climate change">🌡️ Climate</button>
                     <button class="suggestion-btn" data-keyword="olympics 2024">🏅 Olympics</button>
                     <button class="suggestion-btn" data-keyword="cryptocurrency">💰 Crypto</button>
@@ -145,111 +146,6 @@
                 </div>
             </section>
 
-            <!-- Enhanced Country Info Panel -->
-            <section class="country-info-panel" id="countryInfoPanel" style="display: none;">
-                <div class="country-header">
-                    <div class="country-title-section">
-                        <h2 id="countryTitle">
-                            <span id="countryFlag">🌍</span>
-                            <span id="countryName">Country</span>
-                            <span class="country-code" id="countryCodeDisplay">XX</span>
-                        </h2>
-                        <div class="country-subtitle" id="countrySubtitle">Explore trending topics and local insights</div>
-                    </div>
-                    <button id="closeCountryPanel" class="close-btn">✕</button>
-                </div>
-                
-                <div class="country-content">
-                    <!-- Enhanced Country Stats -->
-                    <div class="country-stats">
-                        <div class="stat-card primary">
-                            <div class="stat-icon">🔥</div>
-                            <div class="stat-content">
-                                <div class="stat-number" id="trendingCount">-</div>
-                                <div class="stat-label">Trending Topics</div>
-                            </div>
-                        </div>
-                        <div class="stat-card secondary">
-                            <div class="stat-icon">📊</div>
-                            <div class="stat-content">
-                                <div class="stat-number" id="dataPoints">-</div>
-                                <div class="stat-label">Data Points</div>
-                            </div>
-                        </div>
-                        <div class="stat-card tertiary">
-                            <div class="stat-icon">🌍</div>
-                            <div class="stat-content">
-                                <div class="stat-number" id="globalRank">-</div>
-                                <div class="stat-label">Global Rank</div>
-                            </div>
-                        </div>
-                        <div class="stat-card info">
-                            <div class="stat-icon">⏰</div>
-                            <div class="stat-content">
-                                <div class="stat-number" id="lastUpdate">-</div>
-                                <div class="stat-label">Last Updated</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Country-specific Trending Topics -->
-                    <div class="trending-topics">
-                        <h3>🔥 Currently Trending in <span id="countryNameInHeading">This Country</span></h3>
-                        <div class="trending-filter-tabs">
-                            <button class="filter-tab active" data-filter="all">All Topics</button>
-                            <button class="filter-tab" data-filter="rising">Rising</button>
-                            <button class="filter-tab" data-filter="top">Top Searches</button>
-                        </div>
-                        <div class="trending-grid enhanced" id="countryTrendingGrid">
-                            <!-- Country-specific trending topics will be loaded here -->
-                        </div>
-                    </div>
-
-                    <!-- Enhanced Country Search -->
-                    <div class="country-search">
-                        <h3>🔍 Explore Trends in <span id="countryNameInSearch">This Country</span></h3>
-                        <div class="search-form enhanced">
-                            <div class="search-input-group">
-                                <input 
-                                    type="text" 
-                                    id="countrySearchInput" 
-                                    placeholder="Enter a keyword to explore locally..."
-                                    autocomplete="off"
-                                >
-                                <button id="countrySearchBtn" type="button">
-                                    <span class="search-icon">🔍</span>
-                                    Search
-                                </button>
-                            </div>
-                            <div class="search-suggestions" id="countrySearchSuggestions">
-                                <!-- Dynamic suggestions will appear here -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Country Comparison Tool -->
-                    <div class="country-comparison">
-                        <h3>⚖️ Compare with Other Countries</h3>
-                        <div class="comparison-controls">
-                            <select id="compareCountrySelect" class="compare-select">
-                                <option value="">Select country to compare...</option>
-                                <option value="US">🇺🇸 United States</option>
-                                <option value="GB">🇬🇧 United Kingdom</option>
-                                <option value="DE">🇩🇪 Germany</option>
-                                <option value="FR">🇫🇷 France</option>
-                                <option value="JP">🇯🇵 Japan</option>
-                                <option value="KR">🇰🇷 South Korea</option>
-                                <option value="IN">🇮🇳 India</option>
-                                <option value="BR">🇧🇷 Brazil</option>
-                            </select>
-                            <button id="startComparisonBtn" class="comparison-btn" disabled>
-                                📊 Compare
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Enhanced Search Results Section -->
             <section class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
@@ -257,8 +153,8 @@
                     <div class="results-meta">
                         <div class="stats" id="searchStats"></div>
                         <div class="provider-info" id="providerInfo">
-                            <span class="provider-name" id="providerName">SerpAPI</span>
-                            <span class="data-quality-badge" id="qualityBadge">High Quality</span>
+                            <span class="provider-name" id="providerName">Pytrends API</span>
+                            <span class="data-quality-badge" id="qualityBadge">Korean Support</span>
                         </div>
                     </div>
                 </div>
@@ -375,8 +271,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <p>&copy; 2025 World Trends Explorer v1.2.1 | Enhanced Country Data Features</p>
-                    <p class="footer-subtitle">Powered by SerpAPI & Google Trends | Built with ❤️ for global insights</p>
+                    <p>&copy; 2025 World Trends Explorer v1.2.2 | Korean Trends Support & Restored Search</p>
+                    <p class="footer-subtitle">🇰🇷 Enhanced Korean language support | Powered by Pytrends API | Built with ❤️ for global insights</p>
                 </div>
                 <div class="footer-stats" id="footerStats">
                     <div class="footer-stat">
@@ -384,7 +280,7 @@
                         <span class="stat-label">Queries</span>
                     </div>
                     <div class="footer-stat">
-                        <span class="stat-value" id="activeCountries">20+</span>
+                        <span class="stat-value" id="activeCountries">68+</span>
                         <span class="stat-label">Countries</span>
                     </div>
                     <div class="footer-stat">
@@ -405,14 +301,15 @@
     <!-- Version Check Script -->
     <script>
         // Display version info on load
-        console.log('🌍 World Trends Explorer v1.2.1 - Enhanced Country Data');
-        console.log('📅 Build Date: July 13, 2025');
-        console.log('🚀 Features: Multi-provider, Enhanced Country Data, Interactive Maps');
+        console.log('🌍 World Trends Explorer v1.2.2 - Korean Trends Support');
+        console.log('📅 Build Date: July 14, 2025');
+        console.log('🚀 Features: Korean Language Support, Restored Search, Enhanced Error Handling');
+        console.log('🇰🇷 Korean Keywords: 인공지능, 머신러닝, 딥러닝, 챗GPT, AI 기술');
         
         // Set version in DOM
         document.addEventListener('DOMContentLoaded', function() {
             const versionElements = document.querySelectorAll('.version-display');
-            versionElements.forEach(el => el.textContent = 'v1.2.1');
+            versionElements.forEach(el => el.textContent = 'v1.2.2');
         });
     </script>
 </body>
