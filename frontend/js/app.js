@@ -1,6 +1,6 @@
 /**
- * Main Application JavaScript for World Trends Explorer v1.2.2
- * Restored search functionality with Korean trends support
+ * Main Application JavaScript for World Trends Explorer v1.2.4
+ * Enhanced with Quick Search Button functionality (Issue #33 Fix)
  */
 
 class WorldTrendsApp {
@@ -11,15 +11,22 @@ class WorldTrendsApp {
         this.currentData = null;
         this.selectedCountry = null;
         this.isLoading = false;
+        this.version = 'v1.2.4';
         
-        // DOM elements - Full feature interface
-        this.elements = {
-            // Search elements (restored)
+        // DOM elements - Enhanced with quick buttons
+        this.elements = this.initializeElements();
+        
+        this.init();
+    }
+
+    initializeElements() {
+        return {
+            // Search elements
             searchInput: document.getElementById('searchInput'),
             countrySelect: document.getElementById('countrySelect'),
             searchBtn: document.getElementById('searchBtn'),
             
-            // Quick search buttons
+            // Quick search buttons - Fix for Issue #33
             quickBtns: document.querySelectorAll('.quick-btn'),
             
             // Country info panel
@@ -48,20 +55,19 @@ class WorldTrendsApp {
             // UI elements
             loadingIndicator: document.getElementById('loadingIndicator'),
             errorMessage: document.getElementById('errorMessage'),
-            errorText: document.getElementById('errorText'),
-            resetMapBtn: document.getElementById('resetMapBtn'),
-            showDataMode: document.getElementById('showDataMode')
+            errorText: document.getElementById('errorText')
         };
-        
-        this.init();
     }
 
     async init() {
-        console.log('🌍 World Trends Explorer v1.2.2 - Enhanced Korean Trends Support');
-        console.log('📅 Build Date: July 14, 2025');
-        console.log('🚀 Features: Full Search + Map Interface, Korean Language Support');
+        console.log(`🌍 World Trends Explorer ${this.version} - Enhanced Quick Search`);
+        console.log('📅 Build Date: July 15, 2025');
+        console.log('🚀 Features: Quick Search Buttons, Full Interface, Multi-language');
         
         try {
+            // Display version
+            this.displayVersion();
+            
             // Initialize components
             this.chart = new TrendsChart('trendsChart');
             this.worldMap = new WorldMap('worldMap');
@@ -75,17 +81,30 @@ class WorldTrendsApp {
             // Check API health
             await this.checkAPIHealth();
             
-            console.log('✅ World Trends Explorer v1.2.2 initialized successfully');
+            console.log(`✅ World Trends Explorer ${this.version} initialized successfully`);
         } catch (error) {
             console.error('❌ Failed to initialize app:', error);
             this.showError('Failed to initialize application');
         }
     }
 
+    displayVersion() {
+        // Add version to header if not exists
+        const header = document.querySelector('.header .container');
+        if (header && !document.getElementById('versionDisplay')) {
+            const versionDiv = document.createElement('div');
+            versionDiv.id = 'versionDisplay';
+            versionDiv.style.cssText = 'position: absolute; top: 10px; right: 20px; color: rgba(255,255,255,0.7); font-size: 0.9rem;';
+            versionDiv.textContent = this.version;
+            header.style.position = 'relative';
+            header.appendChild(versionDiv);
+        }
+    }
+
     setupEventListeners() {
-        console.log('🔧 Setting up event listeners for v1.2.2...');
+        console.log(`🔧 Setting up event listeners for ${this.version}...`);
         
-        // Primary search functionality (restored)
+        // Primary search functionality
         if (this.elements.searchBtn) {
             this.elements.searchBtn.addEventListener('click', () => this.handleSearch());
         }
@@ -101,16 +120,8 @@ class WorldTrendsApp {
             );
         }
         
-        // Quick search buttons
-        this.elements.quickBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const keyword = e.target.dataset.keyword;
-                if (keyword) {
-                    this.elements.searchInput.value = keyword;
-                    this.handleSearch();
-                }
-            });
-        });
+        // Enhanced Quick search buttons - Fix for Issue #33
+        this.setupQuickSearchButtons();
         
         // Country selection from map
         document.addEventListener('countrySelected', (e) => {
@@ -144,19 +155,6 @@ class WorldTrendsApp {
             });
         }
         
-        // Map controls
-        if (this.elements.resetMapBtn) {
-            this.elements.resetMapBtn.addEventListener('click', () => {
-                this.resetMap();
-            });
-        }
-        
-        if (this.elements.showDataMode) {
-            this.elements.showDataMode.addEventListener('change', (e) => {
-                this.toggleMapDataMode(e.target.checked);
-            });
-        }
-        
         // Window resize
         window.addEventListener('resize', TrendsUtils.debounce(() => {
             if (this.chart) this.chart.resize();
@@ -187,7 +185,189 @@ class WorldTrendsApp {
             }
         });
         
-        console.log('✅ Event listeners set up for v1.2.2');
+        console.log(`✅ Event listeners set up for ${this.version}`);
+    }
+
+    /**
+     * Enhanced Quick Search Buttons Setup - Fix for Issue #33
+     */
+    setupQuickSearchButtons() {
+        console.log('🔧 Setting up quick search buttons...');
+        
+        if (!this.elements.quickBtns || this.elements.quickBtns.length === 0) {
+            console.warn('⚠️ Quick search buttons not found');
+            return;
+        }
+        
+        this.elements.quickBtns.forEach((btn, index) => {
+            // Remove any existing listeners
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        
+        // Re-query the buttons after cloning
+        this.elements.quickBtns = document.querySelectorAll('.quick-btn');
+        
+        this.elements.quickBtns.forEach((btn, index) => {
+            // Enhanced click handler
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const keyword = btn.dataset.keyword || btn.getAttribute('data-keyword');
+                const category = btn.dataset.category || btn.getAttribute('data-category');
+                
+                console.log(`🔍 Quick search clicked: "${keyword}" (${category})`);
+                
+                if (keyword && keyword.trim()) {
+                    this.handleQuickSearch(keyword.trim(), btn, category);
+                } else {
+                    console.error('❌ No keyword found for quick search button');
+                }
+            });
+            
+            // Enhanced hover effects
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'translateY(-3px)';
+                console.log(`💡 Hovering over: ${btn.dataset.keyword}`);
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                if (!btn.classList.contains('loading')) {
+                    btn.style.transform = '';
+                }
+            });
+            
+            // Touch support for mobile
+            btn.addEventListener('touchstart', (e) => {
+                btn.style.transform = 'translateY(-2px)';
+            });
+            
+            btn.addEventListener('touchend', (e) => {
+                setTimeout(() => {
+                    if (!btn.classList.contains('loading')) {
+                        btn.style.transform = '';
+                    }
+                }, 150);
+            });
+        });
+        
+        console.log(`✅ Set up ${this.elements.quickBtns.length} quick search buttons`);
+    }
+
+    /**
+     * Handle quick search with enhanced feedback - Fix for Issue #33
+     */
+    async handleQuickSearch(keyword, buttonElement, category) {
+        try {
+            // Immediate visual feedback
+            this.setQuickButtonLoading(buttonElement, true);
+            
+            // Set the search input
+            if (this.elements.searchInput) {
+                this.elements.searchInput.value = keyword;
+                
+                // Add visual highlight to search input
+                this.elements.searchInput.style.borderColor = '#667eea';
+                this.elements.searchInput.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                
+                setTimeout(() => {
+                    this.elements.searchInput.style.borderColor = '';
+                    this.elements.searchInput.style.boxShadow = '';
+                }, 1000);
+            }
+            
+            // Add category-specific analytics
+            console.log(`📊 Quick search analytics: Category=${category}, Keyword=${keyword}`);
+            
+            // Perform the search
+            await this.handleSearch();
+            
+            // Success feedback
+            this.showQuickSearchSuccess(buttonElement, keyword);
+            
+        } catch (error) {
+            console.error('Quick search failed:', error);
+            this.showQuickSearchError(buttonElement, error.message);
+        } finally {
+            // Remove loading state after delay
+            setTimeout(() => {
+                this.setQuickButtonLoading(buttonElement, false);
+            }, 1000);
+        }
+    }
+
+    /**
+     * Set loading state for quick button
+     */
+    setQuickButtonLoading(button, loading) {
+        if (!button) return;
+        
+        if (loading) {
+            button.classList.add('loading');
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.7';
+            
+            // Store original content
+            if (!button.dataset.originalContent) {
+                button.dataset.originalContent = button.innerHTML;
+            }
+            
+            // Show loading state
+            button.innerHTML = `
+                <span class="btn-icon">⏳</span>
+                <span class="btn-text">Loading...</span>
+            `;
+        } else {
+            button.classList.remove('loading');
+            button.style.pointerEvents = '';
+            button.style.opacity = '';
+            button.style.transform = '';
+            
+            // Restore original content
+            if (button.dataset.originalContent) {
+                button.innerHTML = button.dataset.originalContent;
+                delete button.dataset.originalContent;
+            }
+        }
+    }
+
+    /**
+     * Show quick search success feedback
+     */
+    showQuickSearchSuccess(button, keyword) {
+        if (!button) return;
+        
+        // Temporary success state
+        const originalBg = button.style.background;
+        button.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+        button.style.color = 'white';
+        
+        setTimeout(() => {
+            button.style.background = originalBg;
+            button.style.color = '';
+        }, 2000);
+        
+        console.log(`✅ Quick search successful: ${keyword}`);
+    }
+
+    /**
+     * Show quick search error feedback
+     */
+    showQuickSearchError(button, errorMessage) {
+        if (!button) return;
+        
+        // Temporary error state
+        const originalBg = button.style.background;
+        button.style.background = 'linear-gradient(135deg, #dc3545 0%, #e74c3c 100%)';
+        button.style.color = 'white';
+        
+        setTimeout(() => {
+            button.style.background = originalBg;
+            button.style.color = '';
+        }, 3000);
+        
+        this.showError(`Quick search failed: ${errorMessage}`);
+        console.error(`❌ Quick search failed: ${errorMessage}`);
     }
 
     async handleSearch() {
@@ -623,22 +803,6 @@ class WorldTrendsApp {
         `;
     }
 
-    resetMap() {
-        this.hideCountryPanel();
-        this.hideSearchResults();
-        
-        if (this.worldMap) {
-            this.worldMap.reset();
-        }
-        
-        console.log('🔄 Map reset to initial state');
-    }
-
-    toggleMapDataMode(enabled) {
-        console.log(`🗺️ Map data mode: ${enabled ? 'enabled' : 'disabled'}`);
-        // Map visualization toggle functionality can be implemented here
-    }
-
     async handleRefresh() {
         if (this.currentData && this.currentData.keyword) {
             this.api.clearCache();
@@ -710,10 +874,10 @@ class WorldTrendsApp {
     // Version management method
     getVersionInfo() {
         return {
-            version: '1.2.2',
-            branch: 'fix/korea-trends-test-v1.2.2',
+            version: '1.2.4',
+            branch: 'fix/quick-search-buttons-v1.2.4',
             environment: 'development',
-            features: ['Search + Map Interface', 'Korean Language Support', 'Enhanced Error Handling']
+            features: ['Enhanced Quick Search Buttons', 'Full Interface', 'Multi-language Support']
         };
     }
 }
