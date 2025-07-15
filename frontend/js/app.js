@@ -1,6 +1,6 @@
 /**
- * Main Application JavaScript for World Trends Explorer v1.2.4
- * Enhanced with Quick Search Button functionality (Issue #33 Fix)
+ * Main Application JavaScript for World Trends Explorer v1.3.1
+ * Updated to remove Global Trending section
  */
 
 class WorldTrendsApp {
@@ -11,9 +11,9 @@ class WorldTrendsApp {
         this.currentData = null;
         this.selectedCountry = null;
         this.isLoading = false;
-        this.version = 'v1.2.4';
+        this.version = 'v1.3.1';
         
-        // DOM elements - Enhanced with quick buttons
+        // DOM elements - Updated without global trending
         this.elements = this.initializeElements();
         
         this.init();
@@ -26,7 +26,7 @@ class WorldTrendsApp {
             countrySelect: document.getElementById('countrySelect'),
             searchBtn: document.getElementById('searchBtn'),
             
-            // Quick search buttons - Fix for Issue #33
+            // Quick search buttons
             quickBtns: document.querySelectorAll('.quick-btn'),
             
             // Country info panel
@@ -48,10 +48,6 @@ class WorldTrendsApp {
             topQueries: document.getElementById('topQueries'),
             risingQueries: document.getElementById('risingQueries'),
             
-            // Global trending
-            globalTrendingCountrySelect: document.getElementById('globalTrendingCountrySelect'),
-            globalTrendingGrid: document.getElementById('globalTrendingGrid'),
-            
             // UI elements
             loadingIndicator: document.getElementById('loadingIndicator'),
             errorMessage: document.getElementById('errorMessage'),
@@ -60,9 +56,10 @@ class WorldTrendsApp {
     }
 
     async init() {
-        console.log(`🌍 World Trends Explorer ${this.version} - Enhanced Quick Search`);
+        console.log(`🌍 World Trends Explorer ${this.version} - Global Trending Removed`);
         console.log('📅 Build Date: July 15, 2025');
-        console.log('🚀 Features: Quick Search Buttons, Full Interface, Multi-language');
+        console.log('🚀 Features: Quick Search Buttons, Interactive World Map, Multi-language');
+        console.log('🔧 v1.3.1 Update: Removed Global Trending section for cleaner UI');
         
         try {
             // Display version
@@ -75,9 +72,6 @@ class WorldTrendsApp {
             // Set up event listeners
             this.setupEventListeners();
             
-            // Load initial trending data
-            await this.loadGlobalTrending();
-            
             // Check API health
             await this.checkAPIHealth();
             
@@ -89,16 +83,8 @@ class WorldTrendsApp {
     }
 
     displayVersion() {
-        // Add version to header if not exists
-        const header = document.querySelector('.header .container');
-        if (header && !document.getElementById('versionDisplay')) {
-            const versionDiv = document.createElement('div');
-            versionDiv.id = 'versionDisplay';
-            versionDiv.style.cssText = 'position: absolute; top: 10px; right: 20px; color: rgba(255,255,255,0.7); font-size: 0.9rem;';
-            versionDiv.textContent = this.version;
-            header.style.position = 'relative';
-            header.appendChild(versionDiv);
-        }
+        // Version is now displayed in the header via HTML
+        console.log(`📌 Version ${this.version} displayed in header`);
     }
 
     setupEventListeners() {
@@ -120,7 +106,7 @@ class WorldTrendsApp {
             );
         }
         
-        // Enhanced Quick search buttons - Fix for Issue #33
+        // Enhanced Quick search buttons
         this.setupQuickSearchButtons();
         
         // Country selection from map
@@ -145,13 +131,6 @@ class WorldTrendsApp {
         if (this.elements.countrySearchInput) {
             this.elements.countrySearchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') this.handleCountrySearch();
-            });
-        }
-        
-        // Global trending country selection
-        if (this.elements.globalTrendingCountrySelect) {
-            this.elements.globalTrendingCountrySelect.addEventListener('change', (e) => {
-                this.loadGlobalTrending(e.target.value);
             });
         }
         
@@ -189,7 +168,7 @@ class WorldTrendsApp {
     }
 
     /**
-     * Enhanced Quick Search Buttons Setup - Fix for Issue #33
+     * Enhanced Quick Search Buttons Setup
      */
     setupQuickSearchButtons() {
         console.log('🔧 Setting up quick search buttons...');
@@ -255,7 +234,7 @@ class WorldTrendsApp {
     }
 
     /**
-     * Handle quick search with enhanced feedback - Fix for Issue #33
+     * Handle quick search with enhanced feedback
      */
     async handleQuickSearch(keyword, buttonElement, category) {
         try {
@@ -747,68 +726,10 @@ class WorldTrendsApp {
         }
     }
 
-    async loadGlobalTrending(geo = 'US') {
-        try {
-            console.log(`🔥 Loading global trending searches for: ${geo}`);
-            
-            const data = await this.api.getTrendingSearches(geo);
-            this.displayGlobalTrending(data);
-            
-        } catch (error) {
-            console.error('Failed to load global trending:', error);
-            this.displayGlobalTrendingError();
-        }
-    }
-
-    displayGlobalTrending(data) {
-        if (!this.elements.globalTrendingGrid) return;
-        
-        this.elements.globalTrendingGrid.innerHTML = '';
-        
-        if (!data || !data.trending_searches || !Array.isArray(data.trending_searches)) {
-            this.displayGlobalTrendingError();
-            return;
-        }
-        
-        data.trending_searches.slice(0, 12).forEach(item => {
-            const element = document.createElement('div');
-            element.className = 'trending-item';
-            element.innerHTML = `
-                <div class="trending-rank">#${item.rank}</div>
-                <div class="trending-query">${TrendsUtils.truncateText(item.query, 30)}</div>
-            `;
-            
-            element.addEventListener('click', () => {
-                if (this.elements.searchInput) {
-                    this.elements.searchInput.value = item.query;
-                    this.handleSearch();
-                }
-            });
-            
-            this.elements.globalTrendingGrid.appendChild(element);
-        });
-    }
-
-    displayGlobalTrendingError() {
-        if (!this.elements.globalTrendingGrid) return;
-        
-        this.elements.globalTrendingGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 2rem;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
-                <div>Failed to load trending searches</div>
-                <button onclick="app.loadGlobalTrending()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                    Retry
-                </button>
-            </div>
-        `;
-    }
-
     async handleRefresh() {
         if (this.currentData && this.currentData.keyword) {
             this.api.clearCache();
             await this.handleSearch();
-        } else {
-            await this.loadGlobalTrending();
         }
     }
 
@@ -874,10 +795,11 @@ class WorldTrendsApp {
     // Version management method
     getVersionInfo() {
         return {
-            version: '1.2.4',
-            branch: 'fix/quick-search-buttons-v1.2.4',
-            environment: 'development',
-            features: ['Enhanced Quick Search Buttons', 'Full Interface', 'Multi-language Support']
+            version: '1.3.1',
+            branch: 'feature/v1.3.1-remove-global-section',
+            environment: 'production',
+            features: ['Quick Search Buttons', 'Interactive World Map', 'Multi-language Support'],
+            changes: ['Removed Global Trending section for cleaner UI']
         };
     }
 }
