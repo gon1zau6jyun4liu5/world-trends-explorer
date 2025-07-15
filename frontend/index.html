@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 World Trends Explorer v1.3.1</title>
+    <title>🌍 World Trends Explorer v1.3.2</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
     
     <!-- External libraries -->
@@ -21,7 +21,7 @@
             <h1 class="title">
                 <span class="icon">🌍</span>
                 World Trends Explorer
-                <span class="version-badge">v1.3.1</span>
+                <span class="version-badge">v1.3.2</span>
             </h1>
             <p class="subtitle">Powered by SerpAPI - Real-time global trends analysis</p>
         </div>
@@ -30,7 +30,48 @@
     <!-- Main container -->
     <main class="main">
         <div class="container">
-            <!-- Enhanced Search Section with Quick Search Buttons -->
+            <!-- Interactive World Map Section (Main Feature) - MOVED UP -->
+            <section class="world-map-section">
+                <div class="map-header">
+                    <h2>🗺️ Interactive World Map</h2>
+                    <p>Click on any country to see its trending searches and popular topics</p>
+                </div>
+                
+                <div class="world-map-container-main">
+                    <svg id="worldMap"></svg>
+                    
+                    <!-- Map tooltip -->
+                    <div id="mapTooltip" class="map-tooltip"></div>
+                    
+                    <!-- Map controls -->
+                    <div class="map-controls">
+                        <button id="resetMapBtn" class="map-control-btn">
+                            🔄 Reset View
+                        </button>
+                        <button id="zoomInBtn" class="map-control-btn">
+                            🔍 Zoom In
+                        </button>
+                        <button id="zoomOutBtn" class="map-control-btn">
+                            🔍 Zoom Out
+                        </button>
+                    </div>
+                    
+                    <!-- Map legend -->
+                    <div class="map-legend">
+                        <div class="legend-title">SerpAPI Enhanced Data</div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #667eea;"></div>
+                            <span>Available Data</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #e1e5e9;"></div>
+                            <span>No Data</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Search Section with Quick Search Buttons - MOVED DOWN -->
             <section class="search-section">
                 <h2>🔍 Search Global Trends</h2>
                 <div class="input-group">
@@ -117,47 +158,6 @@
                 </div>
             </section>
 
-            <!-- Interactive World Map Section (Main Feature) -->
-            <section class="world-map-section">
-                <div class="map-header">
-                    <h2>🗺️ Interactive World Map</h2>
-                    <p>Click on any country to see its trending searches and popular topics</p>
-                </div>
-                
-                <div class="world-map-container-main">
-                    <svg id="worldMap"></svg>
-                    
-                    <!-- Map tooltip -->
-                    <div id="mapTooltip" class="map-tooltip"></div>
-                    
-                    <!-- Map controls -->
-                    <div class="map-controls">
-                        <button id="resetMapBtn" class="map-control-btn">
-                            🔄 Reset View
-                        </button>
-                        <button id="zoomInBtn" class="map-control-btn">
-                            🔍 Zoom In
-                        </button>
-                        <button id="zoomOutBtn" class="map-control-btn">
-                            🔍 Zoom Out
-                        </button>
-                    </div>
-                    
-                    <!-- Map legend -->
-                    <div class="map-legend">
-                        <div class="legend-title">SerpAPI Enhanced Data</div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #667eea;"></div>
-                            <span>Available Data</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #e1e5e9;"></div>
-                            <span>No Data</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Search Results Section (Initially Hidden) -->
             <section class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
@@ -219,7 +219,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 World Trends Explorer v1.3.1 | SerpAPI Integration</p>
+            <p>&copy; 2025 World Trends Explorer v1.3.2 | SerpAPI Integration</p>
         </div>
     </footer>
 

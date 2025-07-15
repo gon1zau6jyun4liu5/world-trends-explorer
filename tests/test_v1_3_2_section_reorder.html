@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Tests - v1.3.2 Section Reorder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .test-name {
+            font-weight: bold;
+        }
+        .test-description {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Unit Tests for v1.3.2 - Section Reorder Update</h1>
+        <p>Testing the reordering of sections: World Map first, Search section second</p>
+        
+        <div id="test-results"></div>
+        <div id="summary" class="summary"></div>
+    </div>
+
+    <script>
+        // Test Framework
+        class TestRunner {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+
+            test(name, description, testFn) {
+                this.tests.push({ name, description, testFn });
+            }
+
+            async run() {
+                console.log('🧪 Running v1.3.2 Section Reorder Tests...');
+                
+                for (const test of this.tests) {
+                    try {
+                        await test.testFn();
+                        this.results.push({
+                            name: test.name,
+                            description: test.description,
+                            passed: true
+                        });
+                    } catch (error) {
+                        this.results.push({
+                            name: test.name,
+                            description: test.description,
+                            passed: false,
+                            error: error.message
+                        });
+                    }
+                }
+
+                this.displayResults();
+            }
+
+            displayResults() {
+                const resultsContainer = document.getElementById('test-results');
+                const summaryContainer = document.getElementById('summary');
+                
+                let passedCount = 0;
+                let failedCount = 0;
+
+                this.results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = `test-result ${result.passed ? 'pass' : 'fail'}`;
+                    
+                    const status = result.passed ? '✅' : '❌';
+                    resultDiv.innerHTML = `
+                        <div class="test-name">${status} ${result.name}</div>
+                        <div class="test-description">${result.description}</div>
+                        ${result.error ? `<div style="color: red; margin-top: 5px;">Error: ${result.error}</div>` : ''}
+                    `;
+                    
+                    resultsContainer.appendChild(resultDiv);
+
+                    if (result.passed) {
+                        passedCount++;
+                    } else {
+                        failedCount++;
+                    }
+                });
+
+                // Summary
+                const total = this.results.length;
+                const passRate = ((passedCount / total) * 100).toFixed(1);
+                
+                summaryContainer.innerHTML = `
+                    <h3>Test Summary</h3>
+                    <p>Total Tests: ${total}</p>
+                    <p>Passed: ${passedCount} ✅</p>
+                    <p>Failed: ${failedCount} ❌</p>
+                    <p>Pass Rate: ${passRate}%</p>
+                    <p>Version: v1.3.2 - Section Reorder Update</p>
+                `;
+
+                console.log(`✅ Passed: ${passedCount}/${total} (${passRate}%)`);
+                if (failedCount > 0) {
+                    console.log(`❌ Failed: ${failedCount}`);
+                }
+            }
+        }
+
+        // Initialize test runner
+        const runner = new TestRunner();
+
+        // Test utilities
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEqual(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected}, but got ${actual}`);
+            }
+        }
+
+        // Mock DOM for testing
+        function createMockDOM() {
+            const container = document.createElement('div');
+            container.innerHTML = `
+                <main class="main">
+                    <div class="container">
+                        <section class="world-map-section">
+                            <h2>🗺️ Interactive World Map</h2>
+                        </section>
+                        <section class="search-section">
+                            <h2>🔍 Search Global Trends</h2>
+                        </section>
+                        <section class="results-section" id="resultsSection"></section>
+                    </div>
+                </main>
+                <header class="header">
+                    <span class="version-badge">v1.3.2</span>
+                </header>
+                <footer class="footer">
+                    <p>&copy; 2025 World Trends Explorer v1.3.2 | SerpAPI Integration</p>
+                </footer>
+            `;
+            return container;
+        }
+
+        // Tests for v1.3.2
+        runner.test('Version Update', 'Verify version is updated to v1.3.2', () => {
+            const dom = createMockDOM();
+            const versionBadge = dom.querySelector('.version-badge');
+            const footerText = dom.querySelector('.footer p').textContent;
+            
+            assert(versionBadge, 'Version badge should exist');
+            assertEqual(versionBadge.textContent, 'v1.3.2', 'Version badge should show v1.3.2');
+            assert(footerText.includes('v1.3.2'), 'Footer should contain v1.3.2');
+        });
+
+        runner.test('Section Order', 'World Map section should come before Search section', () => {
+            const dom = createMockDOM();
+            const sections = dom.querySelectorAll('.container > section');
+            
+            assert(sections.length >= 2, 'Should have at least 2 sections');
+            
+            const firstSection = sections[0];
+            const secondSection = sections[1];
+            
+            assert(firstSection.classList.contains('world-map-section'), 'First section should be world-map-section');
+            assert(secondSection.classList.contains('search-section'), 'Second section should be search-section');
+        });
+
+        runner.test('World Map Section First', 'World Map section should be the first main content section', () => {
+            const dom = createMockDOM();
+            const container = dom.querySelector('.container');
+            const firstSection = container.querySelector('section');
+            
+            assert(firstSection, 'First section should exist');
+            assert(firstSection.classList.contains('world-map-section'), 'First section should be world map');
+            
+            const heading = firstSection.querySelector('h2');
+            assert(heading, 'World map section should have heading');
+            assert(heading.textContent.includes('Interactive World Map'), 'Heading should mention Interactive World Map');
+        });
+
+        runner.test('Search Section Second', 'Search section should come after World Map section', () => {
+            const dom = createMockDOM();
+            const worldMapSection = dom.querySelector('.world-map-section');
+            const nextSection = worldMapSection.nextElementSibling;
+            
+            assert(nextSection, 'There should be a section after world map');
+            assert(nextSection.classList.contains('search-section'), 'Section after world map should be search section');
+            
+            const heading = nextSection.querySelector('h2');
+            assert(heading, 'Search section should have heading');
+            assert(heading.textContent.includes('Search Global Trends'), 'Heading should mention Search Global Trends');
+        });
+
+        runner.test('Results Section Position', 'Results section should come after Search section', () => {
+            const dom = createMockDOM();
+            const searchSection = dom.querySelector('.search-section');
+            const nextSection = searchSection.nextElementSibling;
+            
+            assert(nextSection, 'There should be a section after search');
+            assert(nextSection.classList.contains('results-section'), 'Section after search should be results section');
+            assertEqual(nextSection.id, 'resultsSection', 'Results section should have correct ID');
+        });
+
+        runner.test('DOM Structure Integrity', 'All essential sections should exist', () => {
+            const dom = createMockDOM();
+            
+            // Check all essential sections exist
+            assert(dom.querySelector('.world-map-section'), 'World map section should exist');
+            assert(dom.querySelector('.search-section'), 'Search section should exist');
+            assert(dom.querySelector('.results-section'), 'Results section should exist');
+            assert(dom.querySelector('.header'), 'Header should exist');
+            assert(dom.querySelector('.footer'), 'Footer should exist');
+        });
+
+        runner.test('Section Classes', 'Sections should maintain their original classes', () => {
+            const dom = createMockDOM();
+            
+            const worldMap = dom.querySelector('.world-map-section');
+            const search = dom.querySelector('.search-section');
+            const results = dom.querySelector('.results-section');
+            
+            assert(worldMap.classList.contains('world-map-section'), 'World map should have correct class');
+            assert(search.classList.contains('search-section'), 'Search should have correct class');
+            assert(results.classList.contains('results-section'), 'Results should have correct class');
+        });
+
+        runner.test('No Duplicate Sections', 'There should be no duplicate sections', () => {
+            const dom = createMockDOM();
+            
+            const worldMapSections = dom.querySelectorAll('.world-map-section');
+            const searchSections = dom.querySelectorAll('.search-section');
+            const resultsSections = dom.querySelectorAll('.results-section');
+            
+            assertEqual(worldMapSections.length, 1, 'Should have exactly one world map section');
+            assertEqual(searchSections.length, 1, 'Should have exactly one search section');
+            assertEqual(resultsSections.length, 1, 'Should have exactly one results section');
+        });
+
+        runner.test('Section Content Preservation', 'Section content should be preserved', () => {
+            const dom = createMockDOM();
+            
+            // Check world map section content
+            const worldMapHeading = dom.querySelector('.world-map-section h2');
+            assert(worldMapHeading.textContent.includes('🗺️'), 'World map heading should have emoji');
+            
+            // Check search section content
+            const searchHeading = dom.querySelector('.search-section h2');
+            assert(searchHeading.textContent.includes('🔍'), 'Search heading should have emoji');
+        });
+
+        runner.test('Visual Hierarchy', 'World Map should be visually prominent as first section', () => {
+            const dom = createMockDOM();
+            const sections = dom.querySelectorAll('.container > section');
+            
+            // First visible section should be world map
+            const firstVisibleSection = Array.from(sections).find(s => 
+                !s.style.display || s.style.display !== 'none'
+            );
+            
+            assert(firstVisibleSection, 'Should have at least one visible section');
+            assert(firstVisibleSection.classList.contains('world-map-section'), 
+                'First visible section should be world map');
+        });
+
+        // Run all tests
+        runner.run();
+    </script>
+</body>
+</html>

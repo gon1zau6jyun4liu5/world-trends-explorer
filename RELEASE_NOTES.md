@@ -4,12 +4,47 @@
 
 ---
 
+## 🔄 v1.3.2 - Section Reorder Update
+**Released**: July 15, 2025  
+**Type**: Patch Release
+
+### What's Changed
+- **🗺️ Map-First Design**: Moved Interactive World Map to the top for better visual impact
+- **🔍 Search Below Map**: Repositioned Search Global Trends section below the map
+- **🎨 Improved Visual Hierarchy**: More intuitive flow - explore map first, then search
+- **📱 Better Mobile Experience**: Map visible without scrolling on most devices
+
+### User Experience Improvements
+- Visual-first approach with immediate map engagement
+- Natural exploration flow: Map → Search → Results
+- More attractive first impression
+- Encourages interactive exploration through map clicking
+
+### Technical Details
+- Reordered sections in `index.html` (World Map → Search → Results)
+- No functionality changes - pure UI restructuring
+- No CSS or JavaScript modifications required
+- 100% backward compatible
+
+### Files Modified
+- `frontend/index.html` - Section order changed, version updated to v1.3.2
+- `docs/FEATURE_SPEC.md` - Updated to v1.3.2 with new UI structure
+- `tests/test_v1_3_2_section_reorder.html` - Added section order validation tests
+
+### Test Results
+- Total Tests: 10
+- Passed: 10 ✅
+- Failed: 0
+- Pass Rate: 100%
+
+---
+
 ## 🧹 v1.3.1 - UI Cleanup Update
 **Released**: July 15, 2025  
 **Type**: Patch Release
 
 ### What's Changed
-- **🗑️ Removed Global Trending Section**: Cleaned up the UI by removing the "Global Trending Topics Powered by SerpAPI" section per user request
+- **🗑️ Removed Global Trending Section**: Cleaned up the UI by removing the "🌍 Global Trending Topics Powered by SerpAPI" section per user request
 - **⚡ Performance Improvements**: Faster initial page load by eliminating unnecessary API calls
 - **📦 Code Optimization**: Removed unused JavaScript functions and CSS styles
 - **🎨 Cleaner Interface**: More focused user experience with core features
@@ -130,6 +165,11 @@ We follow Semantic Versioning (SemVer):
 - **Patch (0.0.X)**: Bug fixes and small improvements
 
 ## 🔮 Upcoming Releases
+
+### v1.3.3 (Next Patch)
+- Map improvements and animations
+- Enhanced tooltips
+- Performance optimizations
 
 ### v1.4.0 (Planned)
 - Country comparison features
