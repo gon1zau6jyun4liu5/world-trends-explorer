@@ -1,12 +1,11 @@
-# World Trends Explorer - Backend Dependencies v1.2.3
-# SerpAPI Only - Clean Architecture
+# World Trends Explorer - Backend Dependencies v1.3.0 
+# Enhanced SerpAPI Integration
 
 # Core web framework
 Flask==3.0.0
 Flask-CORS==4.0.0
 
-# SerpAPI integration (Primary and only data source)
-google-search-results==2.4.2
+# SerpAPI integration
 requests==2.31.0
 
 # Data processing
@@ -19,5 +18,15 @@ gunicorn==21.2.0
 # Development tools
 python-dotenv==1.0.0
 
+# Caching (optional)
+redis==5.0.1
+
 # Logging
 colorlog==6.7.0
+
+# Testing framework
+pytest==7.4.3
+pytest-flask==1.3.0
+
+# SerpAPI specific
+google-search-results==2.4.2
