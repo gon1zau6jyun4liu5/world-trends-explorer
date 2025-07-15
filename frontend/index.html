@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 World Trends Explorer v1.2.3</title>
+    <title>🌍 World Trends Explorer v1.2.4</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
     
     <!-- External libraries -->
@@ -15,31 +15,21 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Header with Version -->
+    <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="header-content">
-                <h1 class="title">
-                    <span class="icon">🌍</span>
-                    World Trends Explorer
-                    <span class="version-badge">v1.2.3</span>
-                </h1>
-                <p class="subtitle">🔍 Clean SerpAPI-only architecture with simplified backend</p>
-                
-                <!-- Provider Status Indicator -->
-                <div class="provider-status" id="providerStatus">
-                    <span class="status-indicator" id="statusIndicator">●</span>
-                    <span class="status-text" id="statusText">Connecting...</span>
-                    <span class="data-quality" id="dataQuality">SerpAPI</span>
-                </div>
-            </div>
+            <h1 class="title">
+                <span class="icon">🌍</span>
+                World Trends Explorer
+            </h1>
+            <p class="subtitle">Click on any country to explore its trending topics</p>
         </div>
     </header>
 
     <!-- Main container -->
     <main class="main">
         <div class="container">
-            <!-- Enhanced Search Section with Korean Support -->
+            <!-- Enhanced Search Section with Quick Search Buttons -->
             <section class="search-section">
                 <h2>🔍 Search Global Trends</h2>
                 <div class="input-group">
@@ -78,23 +68,59 @@
                     </button>
                 </div>
                 
-                <!-- Quick Search Suggestions with Korean Keywords -->
+                <!-- Enhanced Quick Search Buttons - Fix for Issue #33 -->
                 <div class="quick-suggestions">
-                    <span class="suggestions-label">Quick searches:</span>
-                    <button class="suggestion-btn" data-keyword="artificial intelligence">🤖 AI</button>
-                    <button class="suggestion-btn" data-keyword="인공지능">🤖 인공지능</button>
-                    <button class="suggestion-btn" data-keyword="climate change">🌡️ Climate</button>
-                    <button class="suggestion-btn" data-keyword="olympics 2024">🏅 Olympics</button>
-                    <button class="suggestion-btn" data-keyword="cryptocurrency">💰 Crypto</button>
-                    <button class="suggestion-btn" data-keyword="space exploration">🚀 Space</button>
+                    <span class="suggestions-label">💡 Quick searches:</span>
+                    <div class="suggestions-grid">
+                        <button class="quick-btn" data-keyword="artificial intelligence" data-category="tech">
+                            <span class="btn-icon">🤖</span>
+                            <span class="btn-text">AI</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="인공지능" data-category="tech">
+                            <span class="btn-icon">🤖</span>
+                            <span class="btn-text">인공지능</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="climate change" data-category="environment">
+                            <span class="btn-icon">🌡️</span>
+                            <span class="btn-text">Climate</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="olympics 2024" data-category="sports">
+                            <span class="btn-icon">🏅</span>
+                            <span class="btn-text">Olympics</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="cryptocurrency" data-category="finance">
+                            <span class="btn-icon">💰</span>
+                            <span class="btn-text">Crypto</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="space exploration" data-category="science">
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Space</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="electric vehicles" data-category="auto">
+                            <span class="btn-icon">⚡</span>
+                            <span class="btn-text">EV</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="renewable energy" data-category="energy">
+                            <span class="btn-icon">♻️</span>
+                            <span class="btn-text">Green Energy</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="machine learning" data-category="tech">
+                            <span class="btn-icon">🧠</span>
+                            <span class="btn-text">ML</span>
+                        </button>
+                        <button class="quick-btn" data-keyword="quantum computing" data-category="tech">
+                            <span class="btn-icon">⚛️</span>
+                            <span class="btn-text">Quantum</span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <!-- Interactive World Map Section -->
+            <!-- Interactive World Map Section (Main Feature) -->
             <section class="world-map-section">
                 <div class="map-header">
                     <h2>🗺️ Interactive World Map</h2>
-                    <p>Click on any country to see its trending searches and explore local data</p>
+                    <p>Click on any country to see its trending searches and popular topics</p>
                 </div>
                 
                 <div class="world-map-container-main">
@@ -103,62 +129,112 @@
                     <!-- Map tooltip -->
                     <div id="mapTooltip" class="map-tooltip"></div>
                     
+                    <!-- Map controls -->
+                    <div class="map-controls">
+                        <button id="resetMapBtn" class="map-control-btn">
+                            🔄 Reset View
+                        </button>
+                        <button id="zoomInBtn" class="map-control-btn">
+                            🔍 Zoom In
+                        </button>
+                        <button id="zoomOutBtn" class="map-control-btn">
+                            🔍 Zoom Out
+                        </button>
+                    </div>
+                    
                     <!-- Map legend -->
                     <div class="map-legend">
-                        <div class="legend-title">Data Visualization</div>
-                        <div class="legend-items" id="legendItems">
-                            <div class="legend-item">
-                                <div class="legend-color intensity-high"></div>
-                                <span>High Interest</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color intensity-medium"></div>
-                                <span>Medium Interest</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color intensity-low"></div>
-                                <span>Low Interest</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color no-data"></div>
-                                <span>No Data</span>
-                            </div>
+                        <div class="legend-title">Click Countries to Explore</div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #667eea;"></div>
+                            <span>Available Data</span>
                         </div>
-                        <div class="legend-interaction">
-                            <small>💡 Click countries to explore</small>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #e1e5e9;"></div>
+                            <span>No Data</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Search Results Section -->
+            <!-- Country Info Panel (Initially Hidden) -->
+            <section class="country-info-panel" id="countryInfoPanel" style="display: none;">
+                <div class="country-header">
+                    <h2 id="countryTitle">Country Trends</h2>
+                    <button id="closeCountryPanel" class="close-btn">✕</button>
+                </div>
+                
+                <div class="country-content">
+                    <!-- Country Stats -->
+                    <div class="country-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="trendingCount">-</div>
+                                <div class="stat-label">Trending Topics</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dataAvailable">-</div>
+                                <div class="stat-label">Data Points</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🌍</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="countryCode">-</div>
+                                <div class="stat-label">Country Code</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending Topics for Selected Country -->
+                    <div class="trending-topics">
+                        <h3>🔥 Currently Trending</h3>
+                        <div class="trending-grid" id="countryTrendingGrid">
+                            <!-- Country-specific trending topics will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Search for Country -->
+                    <div class="country-search">
+                        <h3>🔍 Search Trends in This Country</h3>
+                        <div class="search-form">
+                            <input 
+                                type="text" 
+                                id="countrySearchInput" 
+                                placeholder="Enter a keyword to explore in this country..."
+                                autocomplete="off"
+                            >
+                            <button id="countrySearchBtn" type="button">
+                                <span class="search-icon">🔍</span>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Results Section (Initially Hidden) -->
             <section class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
                     <h2 id="resultsTitle">Search Results</h2>
-                    <div class="results-meta">
-                        <div class="stats" id="searchStats"></div>
-                        <div class="provider-info" id="providerInfo">
-                            <span class="provider-name" id="providerName">SerpAPI</span>
-                            <span class="data-quality-badge" id="qualityBadge">Clean Architecture</span>
-                        </div>
-                    </div>
+                    <div class="stats" id="searchStats"></div>
                 </div>
 
                 <!-- Charts Layout -->
                 <div class="charts-layout">
                     <!-- Time series chart -->
                     <div class="chart-container">
-                        <div class="chart-header">
-                            <h3>📈 Interest Over Time</h3>
-                        </div>
+                        <h3>📈 Interest Over Time</h3>
                         <canvas id="trendsChart"></canvas>
                     </div>
 
                     <!-- Regional data -->
                     <div class="regional-data">
-                        <div class="regional-header">
-                            <h3>📊 Top Regions</h3>
-                        </div>
+                        <h3>📊 Top Regions</h3>
                         <div class="regional-table" id="regionalTable">
                             <!-- Regional data will be populated here -->
                         </div>
@@ -169,13 +245,13 @@
                 <div class="related-section">
                     <h3>🔗 Related Searches</h3>
                     <div class="related-grid">
-                        <div class="related-column" id="topQueriesSection">
+                        <div class="related-column">
                             <h4>🔥 Top Queries</h4>
                             <ul id="topQueries" class="queries-list">
                                 <!-- Top queries will be populated here -->
                             </ul>
                         </div>
-                        <div class="related-column" id="risingQueriesSection">
+                        <div class="related-column">
                             <h4>📈 Rising Queries</h4>
                             <ul id="risingQueries" class="queries-list">
                                 <!-- Rising queries will be populated here -->
@@ -192,7 +268,7 @@
                     Global Trending Topics
                 </h3>
                 <div class="trending-controls">
-                    <select id="globalTrendingCountrySelect" class="trending-country-select">
+                    <select id="globalTrendingCountrySelect">
                         <option value="US">🇺🇸 United States</option>
                         <option value="GB">🇬🇧 United Kingdom</option>
                         <option value="DE">🇩🇪 Germany</option>
@@ -201,10 +277,7 @@
                         <option value="KR">🇰🇷 South Korea</option>
                         <option value="IN">🇮🇳 India</option>
                         <option value="BR">🇧🇷 Brazil</option>
-                        <option value="CA">🇨🇦 Canada</option>
-                        <option value="AU">🇦🇺 Australia</option>
                     </select>
-                    <button id="refreshTrendingBtn" class="refresh-btn">🔄 Refresh</button>
                 </div>
                 <div class="trending-grid" id="globalTrendingGrid">
                     <!-- Global trending searches will be populated here -->
@@ -220,12 +293,7 @@
             <!-- Error message -->
             <div class="error-message" id="errorMessage" style="display: none;">
                 <span class="error-icon">⚠️</span>
-                <div class="error-content">
-                    <span id="errorText"></span>
-                    <div class="error-actions">
-                        <button id="retryBtn" class="retry-btn">🔄 Retry</button>
-                    </div>
-                </div>
+                <span id="errorText"></span>
             </div>
         </div>
     </main>
@@ -233,26 +301,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <p>&copy; 2025 World Trends Explorer v1.2.3 | Clean SerpAPI Architecture</p>
-                    <p class="footer-subtitle">🔍 Powered by SerpAPI | Built for reliability and simplicity</p>
-                </div>
-                <div class="footer-stats" id="footerStats">
-                    <div class="footer-stat">
-                        <span class="stat-value" id="totalQueries">0</span>
-                        <span class="stat-label">Queries</span>
-                    </div>
-                    <div class="footer-stat">
-                        <span class="stat-value" id="activeCountries">68+</span>
-                        <span class="stat-label">Countries</span>
-                    </div>
-                    <div class="footer-stat">
-                        <span class="stat-value" id="uptime">99.9%</span>
-                        <span class="stat-label">Uptime</span>
-                    </div>
-                </div>
-            </div>
+            <p>&copy; 2025 World Trends Explorer v1.2.4 | Enhanced Quick Search</p>
         </div>
     </footer>
 
@@ -261,20 +310,5 @@
     <script src="js/worldmap.js"></script>
     <script src="js/chart.js"></script>
     <script src="js/app.js"></script>
-    
-    <!-- Version Check Script -->
-    <script>
-        // Display version info on load
-        console.log('🌍 World Trends Explorer v1.2.3 - Clean SerpAPI Architecture');
-        console.log('📅 Build Date: July 15, 2025');
-        console.log('🚀 Features: SerpAPI Only, Simplified Backend, Better Reliability');
-        console.log('🔍 Data Source: SerpAPI with built-in mock mode support');
-        
-        // Set version in DOM
-        document.addEventListener('DOMContentLoaded', function() {
-            const versionElements = document.querySelectorAll('.version-display');
-            versionElements.forEach(el => el.textContent = 'v1.2.3');
-        });
-    </script>
 </body>
 </html>
