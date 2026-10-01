@@ -166,6 +166,7 @@ yarn-error.log*
 .dockerignore
 
 # Local development
+.local/
 run.sh
 stop.sh
 .env.local

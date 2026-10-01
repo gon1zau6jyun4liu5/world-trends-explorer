@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#152e2b"><title>World Trends · 지금 세계의 화제</title>
+  <link rel="stylesheet" href="/desk.css">
+  <script defer src="/vendor/d3.min.js"></script><script defer src="/vendor/topojson.min.js"></script>
+  <script defer src="/globe.js"></script><script defer src="/desk.js"></script>
+</head>
+<body>
+  <header class="masthead"><div class="mast-inner"><a class="brand" href="/" aria-label="World Trends 홈"><span class="brand-mark">◎</span><span>WORLD TRENDS<small>세상의 관심을 읽는 창</small></span></a><nav aria-label="주 메뉴"><button id="home-tab" class="nav active">세계의 화제</button><button id="saved-tab" class="nav">저장한 화제 <span id="saved-count">0</span></button></nav><a id="portal" class="portal" href="/">내 앱 ↗</a></div></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">A WINDOW INTO THE WORLD</p><h1 id="page-title">지금, 세계의 <em>관심은.</em></h1><p id="page-description">나라별로 달라지는 화제, 그 뒤에 있는 이야기를 만나보세요.</p></div><div class="intro-side"><span class="live-label"><i></i> 검색 화제 + 현지 뉴스</span><p id="today"></p><small>열어 둔 동안 10분마다 확인</small></div></section>
+    <div id="error-banner" class="error-banner" role="alert" hidden></div>
+    <section class="toolbar" aria-label="탐색 도구"><div class="regions" id="regions"></div><div class="tools"><button id="map-toggle" aria-expanded="true">◎ 지구본 접기</button><button id="choose-countries">＋ 관심 국가</button><button id="refresh" aria-label="새 소식 확인">↻ 새로고침</button></div></section>
+    <section id="map-panel" class="map-panel" aria-label="지구본에서 국가 선택">
+      <div class="section-heading"><div><p class="globe-eyebrow">THE WORLD, RIGHT NOW</p><h2>지금, 지구 반대편은</h2><p>드래그로 지구를 돌려보세요. 나라에 마우스를 올리면 이름이, 선택하면 화제가 나타납니다.</p></div><button id="map-close" aria-label="지도 닫기">접기 ×</button></div>
+      <div class="globe-topbar"><div class="globe-controls"><button id="globe-spin" aria-pressed="false">▷ 자동 회전</button><button id="globe-day">☀ 낮쪽 보기</button><button id="globe-night">☾ 밤쪽 보기</button><button id="globe-home">처음 위치</button></div><label class="clock-switch"><input id="globe-times" type="checkbox" checked> 도시 시각 표시</label></div>
+      <div id="map-status" role="status">지구본을 불러오는 중…</div>
+      <div class="globe-layout"><div class="globe-stage"><svg id="world-map" viewBox="0 0 800 660" aria-label="회전 가능한 지구본"></svg><div class="globe-navigation" aria-label="지구본 이동"><button id="globe-left" aria-label="지구본 왼쪽으로 회전">←</button><button id="globe-up" aria-label="지구본 위로 회전">↑</button><button id="globe-down" aria-label="지구본 아래로 회전">↓</button><button id="globe-right" aria-label="지구본 오른쪽으로 회전">→</button><span></span><button id="globe-out" aria-label="지구본 축소">−</button><button id="globe-in" aria-label="지구본 확대">＋</button></div></div>
+      <aside class="clock-panel"><p class="globe-eyebrow">LOCAL TIME</p><h3>보이는 지역의 시각</h3><div id="world-clocks"></div><div class="utc-clock"><span>기준 시각</span><strong id="globe-utc"></strong></div></aside></div>
+      <div class="globe-legend"><span><i class="day-dot"></i>낮</span><span><i class="night-dot"></i>밤</span><span><i class="available-dot"></i>화제 조회 가능</span><span>30초마다 시각 갱신 · 도시별 서머타임 반영</span></div>
+      <p class="globe-note">낮·밤 경계는 현재 태양 위치의 근사치입니다. 시간대는 주요 도시 기준이며 국가 전체의 시간대 경계를 나타내지는 않습니다.</p>
+      <div id="map-countries" class="map-countries"></div>
+    </section>
+    <section class="board-heading"><div><h2 id="board-title">내가 보는 나라</h2><p id="board-summary" role="status">소식을 준비하고 있습니다.</p></div><div class="board-controls"><label id="display-options" class="display-options">국가별 화제 <select id="display-count" aria-label="국가별 표시할 화제 수"><option value="1">1개</option><option value="3">3개</option><option value="5">5개</option><option value="10">10개</option><option value="0">전체</option></select></label><label id="availability-options" class="display-options"><input id="show-unavailable" type="checkbox">화제 없는 국가도 표시</label><label class="search-wrap"><span>⌕</span><input id="filter" type="search" placeholder="현재 목록에서 화제 찾기" aria-label="현재 목록에서 화제 찾기"></label></div></section>
+    <div id="board" class="board" aria-live="polite"></div>
+    <footer><span>WORLD TRENDS <b>×</b> 검색 화제 + 현지 뉴스</span><p>Google RSS에 제공된 일부 급상승 검색어입니다. 전체 인기 순위가 아니며, 검색량은 근사치입니다.<br>현지 뉴스는 GDELT가 수집한 해당 국가 언론의 최근 24시간 보도로, 검색 인기 순위가 아닙니다. 국가를 선택해 조회하세요.<br>원문 제목을 그대로 표시합니다. 관련 기사에서 한국어 번역을 열 수 있습니다.</p><a href="https://support.google.com/trends/answer/3076011?hl=ko" target="_blank" rel="noopener noreferrer">데이터 안내 ↗</a></footer>
+  </main>
+  <dialog id="country-dialog"><form method="dialog"><div class="dialog-heading"><div><p class="eyebrow">YOUR WORLD</p><h2>어느 나라가 궁금하세요?</h2></div><button class="icon-button" aria-label="닫기">×</button></div><p class="muted">최대 8개국을 골라 한 화면에서 살펴보세요.<br>선택한 국가와 저장한 화제는 연결된 기기에서 함께 사용합니다.</p><div id="country-options"></div><p id="country-message" role="status"></p><button id="apply-countries" type="button" class="primary">선택한 국가 보기</button></form></dialog>
+  <dialog id="story-dialog"><div class="dialog-heading"><p id="story-country" class="eyebrow"></p><button id="story-close" class="icon-button" aria-label="기사 상세 닫기">×</button></div><h2 id="story-title"></h2><p id="story-meta" class="muted"></p><button id="story-save"></button><h3 class="articles-heading">이 화제의 관련 기사</h3><div id="story-articles"></div><div id="story-search" class="story-search"></div></dialog>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>
