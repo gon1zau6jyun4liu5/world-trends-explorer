@@ -211,6 +211,12 @@ class Desk:
                 self.news_next = time.monotonic() + 60
                 raise NewsUnavailable('현지 뉴스 제공처가 현재 요청을 제한하고 있습니다. 1분 후 다시 시도해 주세요.')
             return parse_news(body, geo)
+        except HTTPError as exc:
+            if exc.code == 429:
+                self.news_next = time.monotonic() + 60
+                exc.close()
+                raise NewsUnavailable('현지 뉴스 제공처가 현재 요청을 제한하고 있습니다. 1분 후 다시 시도해 주세요.') from None
+            raise
         finally:
             self.news_lock.release()
 
@@ -222,9 +228,12 @@ class Desk:
             if row and now - row[0] < TTL and all(
                     item.get('thumbnail_version') == 1 for item in json.loads(row[1])):
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=row[0], stale=False, items=json.loads(row[1]))
+            if self.retry_after.get(geo, 0) > now:
+                return dict(country=geo, source=COUNTRY_INFO[geo]['source'],
+                            fetched=row[0] if row else None, stale=bool(row),
+                            items=json.loads(row[1]) if row else [],
+                            error=self.last_error.get(geo, '잠시 후 다시 확인해 주세요.'))
             try:
-                if self.retry_after.get(geo, 0) > now:
-                    raise NewsUnavailable(self.last_error.get(geo, '잠시 후 다시 확인해 주세요.'))
                 items = self.fetch_items(geo)
                 fetched = time.time()
                 with self.db() as db:
@@ -242,12 +251,29 @@ class Desk:
             except Exception as exc:
                 if isinstance(exc, HTTPError) and exc.code == 429 and COUNTRY_INFO[geo]['source'] == 'google':
                     self.google_until = time.time() + 900
+                    exc.close()
                     exc = NewsUnavailable('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
                 self.retry_after[geo] = now + 60
                 self.last_error[geo] = str(exc) if isinstance(exc, NewsUnavailable) else '최신 소식을 가져오지 못했습니다. 잠시 후 다시 확인해 주세요.'
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=row[0] if row else None, stale=bool(row),
                             items=json.loads(row[1]) if row else [],
                             error=str(exc) if isinstance(exc, NewsUnavailable) else '최신 소식을 가져오지 못했습니다. 잠시 후 다시 확인해 주세요.')
+
+    def cached_news(self):
+        # Bootstrap reads only local data; it must never spend provider quota.
+        now = time.time()
+        with self.db() as db:
+            rows = db.execute('SELECT country, fetched, body FROM feeds').fetchall()
+        feeds = {}
+        for code, fetched, body in rows:
+            if COUNTRY_INFO.get(code, {}).get('source') != 'gdelt':
+                continue
+            stale = now - fetched >= TTL
+            feeds[code] = dict(country=code, source='gdelt', fetched=fetched,
+                               stale=stale, items=json.loads(body))
+            if stale:
+                feeds[code]['error'] = '이전에 받은 현지 뉴스입니다. 뉴스 다시 확인을 눌러 최신 보도를 조회하세요.'
+        return feeds
 
     def saved(self):
         with self.db() as db:
@@ -292,7 +318,7 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         desk = self.server.app
         if path == '/api/bootstrap':
-            return self.send_json({'countries': COVERAGE,
+            return self.send_json({'countries': COVERAGE, 'newsFeeds': desk.cached_news(),
                                    'displayCounts': desk.display_counts(), 'selected': desk.selection(), 'saved': desk.saved(), 'csrf': desk.csrf})
         if path == '/api/trending':
             geo = parse_qs(urlparse(self.path).query).get('geo', [''])[0]

@@ -33,6 +33,37 @@ class DeskFixture:
 
 
 class DeskTests(DeskFixture, unittest.TestCase):
+    def test_polling_during_cooldown_does_not_postpone_recovery(self):
+        with patch.object(app.time, 'time', return_value=1000), patch.object(app, 'urlopen', side_effect=OSError('offline')):
+            self.desk.feed('KR')
+        with patch.object(app.time, 'time', return_value=1030), patch.object(app, 'urlopen') as request:
+            self.desk.feed('KR')
+            request.assert_not_called()
+            self.assertEqual(self.desk.retry_after['KR'], 1060)
+        with patch.object(app.time, 'time', return_value=1061), patch.object(app, 'urlopen', return_value=io.BytesIO(FEED)):
+            self.assertNotIn('error', self.desk.feed('KR'))
+
+    def test_news_http_429_throttles_other_countries(self):
+        other = next(c['code'] for c in app.COVERAGE if c['source']=='gdelt' and c['code']!='CN')
+        with patch.object(app.time, 'monotonic', return_value=100), patch.object(app, 'urlopen', side_effect=app.HTTPError('https://api.gdeltproject.org',429,'limited',{},None)):
+            self.assertIn('제한', self.desk.feed('CN')['error'])
+        with patch.object(app.time, 'monotonic', return_value=110), patch.object(app, 'urlopen') as request:
+            self.assertIn('제한', self.desk.feed(other)['error'])
+            request.assert_not_called()
+            self.assertEqual(self.desk.news_next,160)
+
+    def test_news_cache_reloads_without_network_and_marks_old_items(self):
+        items=app.parse_news(json.dumps({'articles':[{'title':'Local story','url':'https://example.com/1'}]}), 'CN')
+        with self.desk.db() as db:
+            db.execute('INSERT INTO feeds VALUES (?,?,?)',('CN',1000,json.dumps(items)))
+        restored=app.Desk(self.desk.db_path)
+        with patch.object(app.time,'time',return_value=1700), patch.object(app,'urlopen') as request:
+            data=restored.cached_news()['CN']
+            request.assert_not_called()
+            self.assertTrue(data['stale'])
+            self.assertEqual(data['items'],items)
+            self.assertIn('error',data)
+
     def test_google_rate_limit_stops_requests_across_countries(self):
         with patch.object(app, 'urlopen', side_effect=app.HTTPError('https://trends.google.com',429,'limited',{},None)) as request:
             first=self.desk.feed('TH')
