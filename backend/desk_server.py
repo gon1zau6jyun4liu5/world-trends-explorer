@@ -161,10 +161,13 @@ class Desk:
         self.google_slots = threading.BoundedSemaphore(4)
         self.google_until = 0
         self.last_error = {}
+        self.translation_lock = threading.Lock()
+        self.translation_until = 0
         with self.db() as db:
             db.execute('CREATE TABLE IF NOT EXISTS feeds (country TEXT PRIMARY KEY, fetched REAL, body TEXT)')
             db.execute('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, body TEXT)')
             db.execute('CREATE TABLE IF NOT EXISTS saved (id TEXT PRIMARY KEY, body TEXT, saved_at REAL)')
+            db.execute('CREATE TABLE IF NOT EXISTS translations (target TEXT, original TEXT, translated TEXT, PRIMARY KEY(target, original))')
 
     @contextmanager
     def db(self):
@@ -185,6 +188,60 @@ class Desk:
             row = db.execute("SELECT body FROM settings WHERE key='display_counts'").fetchone()
         return json.loads(row[0]) if row else {'world': 1, 'regional': 5}
 
+    def ui_preferences(self):
+        with self.db() as db:
+            row = db.execute("SELECT body FROM settings WHERE key='ui'").fetchone()
+        return {'language': 'ko', 'showUnavailable': False} | (json.loads(row[0]) if row else {})
+
+    @contextmanager
+    def translation_slot(self):
+        if not self.translation_lock.acquire(timeout=1):
+            raise NewsUnavailable('translation_unavailable')
+        try:
+            yield
+        finally:
+            self.translation_lock.release()
+
+    def translate(self, text, target):
+        # Only public headlines, on demand. Never submit memories via the provider's set API.
+        with self.translation_slot():
+            with self.db() as db:
+                row = db.execute('SELECT translated FROM translations WHERE target=? AND original=?', (target, text)).fetchone()
+            if row:
+                return row[0]
+            if time.time() < self.translation_until:
+                raise NewsUnavailable('translation_unavailable')
+            chunks, chunk = [], ''
+            for char in text:
+                if len((chunk + char).encode('utf-8')) > 500:
+                    split = chunk.rfind(' ') + 1
+                    if not split or len(chunk[:split].encode('utf-8')) < len(char.encode('utf-8')):
+                        split = len(chunk)
+                    chunks.append(chunk[:split])
+                    chunk = chunk[split:]
+                chunk += char
+            if chunk:
+                chunks.append(chunk)
+            result = []
+            for chunk in chunks:
+                params = urlencode({'q': chunk, 'langpair': 'autodetect|' + target})
+                try:
+                    with urlopen(Request('https://api.mymemory.translated.net/get?' + params,
+                                         headers={'User-Agent': 'WorldTrendsExplorer/2.0'}), timeout=15) as response:
+                        data = json.loads(response.read(100_001))
+                    translated = data.get('responseData', {}).get('translatedText')
+                    if data.get('quotaFinished') or str(data.get('responseStatus')) != '200' or not isinstance(translated, str) or not translated.strip():
+                        self.translation_until = time.time() + (3600 if data.get('quotaFinished') else 60)
+                        raise NewsUnavailable('translation_unavailable')
+                    result.append(html.unescape(translated))
+                except Exception:
+                    self.translation_until = max(self.translation_until, time.time() + 60)
+                    raise NewsUnavailable('translation_unavailable') from None
+            translated = ' '.join(result)
+            with self.db() as db:
+                db.execute('INSERT OR REPLACE INTO translations VALUES (?,?,?)', (target, text, translated))
+            return translated
+
     def fetch_items(self, geo):
         if COUNTRY_INFO[geo]['source'] == 'google':
             with self.google_slots:
@@ -192,8 +249,15 @@ class Desk:
                     raise ProviderCooldown('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
                 req = Request('https://trends.google.com/trending/rss?geo=' + geo,
                               headers={'User-Agent': 'WorldTrendsExplorer/2.0'})
-                with urlopen(req, timeout=12) as response:
-                    body = response.read(2_000_001)
+                try:
+                    with urlopen(req, timeout=12) as response:
+                        body = response.read(2_000_001)
+                except HTTPError as exc:
+                    if exc.code == 429:
+                        self.google_until = time.time() + 900
+                        exc.close()
+                        raise ProviderCooldown('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.') from None
+                    raise
                 if len(body) > 2_000_000:
                     raise ValueError('Feed too large')
                 return parse_feed(body, geo)
@@ -254,10 +318,6 @@ class Desk:
                                            (json.dumps(previous, ensure_ascii=False), item['id']))
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=fetched, stale=False, items=items)
             except Exception as exc:
-                if isinstance(exc, HTTPError) and exc.code == 429 and COUNTRY_INFO[geo]['source'] == 'google':
-                    self.google_until = time.time() + 900
-                    exc.close()
-                    exc = NewsUnavailable('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
                 if not isinstance(exc, ProviderCooldown):
                     self.retry_after[geo] = now + 60
                 self.last_error[geo] = str(exc) if isinstance(exc, NewsUnavailable) else '최신 소식을 가져오지 못했습니다. 잠시 후 다시 확인해 주세요.'
@@ -324,7 +384,7 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         desk = self.server.app
         if path == '/api/bootstrap':
-            return self.send_json({'countries': COVERAGE, 'newsFeeds': desk.cached_news(),
+            return self.send_json({'countries': COVERAGE, 'newsFeeds': desk.cached_news(), 'uiPreferences': desk.ui_preferences(),
                                    'displayCounts': desk.display_counts(), 'selected': desk.selection(), 'saved': desk.saved(), 'csrf': desk.csrf})
         if path == '/api/trending':
             geo = parse_qs(urlparse(self.path).query).get('geo', [''])[0]
@@ -336,7 +396,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/saved':
             return self.send_json(desk.saved())
         # Explicit allowlist: never serve source, database, environment or other repository files.
-        assets = {'/': 'desk/index.html', '/desk.css': 'desk/desk.css', '/desk.js': 'desk/desk.js', '/globe.js': 'desk/globe.js',
+        assets = {'/': 'desk/index.html', '/desk.css': 'desk/desk.css', '/desk.js': 'desk/desk.js', '/globe.js': 'desk/globe.js', '/i18n.js': 'desk/i18n.js',
                   '/vendor/d3.min.js': 'desk/vendor/d3.min.js',
                   '/vendor/topojson.min.js': 'desk/vendor/topojson.min.js',
                   '/vendor/countries.json': 'desk/vendor/countries.json'}
@@ -363,6 +423,25 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, UnicodeError):
             return self.send_json({'error': '입력을 확인하세요.'}, 400)
         path = urlparse(self.path).path
+        if path == '/api/ui-preferences':
+            if not body or set(body) - {'language', 'showUnavailable'} or ('language' in body and body['language'] not in ('ko', 'ja', 'en')) or ('showUnavailable' in body and type(body['showUnavailable']) is not bool):
+                return self.send_json({'error': 'invalid_preferences'}, 400)
+            with desk.db() as db:
+                db.execute('BEGIN IMMEDIATE')
+                row = db.execute("SELECT body FROM settings WHERE key='ui'").fetchone()
+                prefs = {'language': 'ko', 'showUnavailable': False}
+                prefs.update(json.loads(row[0]) if row else {})
+                prefs.update(body)
+                db.execute("INSERT OR REPLACE INTO settings VALUES ('ui',?)", (json.dumps(prefs),))
+            return self.send_json({'uiPreferences': prefs})
+        if path == '/api/translate':
+            text, target = body.get('text'), body.get('target')
+            if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > 2500 or target not in ('ko', 'ja', 'en'):
+                return self.send_json({'error': 'invalid_translation'}, 400)
+            try:
+                return self.send_json({'text': desk.translate(text, target), 'target': target, 'provider': 'MyMemory'})
+            except NewsUnavailable:
+                return self.send_json({'error': 'translation_unavailable'}, 503)
         if path == '/api/display-preferences':
             scope, count = body.get('scope'), body.get('count')
             if not isinstance(scope, str) or scope not in ('world', 'regional') or type(count) is not int or count not in (0, 1, 3, 5, 10):

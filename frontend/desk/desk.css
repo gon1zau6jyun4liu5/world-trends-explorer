@@ -99,3 +99,19 @@
 .board-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.display-options{display:flex;align-items:center;gap:8px;font-size:13px;white-space:nowrap}.display-options[hidden]{display:none}.display-options select{font:inherit;color:inherit;background:var(--paper,#fff);border:1px solid #d9ddd6;border-radius:8px;padding:9px 12px}.board-heading{gap:16px;flex-wrap:wrap}@media(max-width:600px){.board-controls{width:100%}.board-controls .search-wrap{flex:1;min-width:180px}}
 
 .load-news{margin:0 23px 22px}.map-countries{max-height:190px;overflow-y:auto}.country-name small{overflow-wrap:anywhere}
+
+/* Language preferences and bilingual story details. */
+[hidden] { display: none !important; }
+.settings-panel { max-width: 880px; margin: 36px auto 70px; padding: 38px; background: #fff; border: 1px solid var(--line, #d7e0dc); border-radius: 18px; }
+.settings-panel h2 { font-size: 2rem; margin: 8px 0 28px; }
+.settings-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; padding: 25px 0; border-top: 1px solid #d7e0dc; }
+.settings-row label,.settings-row h3 { font-size: 1.05rem; font-weight: 700; margin: 0; }
+.settings-row p { max-width: 610px; line-height: 1.7; color: #60726b; }
+.settings-row select { min-width: 150px; padding: 12px 15px; border: 1px solid #bccfc5; border-radius: 8px; background: white; color: #193f32; font: inherit; }
+.headline-translation { margin: 12px 0 18px; padding: 12px 15px; border-left: 3px solid #95b6a3; border-radius: 0 8px 8px 0; background: #f2f6f3; font-size: 1rem; font-weight: 400; line-height: 1.65; overflow-wrap: anywhere; }
+.headline-translation p { display: block; margin: 5px 0; font-size: inherit; color: #244239; }
+.translation-label { display: block; font-size: .72rem; color: #6a7d74; letter-spacing: .03em; }
+.headline-translation a,.translation-retry { font-size: .8rem; margin-right: 14px; }
+.translation-retry { margin-top: 8px; padding: 6px 10px; }
+#story-title,.article>a { overflow-wrap: anywhere; }
+@media(max-width:650px) { .settings-panel { margin: 20px 0 40px; padding: 22px; } .settings-row { flex-direction: column; gap: 10px; } .mast-inner nav { flex-wrap: wrap; } }

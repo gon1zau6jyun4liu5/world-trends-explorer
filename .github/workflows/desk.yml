@@ -18,5 +18,5 @@ jobs:
           node-version: '20'
       - run: python -m unittest discover -s tests -p test_desk.py -v
       - run: node --test tests/globe.test.cjs
-      - run: node --check frontend/desk/desk.js && node --check frontend/desk/globe.js
+      - run: node --check frontend/desk/desk.js && node --check frontend/desk/globe.js && node --check frontend/desk/i18n.js
       - run: git diff --check

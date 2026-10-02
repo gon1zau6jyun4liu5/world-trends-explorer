@@ -56,6 +56,51 @@ class DeskTests(DeskFixture, unittest.TestCase):
         with patch.object(app.time, 'time', return_value=1061), patch.object(app, 'urlopen', return_value=io.BytesIO(FEED)):
             self.assertNotIn('error', self.desk.feed('KR'))
 
+    def test_google_cooldown_is_set_before_slot_is_released(self):
+        desk=self.desk
+        class Slot:
+            def __enter__(self): return self
+            def __exit__(self, *args):
+                self_deadline.append(desk.google_until)
+        self_deadline=[]
+        desk.google_slots=Slot()
+        with patch.object(app.time, 'time', return_value=1000), patch.object(app, 'urlopen', side_effect=app.HTTPError('https://trends.google.com',429,'limited',{},None)):
+            desk.feed('KR')
+        self.assertEqual(self_deadline,[1900])
+
+    def test_translation_is_cached_by_target_and_survives_restart(self):
+        response=json.dumps({'responseStatus':200,'responseData':{'translatedText':'Hello &amp; world'}}).encode()
+        with patch.object(app,'urlopen',return_value=io.BytesIO(response)) as request:
+            self.assertEqual(self.desk.translate('안녕','en'),'Hello & world')
+            self.assertEqual(app.Desk(self.desk.db_path).translate('안녕','en'),'Hello & world')
+            request.assert_called_once()
+        with patch.object(app,'urlopen',return_value=io.BytesIO(response)) as request:
+            self.desk.translate('안녕','ja')
+            request.assert_called_once()
+
+    def test_long_translation_chunks_stay_within_utf8_limit(self):
+        from urllib.parse import parse_qs, urlparse
+        chunks=[]
+        def translate_chunk(req, **kwargs):
+            chunk=parse_qs(urlparse(req.full_url).query)['q'][0]
+            chunks.append(chunk)
+            return io.BytesIO(json.dumps({'responseStatus':200,'responseData':{'translatedText':'translated'}}).encode())
+        text='Hello '+('가나다 😀 ' * 50)
+        with patch.object(app,'urlopen',side_effect=translate_chunk):
+            self.desk.translate(text,'en')
+        self.assertGreater(len(chunks),1)
+        self.assertTrue(all(len(chunk.encode())<=500 for chunk in chunks))
+        self.assertEqual(''.join(chunks),text)
+
+    def test_translation_quota_is_not_cached_as_a_translation(self):
+        response=json.dumps({'responseStatus':200,'quotaFinished':True,'responseData':{'translatedText':'QUOTA EXCEEDED'}}).encode()
+        with patch.object(app,'urlopen',return_value=io.BytesIO(response)) as request:
+            for text in ['Hello','World']:
+                with self.assertRaises(app.NewsUnavailable): self.desk.translate(text,'ko')
+            request.assert_called_once()
+        with self.desk.db() as db:
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM translations').fetchone()[0],0)
+
     def test_news_http_429_throttles_other_countries(self):
         other = next(c['code'] for c in app.COVERAGE if c['source']=='gdelt' and c['code']!='CN')
         with patch.object(app.time, 'monotonic', return_value=100), patch.object(app, 'urlopen', side_effect=app.HTTPError('https://api.gdeltproject.org',429,'limited',{},None)):
@@ -216,6 +261,24 @@ class HTTPTests(DeskFixture, unittest.TestCase):
         self.assertEqual(app.Desk(self.desk.db_path).selection(), ['JP','GB'])
         for value in [[],['XX'],list(sorted(app.CODES)),'KR',[{}]]:
             self.assertEqual(self.request('/api/preferences',{'countries':value},self.mutation_headers())[0],400)
+
+    def test_ui_language_and_visibility_persist_independently(self):
+        self.assertEqual(self.request('/api/ui-preferences',{'language':'ja'})[0],403)
+        for body in [{'language':'ja'},{'showUnavailable':True}]:
+            self.assertEqual(self.request('/api/ui-preferences',body,self.mutation_headers())[0],200)
+        self.assertEqual(app.Desk(self.desk.db_path).ui_preferences(),{'language':'ja','showUnavailable':True})
+        self.assertEqual(json.loads(self.request('/api/bootstrap')[1])['uiPreferences']['language'],'ja')
+        for body in [{'language':'fr'},{'language':[]},{'showUnavailable':1},{'other':True},{}]:
+            self.assertEqual(self.request('/api/ui-preferences',body,self.mutation_headers())[0],400)
+
+    def test_translation_api_requires_csrf_and_validates_input(self):
+        self.assertEqual(self.request('/api/translate',{'text':'Hello','target':'ko'})[0],403)
+        for body in [{'text':'','target':'ko'},{'text':[],'target':'ko'},{'text':'Hello','target':[]},{'text':'가'*1000,'target':'en'}]:
+            self.assertEqual(self.request('/api/translate',body,self.mutation_headers())[0],400)
+        with patch.object(self.desk,'translate',return_value='안녕하세요'):
+            status,body=self.request('/api/translate',{'text':'Hello','target':'ko'},self.mutation_headers())
+            self.assertEqual(status,200)
+            self.assertEqual(json.loads(body)['text'],'안녕하세요')
 
     def test_display_counts_are_separate_persistent_and_protected(self):
         self.assertEqual(self.desk.display_counts(), {'world': 1, 'regional': 5})

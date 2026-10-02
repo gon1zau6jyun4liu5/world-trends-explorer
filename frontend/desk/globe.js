@@ -4,6 +4,7 @@
  */
 (function (root) {
     'use strict';
+    const t=(key)=>root.I18n?.t(key) ?? key;
     const DEG = Math.PI / 180;
     const wrap = angle => ((angle + 180) % 360 + 360) % 360 - 180;
 
@@ -30,10 +31,10 @@
     }
 
     function localClock(zone, date) {
-        const time = new Intl.DateTimeFormat('ko-KR', {
+        const time = new Intl.DateTimeFormat(root.I18n?.locale || 'ko-KR', {
             timeZone: zone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
         }).format(date);
-        const day = new Intl.DateTimeFormat('ko-KR', {
+        const day = new Intl.DateTimeFormat(root.I18n?.locale || 'ko-KR', {
             timeZone: zone, month: 'short', day: 'numeric'
         }).format(date);
         const offset = new Intl.DateTimeFormat('en', {
@@ -91,7 +92,7 @@
                 .rotate([-115,-20,0]).clipAngle(90).precision(0.3);
             this.path = d3.geoPath(this.projection);
             this.svg.attr('viewBox','0 0 800 660').attr('tabindex',0)
-                .attr('aria-label','회전 가능한 지구본. 방향키 또는 드래그로 회전하고 국가를 선택하세요.');
+                .attr('aria-label',t('회전 가능한 지구본. 방향키 또는 드래그로 회전하고 국가를 선택하세요.'));
             this.svg.selectAll('*').remove();
             this.svg.append('circle').attr('class','globe-atmosphere').attr('cx',400).attr('cy',330).attr('r',300);
             this.ocean = this.svg.append('path').datum({type:'Sphere'}).attr('class','globe-ocean');
@@ -118,11 +119,11 @@
                     }
                 });
             this.grid = this.svg.append('path').datum(d3.geoGraticule10()).attr('class','globe-grid');
-            this.night = this.svg.append('path').attr('class','globe-night').attr('aria-label','현재 밤인 영역');
+            this.night = this.svg.append('path').attr('class','globe-night').attr('aria-label',t('현재 밤인 영역'));
             this.deepNight = this.svg.append('path').attr('class','globe-deep-night');
             this.sunMarker = this.svg.append('g').attr('class','sun-marker');
             this.sunMarker.append('circle').attr('r',7);
-            this.sunMarker.append('text').attr('x',13).attr('y',5).text('태양 직하점');
+            this.sunMarker.append('text').attr('x',13).attr('y',5).text(t('태양 직하점'));
             this.cityLayer = this.svg.append('g').attr('class','globe-cities');
             this.tooltip = this.svg.append('g').attr('id','map-tooltip').attr('hidden','').attr('aria-hidden','true');
             this.tooltip.append('rect').attr('rx',7);
@@ -146,7 +147,7 @@
             this.timer=setInterval(()=>this.updateTime(),30000);
             this.resizeObserver=new ResizeObserver(()=>{this.hideTooltip();this.drawCities();});
             this.resizeObserver.observe(svg);
-            this.setRunning(true);
+            this.startAutomatic();
         }
 
         visible(point) {
@@ -178,8 +179,8 @@
             for(const city of candidates) {
                 const point=this.projection(city.point);
                 const clock=this.clocks.get(city.zone);
-                const label=city.name+' '+clock.time;
-                const width=Math.max(96,city.name.length*12+53)*size;
+                const label=t(city.name)+' '+clock.time;
+                const width=Math.max(96,t(city.name).length*8+53)*size;
                 const x=Math.max(8,Math.min(point[0]+9,790-width));
                 const y=point[1]-23*size;
                 if(occupied.some(b=>Math.abs(b.y-y)<40*size && x<b.x+b.w && x+width>b.x)) continue;
@@ -195,7 +196,7 @@
             groups.select('rect').attr('x',d=>d.x).attr('y',d=>d.y).attr('width',d=>d.width).attr('height',34*size);
             groups.select('.city-name').attr('font-size',12*size).attr('x',d=>d.x+7*size).attr('y',d=>d.y+14*size).text(d=>d.label);
             groups.select('.city-offset').attr('font-size',9*size).attr('x',d=>d.x+7*size).attr('y',d=>d.y+27*size)
-                .text(d=>(d.day?'☀ 낮 · ':'☾ 밤 · ')+this.clocks.get(d.zone).offset);
+                .text(d=>t(d.day?'☀ 낮':'☾ 밤')+' · '+this.clocks.get(d.zone).offset);
             this.cityLayer.attr('visibility',document.getElementById('globe-times').checked?'visible':'hidden');
         }
 
@@ -205,7 +206,7 @@
             const cities=CITIES.filter(c=>+c.mapId===+feature.id);
             const details=cities.slice(0,2).map(c=>{
                 const clock=this.clocks.get(c.zone);
-                return `${c.name} ${clock.time} (${clock.offset})`;
+                return `${t(c.name)} ${clock.time} (${clock.offset})`;
             }).join(' · ');
             this.tooltip.select('.tooltip-country').text(name);
             this.tooltip.select('.tooltip-clock').text(details || '');
@@ -239,13 +240,13 @@
                 const clock=this.clocks.get(city.zone);
                 const day=isDay(city.point,this.sun);
                 const row=document.createElement('div');row.className='world-clock';
-                const name=document.createElement('span');name.textContent=city.name;
-                const status=document.createElement('small');status.textContent=day?'☀ 낮':'☾ 밤';status.className=day?'is-day':'is-night';name.append(status);
+                const name=document.createElement('span');name.textContent=t(city.name);
+                const status=document.createElement('small');status.textContent=t(day?'☀ 낮':'☾ 밤');status.className=day?'is-day':'is-night';name.append(status);
                 const time=document.createElement('strong');time.textContent=clock.time;
                 const meta=document.createElement('small');meta.className='clock-meta';meta.textContent=clock.day+' · '+clock.offset;
                 row.append(name,time,meta);list.append(row);
             }
-            if(!closest.length) {const text=document.createElement('p');text.textContent='지구본을 돌리면 보이는 지역의 도시 시각이 나타납니다.';list.append(text);}
+            if(!closest.length) {const text=document.createElement('p');text.textContent=t('지구본을 돌리면 보이는 지역의 도시 시각이 나타납니다.');list.append(text);}
         }
 
         rotate(lon,lat=0) {
@@ -260,10 +261,23 @@
             this.projection.rotate([-point[0],-point[1],0]);this.draw();this.updateClocks();
         }
 
+        startAutomatic() {
+            this.setRunning(!root.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+        }
+
+        localize() {
+            this.land.attr('aria-label',d=>this.nameFor(d,this.countries.get(+d.id)));
+            this.svg.attr('aria-label',t('회전 가능한 지구본. 방향키 또는 드래그로 회전하고 국가를 선택하세요.'));
+            this.night.attr('aria-label',t('현재 밤인 영역'));
+            this.sunMarker.select('text').text(t('태양 직하점'));
+            document.getElementById('globe-spin').textContent=t(this.running?'Ⅱ 회전 멈춤':'▷ 자동 회전');
+            this.hideTooltip();this.updateTime();
+        }
+
         setRunning(value) {
             this.running=value;
             this.hideTooltip();
-            const btn=document.getElementById('globe-spin');btn.textContent=value?'Ⅱ 회전 멈춤':'▷ 자동 회전';
+            const btn=document.getElementById('globe-spin');btn.textContent=t(value?'Ⅱ 회전 멈춤':'▷ 자동 회전');
             btn.setAttribute('aria-pressed',String(value));
             cancelAnimationFrame(this.frame);
             if(value) {
@@ -287,7 +301,7 @@
             bind('globe-spin',()=>this.setRunning(!this.running));
             bind('globe-left',()=>this.rotate(-30));bind('globe-right',()=>this.rotate(30));
             bind('globe-up',()=>this.rotate(0,20));bind('globe-down',()=>this.rotate(0,-20));
-            bind('globe-home',()=>{this.zoom=1;this.projection.scale(294);this.focus([115,20]);this.setRunning(true);});
+            bind('globe-home',()=>{this.zoom=1;this.projection.scale(294);this.focus([115,20]);this.startAutomatic();});
             bind('globe-day',()=>this.focus(this.sun));
             bind('globe-night',()=>this.focus([wrap(this.sun[0]+180),-this.sun[1]]));
             const zoom=step=>{this.zoom=Math.max(.8,Math.min(1.65,this.zoom+step));this.projection.scale(294*this.zoom);this.hideTooltip();this.draw();};
