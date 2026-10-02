@@ -144,6 +144,11 @@ class NewsUnavailable(Exception):
     pass
 
 
+class ProviderCooldown(NewsUnavailable):
+    """An existing provider gate must not install a new country retry timer."""
+    pass
+
+
 class Desk:
     def __init__(self, db_path):
         db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -184,7 +189,7 @@ class Desk:
         if COUNTRY_INFO[geo]['source'] == 'google':
             with self.google_slots:
                 if time.time() < self.google_until:
-                    raise NewsUnavailable('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
+                    raise ProviderCooldown('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
                 req = Request('https://trends.google.com/trending/rss?geo=' + geo,
                               headers={'User-Agent': 'WorldTrendsExplorer/2.0'})
                 with urlopen(req, timeout=12) as response:
@@ -194,10 +199,10 @@ class Desk:
                 return parse_feed(body, geo)
         # Nonblocking global gate: do not queue hundreds of country requests.
         if not self.news_lock.acquire(blocking=False):
-            raise NewsUnavailable('다른 나라의 뉴스를 조회 중입니다. 잠시 후 다시 눌러 주세요.')
+            raise ProviderCooldown('다른 나라의 뉴스를 조회 중입니다. 잠시 후 다시 눌러 주세요.')
         try:
             if time.monotonic() < self.news_next:
-                raise NewsUnavailable('뉴스 제공처의 요청 간격 제한입니다. 잠시 후 다시 눌러 주세요.')
+                raise ProviderCooldown('뉴스 제공처의 요청 간격 제한입니다. 잠시 후 다시 눌러 주세요.')
             self.news_next = time.monotonic() + 6
             query = 'sourcecountry:' + COUNTRY_INFO[geo]['newsCountry']
             params = urlencode(dict(query=query, mode='artlist', format='json',
@@ -253,7 +258,8 @@ class Desk:
                     self.google_until = time.time() + 900
                     exc.close()
                     exc = NewsUnavailable('Google이 요청을 일시 제한했습니다. 잠시 후 자동으로 다시 확인합니다.')
-                self.retry_after[geo] = now + 60
+                if not isinstance(exc, ProviderCooldown):
+                    self.retry_after[geo] = now + 60
                 self.last_error[geo] = str(exc) if isinstance(exc, NewsUnavailable) else '최신 소식을 가져오지 못했습니다. 잠시 후 다시 확인해 주세요.'
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=row[0] if row else None, stale=bool(row),
                             items=json.loads(row[1]) if row else [],

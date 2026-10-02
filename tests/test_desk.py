@@ -33,6 +33,19 @@ class DeskFixture:
 
 
 class DeskTests(DeskFixture, unittest.TestCase):
+    def test_provider_cooldown_poll_allows_retry_at_provider_deadline(self):
+        for geo, body in [('KR', FEED), ('CN', b'{"articles":[]}')]:
+            with self.subTest(geo=geo):
+                self.desk.google_until = 2000
+                self.desk.news_next = 200
+                for wall, monotonic in [(1998, 198), (1999, 199)]:
+                    with patch.object(app.time, 'time', return_value=wall), patch.object(app.time, 'monotonic', return_value=monotonic), patch.object(app, 'urlopen') as request:
+                        self.assertIn('error', self.desk.feed(geo))
+                        request.assert_not_called()
+                with patch.object(app.time, 'time', return_value=2000), patch.object(app.time, 'monotonic', return_value=200), patch.object(app, 'urlopen', return_value=io.BytesIO(body)) as request:
+                    self.assertNotIn('error', self.desk.feed(geo))
+                    request.assert_called_once()
+
     def test_polling_during_cooldown_does_not_postpone_recovery(self):
         with patch.object(app.time, 'time', return_value=1000), patch.object(app, 'urlopen', side_effect=OSError('offline')):
             self.desk.feed('KR')
