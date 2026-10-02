@@ -238,11 +238,17 @@ class Desk:
                     if data.get('quotaFinished') or str(data.get('responseStatus')) != '200' or not isinstance(translated, str) or not translated.strip():
                         self.translation_until = time.time() + (3600 if data.get('quotaFinished') else 60)
                         raise NewsUnavailable('translation_unavailable')
-                    result.append(html.unescape(translated))
+                    translated = html.unescape(translated)
+                    # Preserve a source separator if the provider strips it, but
+                    # never invent a separator at a UTF-8 size-only split.
+                    separator = re.search(r'\s+$', chunk)
+                    if separator and not re.search(r'\s$', translated):
+                        translated += separator.group()
+                    result.append(translated)
                 except Exception:
                     self.translation_until = max(self.translation_until, time.time() + 60)
                     raise NewsUnavailable('translation_unavailable') from None
-            translated = ' '.join(result)
+            translated = ''.join(result)
             with self.db() as db:
                 db.execute('INSERT OR REPLACE INTO translations VALUES (?,?,?)', (target, text, translated))
             return translated

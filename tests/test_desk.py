@@ -139,6 +139,12 @@ class DeskTests(DeskFixture, unittest.TestCase):
             self.assertEqual(self.desk.translate('A news headline','en'),'A news headline')
             request.assert_not_called()
 
+    def test_same_language_long_headline_keeps_exact_chunk_boundaries(self):
+        response=json.dumps({'responseStatus':403,'responseDetails':'PLEASE SELECT TWO DISTINCT LANGUAGES'}).encode()
+        for text in ['日本語の長い見出し'*60, ('Long headline with spaces '*40)]:
+            with self.subTest(text=text[:10]), patch.object(app,'urlopen',side_effect=lambda *a,**k:io.BytesIO(response)):
+                self.assertEqual(self.desk.translate(text,'ja'),text)
+
     def test_translation_quota_is_not_cached_as_a_translation(self):
         response=json.dumps({'responseStatus':200,'quotaFinished':True,'responseData':{'translatedText':'QUOTA EXCEEDED'}}).encode()
         with patch.object(app,'urlopen',return_value=io.BytesIO(response)) as request:
