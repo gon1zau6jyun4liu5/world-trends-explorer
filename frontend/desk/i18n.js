@@ -1,6 +1,8 @@
 'use strict';
 window.I18n = (() => {
  const messages = {
+  "낮·밤 표시: 켜짐": ["낮·밤 표시: 켜짐", "昼夜表示: オン", "Day/night: on"],
+  "낮·밤 표시: 꺼짐": ["낮·밤 표시: 꺼짐", "昼夜表示: オフ", "Day/night: off"],
   "국가 목록 펼치기": ["국가 목록 펼치기", "国の一覧を開く", "Show country list"],
   "국가 목록 접기": ["국가 목록 접기", "国の一覧を閉じる", "Hide country list"],
   "설정": [

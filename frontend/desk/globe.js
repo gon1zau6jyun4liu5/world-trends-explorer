@@ -85,6 +85,8 @@
             this.onSelect = onSelect;
             this.zoom = 1;
             this.running = false;
+            this.showLighting = true;
+            try { this.showLighting = localStorage.getItem('world-trends-globe-lighting') !== 'off'; } catch {}
             this.dragging = false;
             this.now = new Date();
             this.sun = solarPosition(this.now);
@@ -143,6 +145,7 @@
                 if(steps[event.key]) {event.preventDefault();this.rotate(...steps[event.key]);}
             });
             this.bindControls();
+            this.updateLightingControl();
             this.updateTime();
             this.timer=setInterval(()=>this.updateTime(),30000);
             this.resizeObserver=new ResizeObserver(()=>{this.hideTooltip();this.drawCities();});
@@ -163,9 +166,10 @@
                 .attr('aria-hidden',function(){return this.hasAttribute('d')?null:'true';});
             this.grid.attr('d',this.path);
             const anti=[wrap(this.sun[0]+180),-this.sun[1]];
-            this.night.datum(d3.geoCircle().center(anti).radius(89.999).precision(1)()).attr('d',this.path);
-            this.deepNight.datum(d3.geoCircle().center(anti).radius(84).precision(1)()).attr('d',this.path);
-            this.sunMarker.attr('visibility',this.visible(this.sun)?'visible':'hidden')
+            this.night.datum(d3.geoCircle().center(anti).radius(89.999).precision(1)()).attr('d',this.path)
+                .attr('visibility',this.showLighting?'visible':'hidden').attr('aria-hidden',String(!this.showLighting));
+            this.deepNight.datum(d3.geoCircle().center(anti).radius(84).precision(1)()).attr('d',this.path).attr('visibility',this.showLighting?'visible':'hidden');
+            this.sunMarker.attr('visibility',this.showLighting&&this.visible(this.sun)?'visible':'hidden')
                 .attr('transform',`translate(${this.projection(this.sun)})`);
             this.drawCities();
         }
@@ -265,12 +269,19 @@
             this.setRunning(!root.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
         }
 
+        updateLightingControl() {
+            const btn=document.getElementById('globe-lighting');
+            btn.textContent=t(this.showLighting?'낮·밤 표시: 켜짐':'낮·밤 표시: 꺼짐');
+            btn.setAttribute('aria-pressed',String(this.showLighting));
+        }
+
         localize() {
             this.land.attr('aria-label',d=>this.nameFor(d,this.countries.get(+d.id)));
             this.svg.attr('aria-label',t('회전 가능한 지구본. 방향키 또는 드래그로 회전하고 국가를 선택하세요.'));
             this.night.attr('aria-label',t('현재 밤인 영역'));
             this.sunMarker.select('text').text(t('태양 직하점'));
             document.getElementById('globe-spin').textContent=t(this.running?'Ⅱ 회전 멈춤':'▷ 자동 회전');
+            this.updateLightingControl();
             this.hideTooltip();this.updateTime();
         }
 
@@ -299,6 +310,11 @@
         bindControls() {
             const bind=(id,fn)=>document.getElementById(id).onclick=fn;
             bind('globe-spin',()=>this.setRunning(!this.running));
+            bind('globe-lighting',()=>{
+                this.showLighting=!this.showLighting;
+                try { localStorage.setItem('world-trends-globe-lighting',this.showLighting?'on':'off'); } catch {}
+                this.updateLightingControl();this.draw();
+            });
             bind('globe-left',()=>this.rotate(-30));bind('globe-right',()=>this.rotate(30));
             bind('globe-up',()=>this.rotate(0,20));bind('globe-down',()=>this.rotate(0,-20));
             bind('globe-home',()=>{this.zoom=1;this.projection.scale(294);this.focus([115,20]);this.startAutomatic();});
