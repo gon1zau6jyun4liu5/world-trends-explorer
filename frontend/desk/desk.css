@@ -115,3 +115,9 @@
 .translation-retry { margin-top: 8px; padding: 6px 10px; }
 #story-title,.article>a { overflow-wrap: anywhere; }
 @media(max-width:650px) { .settings-panel { margin: 20px 0 40px; padding: 22px; } .settings-row { flex-direction: column; gap: 10px; } .mast-inner nav { flex-wrap: wrap; } }
+
+.country-list { border-top: 1px solid #abc6cc20; padding-top: 12px; }
+.country-list summary { cursor: pointer; color: #deece6; font-size: 12px; padding: 6px 0; width: fit-content; }
+.country-list summary:focus-visible { outline: 3px solid #de9e3a; outline-offset: 4px; border-radius: 4px; }
+.country-list:not([open]) .when-open,.country-list[open] .when-closed { display: none; }
+.country-list .map-countries { border-top: 0; padding-top: 10px; }

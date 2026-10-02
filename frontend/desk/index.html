@@ -28,7 +28,7 @@
       <aside class="clock-panel"><p class="globe-eyebrow">LOCAL TIME</p><h3>보이는 지역의 시각</h3><div id="world-clocks"></div><div class="utc-clock"><span>기준 시각</span><strong id="globe-utc"></strong></div></aside></div>
       <div class="globe-legend"><span><i class="day-dot"></i>낮</span><span><i class="night-dot"></i>밤</span><span><i class="available-dot"></i>화제 조회 가능</span><span>30초마다 시각 갱신 · 도시별 서머타임 반영</span></div>
       <p class="globe-note">낮·밤 경계는 현재 태양 위치의 근사치입니다. 시간대는 주요 도시 기준이며 국가 전체의 시간대 경계를 나타내지는 않습니다.</p>
-      <div id="map-countries" class="map-countries"></div>
+      <details id="country-list" class="country-list"><summary><span class="when-closed">국가 목록 펼치기</span><span class="when-open">국가 목록 접기</span></summary><div id="map-countries" class="map-countries"></div></details>
     </section>
     <section class="board-heading"><div><h2 id="board-title">내가 보는 나라</h2><p id="board-summary" role="status">소식을 준비하고 있습니다.</p></div><div class="board-controls"><label id="display-options" class="display-options">국가별 화제 <select id="display-count" aria-label="국가별 표시할 화제 수"><option value="1">1개</option><option value="3">3개</option><option value="5">5개</option><option value="10">10개</option><option value="0">전체</option></select></label><label id="availability-options" class="display-options"><input id="show-unavailable" type="checkbox">화제 없는 국가도 표시</label><label class="search-wrap"><span>⌕</span><input id="filter" type="search" placeholder="현재 목록에서 화제 찾기" aria-label="현재 목록에서 화제 찾기"></label></div></section>
     <div id="board" class="board" aria-live="polite"></div>

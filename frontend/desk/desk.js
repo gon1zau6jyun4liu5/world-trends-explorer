@@ -225,6 +225,11 @@ $('home-tab').onclick=()=>{state.view='home';$('filter').value='';render();loadF
 $('saved-tab').onclick=async()=>{state.view='saved';$('filter').value='';render();try{state.saved=await api('/api/saved');render();}catch(e){toast(e.message);}};
 $('story-dialog').addEventListener('close',()=>storyGeneration++);
 $('story-close').onclick=()=>$('story-dialog').close();$('story-save').onclick=()=>toggleSave(state.story);
+// This compactness preference is local to this browser.
+try{$('country-list').open=localStorage.getItem('world-trends-country-list')==='open';}catch{}
+$('country-list').addEventListener('toggle',()=>{
+    try{localStorage.setItem('world-trends-country-list',$('country-list').open?'open':'closed');}catch{}
+});
 $('map-toggle').onclick=()=>$('map-panel').hidden?showMap():closeMap();$('map-close').onclick=closeMap;
 function applyLanguage(language){
     I18n.setLanguage(language);$('language-select').value=I18n.language;

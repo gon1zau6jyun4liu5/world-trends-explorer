@@ -1,6 +1,8 @@
 'use strict';
 window.I18n = (() => {
  const messages = {
+  "국가 목록 펼치기": ["국가 목록 펼치기", "国の一覧を開く", "Show country list"],
+  "국가 목록 접기": ["국가 목록 접기", "国の一覧を閉じる", "Hide country list"],
   "설정": [
     "설정",
     "設定",
