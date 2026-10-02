@@ -299,6 +299,8 @@ class Desk:
             now = time.time()
             with self.db() as db:
                 row = db.execute('SELECT fetched, body FROM feeds WHERE country=?', (geo,)).fetchone()
+            if row and COUNTRY_INFO[geo]['source'] == 'google' and not json.loads(row[1]):
+                row = None  # Legacy empty caches are not evidence of a successful fetch.
             if row and now - row[0] < TTL and all(
                     item.get('thumbnail_version') == 1 for item in json.loads(row[1])):
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=row[0], stale=False, items=json.loads(row[1]))
@@ -309,8 +311,8 @@ class Desk:
                             error=self.last_error.get(geo, '잠시 후 다시 확인해 주세요.'))
             try:
                 items = self.fetch_items(geo)
-                if not items and COUNTRY_INFO[geo]['source'] == 'google' and row and json.loads(row[1]):
-                    raise NewsUnavailable('Google이 빈 목록을 반환했습니다. 이전에 받은 화제를 표시합니다.')
+                if not items and COUNTRY_INFO[geo]['source'] == 'google':
+                    raise NewsUnavailable('Google에서 화제를 받지 못했습니다. 잠시 후 다시 확인해 주세요.')
                 fetched = time.time()
                 with self.db() as db:
                     db.execute('INSERT OR REPLACE INTO feeds VALUES (?,?,?)',

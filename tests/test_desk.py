@@ -56,6 +56,21 @@ class DeskTests(DeskFixture, unittest.TestCase):
         with patch.object(app.time,'time',return_value=1761), patch.object(self.desk,'fetch_items',return_value=items):
             self.assertFalse(self.desk.feed('KR')['stale'])
 
+    def test_empty_google_feed_is_unavailable_without_a_populated_cache(self):
+        for legacy in [False,True]:
+            with self.subTest(legacy=legacy):
+                if legacy:
+                    with self.desk.db() as db:
+                        db.execute('INSERT OR REPLACE INTO feeds VALUES (?,?,?)',('KR',1699,'[]'))
+                self.desk.retry_after.clear()
+                with patch.object(app.time,'time',return_value=1700), patch.object(self.desk,'fetch_items',return_value=[]) as fetch:
+                    result=self.desk.feed('KR')
+                fetch.assert_called_once()
+                self.assertIn('error',result)
+                self.assertIsNone(result['fetched'])
+                self.assertEqual(result['items'],[])
+                self.assertEqual(self.desk.retry_after['KR'],1760)
+
     def test_provider_cooldown_poll_allows_retry_at_provider_deadline(self):
         for geo, body in [('KR', FEED), ('CN', b'{"articles":[]}')]:
             with self.subTest(geo=geo):
