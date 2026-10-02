@@ -92,6 +92,15 @@ class DeskTests(DeskFixture, unittest.TestCase):
         self.assertTrue(all(len(chunk.encode())<=500 for chunk in chunks))
         self.assertEqual(''.join(chunks),text)
 
+    def test_same_language_is_preserved_without_blocking_other_translations(self):
+        response=json.dumps({'responseStatus':403,'responseDetails':'PLEASE SELECT TWO DISTINCT LANGUAGES','responseData':{'translatedText':'PLEASE SELECT TWO DISTINCT LANGUAGES'}}).encode()
+        with patch.object(app,'urlopen',return_value=io.BytesIO(response)):
+            self.assertEqual(self.desk.translate('A news headline','en'),'A news headline')
+        self.assertEqual(self.desk.translation_until,0)
+        with patch.object(app,'urlopen') as request:
+            self.assertEqual(self.desk.translate('A news headline','en'),'A news headline')
+            request.assert_not_called()
+
     def test_translation_quota_is_not_cached_as_a_translation(self):
         response=json.dumps({'responseStatus':200,'quotaFinished':True,'responseData':{'translatedText':'QUOTA EXCEEDED'}}).encode()
         with patch.object(app,'urlopen',return_value=io.BytesIO(response)) as request:

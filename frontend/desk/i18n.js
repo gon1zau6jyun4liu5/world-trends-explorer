@@ -660,10 +660,10 @@ window.I18n = (() => {
     "見出しの翻訳",
     "Headline translations"
   ],
-  "상세 모달에서 원문 아래에 선택한 언어의 기계 번역을 표시합니다.": [
-    "상세 모달에서 원문 아래에 선택한 언어의 기계 번역을 표시합니다.",
-    "詳細画面で原文の下に、選択した言語の機械翻訳を表示します。",
-    "Story details show a machine translation below each original headline."
+  "화제 카드와 상세 모달에서 원문 아래에 선택한 언어의 기계 번역을 표시합니다.": [
+    "화제 카드와 상세 모달에서 원문 아래에 선택한 언어의 기계 번역을 표시합니다.",
+    "話題カードと詳細画面で、原文の下に選択言語の機械翻訳を表示します。",
+    "Story cards and details show a machine translation below each original headline."
   ],
   "번역할 때 공개된 제목을 MyMemory에 전송합니다. 무료 서비스의 요청 한도가 있으며, 번역이 부정확하거나 일시적으로 제공되지 않을 수 있습니다.": [
     "번역할 때 공개된 제목을 MyMemory에 전송합니다. 무료 서비스의 요청 한도가 있으며, 번역이 부정확하거나 일시적으로 제공되지 않을 수 있습니다.",

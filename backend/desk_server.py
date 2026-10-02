@@ -230,6 +230,11 @@ class Desk:
                                          headers={'User-Agent': 'WorldTrendsExplorer/2.0'}), timeout=15) as response:
                         data = json.loads(response.read(100_001))
                     translated = data.get('responseData', {}).get('translatedText')
+                    if (not data.get('quotaFinished') and str(data.get('responseStatus')) == '403'
+                            and data.get('responseDetails') == 'PLEASE SELECT TWO DISTINCT LANGUAGES'):
+                        # Auto-detection matched the requested target language.
+                        result.append(chunk)
+                        continue
                     if data.get('quotaFinished') or str(data.get('responseStatus')) != '200' or not isinstance(translated, str) or not translated.strip():
                         self.translation_until = time.time() + (3600 if data.get('quotaFinished') else 60)
                         raise NewsUnavailable('translation_unavailable')

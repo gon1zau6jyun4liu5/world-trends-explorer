@@ -144,6 +144,7 @@
                 const steps={ArrowLeft:[-12,0],ArrowRight:[12,0],ArrowUp:[0,8],ArrowDown:[0,-8]};
                 if(steps[event.key]) {event.preventDefault();this.rotate(...steps[event.key]);}
             });
+            try { document.getElementById('globe-times').checked=localStorage.getItem('world-trends-city-clocks')!=='off'; } catch {}
             this.bindControls();
             this.updateLightingControl();
             this.updateTime();
@@ -296,7 +297,7 @@
                 const tick=now=>{
                     if(!this.running) return;
                     const delta=Math.min(now-last,100);last=now;
-                    if(!document.hidden && !document.getElementById('map-panel').hidden) {
+                    if(!document.hidden && !document.getElementById('map-panel').hidden && !document.getElementById('explore-panel').hidden) {
                         const r=this.projection.rotate();r[0]=wrap(r[0]+delta*0.004);
                         this.projection.rotate(r);this.draw();
                         if(now-clockTick>1000) {this.updateClocks();clockTick=now;}
@@ -322,7 +323,10 @@
             bind('globe-night',()=>this.focus([wrap(this.sun[0]+180),-this.sun[1]]));
             const zoom=step=>{this.zoom=Math.max(.8,Math.min(1.65,this.zoom+step));this.projection.scale(294*this.zoom);this.hideTooltip();this.draw();};
             bind('globe-in',()=>zoom(.15));bind('globe-out',()=>zoom(-.15));
-            document.getElementById('globe-times').onchange=()=>this.drawCities();
+            document.getElementById('globe-times').onchange=()=>{
+                try { localStorage.setItem('world-trends-city-clocks',document.getElementById('globe-times').checked?'on':'off'); } catch {}
+                this.drawCities();
+            };
         }
 
         highlight(selected) {

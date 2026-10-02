@@ -10,7 +10,15 @@ function link(text,url,cls){const a=el('a',cls,text);a.href=url;a.target='_blank
 function button(text,action,cls){const b=el('button',cls,text);b.type='button';b.onclick=action;return b;}
 function toast(text){$('toast').textContent=t(text);$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,3500);}
 async function api(path,body){const opts={headers:{},signal:AbortSignal.timeout(path==='/api/translate'?90000:20000)};if(body){opts.method='POST';opts.headers={'Content-Type':'application/json','X-CSRF-Token':state.csrf};opts.body=JSON.stringify(body);}const r=await fetch(path,opts);if(r.status===401){$('error-banner').textContent=t('로그인이 만료되었습니다. 페이지를 새로고침해 주세요.');$('error-banner').hidden=false;throw Error(t('로그인이 필요합니다.'));}const data=await r.json();if(!r.ok)throw Error(t(data.error||'요청을 처리하지 못했습니다.'));return data;}
-function visibleCodes(){return state.region==='전세계'?state.countries.map(c=>c.code):state.region==='내 국가'?state.selected:state.countries.filter(c=>c.region===state.region).map(c=>c.code);}
+function sortedCountries(rows=state.countries){
+    const selected=new Set(state.selected), collator=new Intl.Collator(I18n.locale,{sensitivity:'base'});
+    return [...rows].sort((a,b)=>Number(selected.has(b.code))-Number(selected.has(a.code))||collator.compare(countryName(a.code),countryName(b.code))||a.code.localeCompare(b.code));
+}
+function visibleCodes(){return sortedCountries().filter(c=>state.region==='전세계'||(state.region==='내 국가'?state.selected.includes(c.code):c.region===state.region)).map(c=>c.code);}
+function renderMapCountries(){
+    $('map-countries').replaceChildren(...sortedCountries().map(c=>button(flag(c.code)+' '+countryName(c.code),()=>selectMapCountry(c),state.selected.includes(c.code)?'selected':'')));
+}
+
 function countScope(){return state.region==='전세계'?'world':'regional';}
 function displayLimit(){return state.displayCounts[countScope()] || Infinity;}
 function sourceLabel(code){return t(country(code)?.source==='gdelt'?'현지 뉴스 · GDELT':'검색 화제 · Google');}
@@ -20,7 +28,7 @@ function isSaved(item){return state.saved.some(x=>x.id===item.id);}
 function dateLabel(date){if(!date)return '';const d=new Date(date);return Number.isNaN(d.getTime())?'':new Intl.DateTimeFormat(I18n.locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(d);}
 function matches(item){const q=$('filter').value.trim().toLocaleLowerCase();return !q||[item.title,...item.articles.map(a=>a.title)].some(t=>t.toLocaleLowerCase().includes(q));}
 function renderRegions(){const box=$('regions');box.replaceChildren();['전세계','내 국가','아시아','유럽','아메리카','오세아니아','아프리카'].forEach(name=>{const b=button(name,()=>{state.focusedCountry=null;state.expanded.clear();state.region=name;state.view='home';$('filter').value='';render();loadFeeds();},name===state.region?'selected':'');b.setAttribute('aria-pressed',String(name===state.region));box.append(b);});}
-function render(){renderRegions();const settings=state.view==='settings',saved=state.view==='saved';$('settings-panel').hidden=!settings;$('explore-panel').hidden=settings;document.querySelector('.intro').hidden=settings;$('settings-tab').classList.toggle('active',settings);$('settings-tab').setAttribute('aria-current',settings?'page':'false');$('board').classList.toggle('worldwide',!saved&&state.region==='전세계');$('display-options').hidden=saved;$('availability-options').hidden=saved;$('show-unavailable').checked=state.showUnavailable;$('display-count').value=String(state.displayCounts[countScope()]);$('home-tab').classList.toggle('active',!saved&&!settings);$('saved-tab').classList.toggle('active',saved);$('home-tab').setAttribute('aria-current',!saved&&!settings?'page':'false');$('saved-tab').setAttribute('aria-current',saved?'page':'false');$('saved-count').textContent=state.saved.length;$('board-title').textContent=saved?t('다시 보고 싶은 이야기'):state.region==='내 국가'?t('내가 보는 나라'):t('regionTitle',{region:t(state.region)});$('board').replaceChildren();if(saved)renderSaved();else visibleCodes().forEach(code=>renderCountry(code));updateSummary();}
+function render(){renderRegions();const settings=state.view==='settings',saved=state.view==='saved';$('settings-panel').hidden=!settings;$('explore-panel').hidden=settings;document.querySelector('.intro').hidden=settings;$('settings-tab').classList.toggle('active',settings);$('settings-tab').setAttribute('aria-current',settings?'page':'false');$('board').classList.toggle('worldwide',!saved&&state.region==='전세계');$('display-options').hidden=saved;$('availability-options').hidden=saved;$('show-unavailable').checked=state.showUnavailable;$('display-count').value=String(state.displayCounts[countScope()]);$('home-tab').classList.toggle('active',!saved&&!settings);$('saved-tab').classList.toggle('active',saved);$('home-tab').setAttribute('aria-current',!saved&&!settings?'page':'false');$('saved-tab').setAttribute('aria-current',saved?'page':'false');$('saved-count').textContent=state.saved.length;$('board-title').textContent=saved?t('다시 보고 싶은 이야기'):state.region==='내 국가'?t('내가 보는 나라'):t('regionTitle',{region:t(state.region)});stopObservingTranslations($('board'));$('board').replaceChildren();if(saved)renderSaved();else visibleCodes().forEach(code=>renderCountry(code));updateSummary();}
 function updateSummary(){
     if(state.view==='saved'){$('board-summary').textContent=t('savedSummary',{n:state.saved.length});return;}
     const codes=visibleCodes();
@@ -73,17 +81,21 @@ function storyNode(item,index) {
     const save=button(isSaved(item)?'★':'☆',()=>toggleSave(item),'bookmark'+(isSaved(item)?' saved':''));
     save.setAttribute('aria-label',`${item.title} ${t(isSaved(item)?'저장 해제':'저장')}`);
     save.setAttribute('aria-pressed',String(isSaved(item)));
-    top.append(save);content.append(top);
+    top.append(save);content.append(top,cardTranslation(item.title));
     const meta=el('div','story-meta');
     if(item.traffic) meta.append(el('span','traffic',t('traffic',{n:item.traffic})));
     meta.append(el('span','',dateLabel(item.published)));content.append(meta);
     if(item.articles[0]) {
         const preview=el('p','story-preview');
-        preview.append(link(item.articles[0].title,item.articles[0].url));content.append(preview);
+        preview.append(link(item.articles[0].title,item.articles[0].url));content.append(preview,cardTranslation(item.articles[0].title));
     }
     box.append(content);return box;
 }
-function renderCountry(code){if(!state.showUnavailable&&state.focusedCountry!==code&&!state.feeds[code]?.items?.length){$('country-'+code)?.remove();return;}const info=country(code);const card=el('section','country-card');card.id='country-'+code;card.setAttribute('aria-label',t('regionTitle',{region:countryName(code)}));const header=el('div','country-header');const name=el('div','country-name');name.append(el('span','flag',flag(code)));const names=el('div');names.append(el('h3','',countryName(code)),el('small','',t(info.region)+' / '+code+' · '+sourceLabel(code)));name.append(names);header.append(name);const feed=state.feeds[code];header.append(el('span','count-pill',feed?(feed.items.length?t('stories',{n:feed.items.length}):feed.error?'수신 지연':'현재 화제 없음'):info.source==='gdelt'&&!state.loading.has(code)?'선택 조회':'확인 중'));card.append(header);if(!feed){if(info.source==='gdelt'&&!state.loading.has(code)){card.append(el('p','card-message','현지 언론의 최근 24시간 보도입니다. 검색 인기 순위와 다릅니다.'),button('현지 뉴스 불러오기',()=>loadNews(code),'load-news'));}else{for(let i=0;i<3;i++)card.append(el('div','skeleton'));}}else{card.append(el('div','card-updated',feed.fetched?t('lastFetched',{date:dateLabel(feed.fetched*1000)}):'아직 수신한 데이터가 없습니다'));if(feed.error)card.append(el('div','stale',t(feed.error)+(feed.stale?t('staleSuffix'):'')));const rows=feed.items.filter(matches);if(!rows.length)card.append(el('div','card-message',feed.error?'새로고침으로 다시 확인할 수 있습니다.':$('filter').value?'일치하는 화제가 없습니다.':'현재 제공된 화제가 없습니다.'));const limit=state.expanded.has(code)?Infinity:displayLimit();const list=el('div');rows.slice(0,limit).forEach(item=>list.append(storyNode(item,feed.items.indexOf(item))));card.append(list);const bottom=el('div','card-bottom');if(rows.length>displayLimit())bottom.append(button(state.expanded.has(code)?'접기 ↑':t('allStories',{n:rows.length}),()=>{state.expanded.has(code)?state.expanded.delete(code):state.expanded.add(code);replaceCard(code);}));else bottom.append(el('span','',info.source==='gdelt'?'현지 보도 · 검색 순위 아님':'Google Trends RSS'));if(info.source==='gdelt')bottom.append(button('뉴스 다시 확인',()=>loadNews(code)));else bottom.append(link('Google에서 더 보기 ↗',`https://trends.google.com/trending?geo=${code}&hl=${I18n.language}`));card.append(bottom);}const old=$('country-'+code);if(old)old.replaceWith(card);else $('board').append(card);}
+function renderCountry(code){if(!state.showUnavailable&&state.focusedCountry!==code&&!state.feeds[code]?.items?.length){const old=$('country-'+code);if(old){stopObservingTranslations(old);old.remove();}return;}const info=country(code);const card=el('section','country-card');card.id='country-'+code;card.setAttribute('aria-label',t('regionTitle',{region:countryName(code)}));const header=el('div','country-header');const name=el('div','country-name');name.append(el('span','flag',flag(code)));const names=el('div');names.append(el('h3','',countryName(code)),el('small','',t(info.region)+' / '+code+' · '+sourceLabel(code)));name.append(names);header.append(name);const feed=state.feeds[code];header.append(el('span','count-pill',feed?(feed.items.length?t('stories',{n:feed.items.length}):feed.error?'수신 지연':'현재 화제 없음'):info.source==='gdelt'&&!state.loading.has(code)?'선택 조회':'확인 중'));card.append(header);if(!feed){if(info.source==='gdelt'&&!state.loading.has(code)){card.append(el('p','card-message','현지 언론의 최근 24시간 보도입니다. 검색 인기 순위와 다릅니다.'),button('현지 뉴스 불러오기',()=>loadNews(code),'load-news'));}else{for(let i=0;i<3;i++)card.append(el('div','skeleton'));}}else{card.append(el('div','card-updated',feed.fetched?t('lastFetched',{date:dateLabel(feed.fetched*1000)}):'아직 수신한 데이터가 없습니다'));if(feed.error)card.append(el('div','stale',t(feed.error)+(feed.stale?t('staleSuffix'):'')));const rows=feed.items.filter(matches);if(!rows.length)card.append(el('div','card-message',feed.error?'새로고침으로 다시 확인할 수 있습니다.':$('filter').value?'일치하는 화제가 없습니다.':'현재 제공된 화제가 없습니다.'));const limit=state.expanded.has(code)?Infinity:displayLimit();const list=el('div');rows.slice(0,limit).forEach(item=>list.append(storyNode(item,feed.items.indexOf(item))));card.append(list);const bottom=el('div','card-bottom');if(rows.length>displayLimit())bottom.append(button(state.expanded.has(code)?'접기 ↑':t('allStories',{n:rows.length}),()=>{state.expanded.has(code)?state.expanded.delete(code):state.expanded.add(code);replaceCard(code);}));else bottom.append(el('span','',info.source==='gdelt'?'현지 보도 · 검색 순위 아님':'Google Trends RSS'));if(info.source==='gdelt')bottom.append(button('뉴스 다시 확인',()=>loadNews(code)));else bottom.append(link('Google에서 더 보기 ↗',`https://trends.google.com/trending?geo=${code}&hl=${I18n.language}`));card.append(bottom);}const old=$('country-'+code);if(old){stopObservingTranslations(old);old.replaceWith(card);}else {
+    const order=visibleCodes(), rank=order.indexOf(code);
+    const next=[...$('board').children].find(node=>node.id.startsWith('country-')&&order.indexOf(node.id.slice(8))>rank);
+    $('board').insertBefore(card,next||null);
+}}
 function replaceCard(code){if(state.view==='home'&&visibleCodes().includes(code))renderCountry(code);updateSummary();}
 function renderSaved(){const rows=state.saved.filter(matches);if(!rows.length){const empty=el('div','empty');empty.append(el('strong','',state.saved.length?'일치하는 화제가 없습니다.':'마음에 남는 화제를 모아두세요.'),el('span','','화제 옆의 ☆를 누르면 여기에 보관됩니다.'));$('board').append(empty);return;}rows.forEach(item=>{const box=el('section','saved-card');box.append(el('div','saved-label',flag(item.country)+' '+countryName(item.country)),storyNode(item));$('board').append(box);});}
 async function fetchCountry(code){
@@ -107,21 +119,69 @@ async function loadFeeds(){
 
 async function toggleSave(item){try{const data=await api('/api/saved',{country:item.country,id:item.id,save:!isSaved(item)});state.saved=data.saved;render();if(state.story?.id===item.id)updateStorySave();toast(isSaved(item)?'화제를 저장했습니다.':'저장을 해제했습니다.');}catch(e){toast(e.message);}}
 function updateStorySave(){$('story-save').textContent=t(isSaved(state.story)?'★ 저장됨 · 해제하기':'☆ 이 화제 저장');$('story-save').setAttribute('aria-pressed',String(isSaved(state.story)));}
+// One shared queue prevents list cards from overwhelming the free translation service.
+const translationCache=new Map(),translationJobs=[];
+let translating=false;
+function queueTranslation(text,target,valid,priority=0){
+    const key=JSON.stringify([target,text]);
+    const cached=translationCache.get(key);
+    if(cached && (!cached.error||cached.until>Date.now()))return cached.error?Promise.reject(cached.error):Promise.resolve(cached.data);
+    return new Promise((resolve,reject)=>{
+        let job=translationJobs.find(j=>j.key===key);
+        if(!job){job={key,text,target,priority,clients:[]};translationJobs.push(job);}
+        job.priority=Math.max(job.priority,priority);job.clients.push({valid,resolve,reject});
+        pumpTranslations();
+    });
+}
+async function pumpTranslations(){
+    if(translating)return;
+    translationJobs.sort((a,b)=>b.priority-a.priority);
+    const job=translationJobs.shift();if(!job)return;
+    const clients=job.clients.filter(c=>c.valid());
+    job.clients.filter(c=>!c.valid()).forEach(c=>c.resolve(null));
+    if(!clients.length){queueMicrotask(pumpTranslations);return;}
+    translating=true;
+    try{
+        const cached=translationCache.get(job.key);
+        if(cached?.error&&cached.until>Date.now())throw cached.error;
+        const data=cached?.data||await api('/api/translate',{text:job.text,target:job.target});
+        translationCache.set(job.key,{data});clients.forEach(c=>c.resolve(data));
+    }catch(error){translationCache.set(job.key,{error,until:Date.now()+60000});clients.forEach(c=>c.reject(error));}
+    finally{translating=false;setTimeout(pumpTranslations,0);}
+}
+const cardTranslationObserver=new IntersectionObserver(entries=>{
+    for(const entry of entries){
+        if(!entry.isIntersecting)continue;
+        cardTranslationObserver.unobserve(entry.target);
+        const node=entry.target;
+        translatedHeadline(node.dataset.original,node,node.lang,null,true);
+    }
+},{rootMargin:'40px'});
+function cardTranslation(text){
+    const node=el('div','card-translation');node.dataset.original=text;node.lang=I18n.language;
+    node.append(el('small','translation-label','기계 번역 · MyMemory'),el('p','','번역 중…'));
+    cardTranslationObserver.observe(node);return node;
+}
+function stopObservingTranslations(container){container.querySelectorAll('.card-translation').forEach(n=>cardTranslationObserver.unobserve(n));}
 let storyGeneration=0;
-function translatedHeadline(text, container, target, generation) {
+function translatedHeadline(text, container, target, generation, compact=false) {
+    const valid=()=>container.isConnected&&target===I18n.language&&(compact||generation===storyGeneration);
     container.replaceChildren();
     const label=el('small','translation-label','기계 번역 · MyMemory');
     const value=el('p','','번역 중…');value.lang=target;value.dir='auto';
     const fallback=link(t('번역 열기 ↗'),`https://translate.google.com/?sl=auto&tl=${target}&text=${encodeURIComponent(text)}&op=translate`);
     container.append(label,value);
-    return api('/api/translate',{text,target}).then(data=>{
-        if(generation!==storyGeneration||!container.isConnected)return;
+    return queueTranslation(text,target,valid,compact?0:1).then(data=>{
+        if(!data||!valid())return;
         value.textContent=data.text;
-        if(data.text.trim()===text.trim()) label.textContent=t('원문과 동일합니다.');
+        if(data.text.trim()===text.trim())label.textContent=t('원문과 동일합니다.');
     }).catch(()=>{
-        if(generation!==storyGeneration||!container.isConnected)return;
+        if(!valid())return;
         value.textContent=t('번역을 불러오지 못했습니다.');
-        container.append(fallback,button(t('번역 다시 시도'),()=>translatedHeadline(text,container,target,generation),'translation-retry'));
+        container.append(fallback,button(t('번역 다시 시도'),()=>{
+            translationCache.delete(JSON.stringify([target,text]));
+            translatedHeadline(text,container,target,generation,compact);
+        },'translation-retry'));
     });
 }
 function openStory(item){
@@ -143,10 +203,10 @@ function openStory(item){
     $('story-dialog').scrollTop=0;
     (async()=>{for(const [text,container] of queue){if(generation!==storyGeneration||!$('story-dialog').open)break;await translatedHeadline(text,container,target,generation);}})();
 }
-function chooseCountries(){$('country-options').replaceChildren();[...new Set(state.countries.map(c=>c.region))].forEach(region=>{const group=el('div','country-group');group.append(el('h3','',region));const options=el('div','country-options');state.countries.filter(c=>c.region===region).forEach(c=>{const label=el('label','country-option');const check=el('input');check.type='checkbox';check.value=c.code;check.checked=state.selected.includes(c.code);check.onchange=updateChoiceCount;label.append(check,document.createTextNode(flag(c.code)+' '+countryName(c.code)+(c.source==='gdelt'?t('localSuffix'):'')));options.append(label);});group.append(options);$('country-options').append(group);});updateChoiceCount();$('country-dialog').showModal();}
+function chooseCountries(){$('country-options').replaceChildren();[...new Set(state.countries.map(c=>c.region))].forEach(region=>{const group=el('div','country-group');group.append(el('h3','',region));const options=el('div','country-options');sortedCountries(state.countries.filter(c=>c.region===region)).forEach(c=>{const label=el('label','country-option');const check=el('input');check.type='checkbox';check.value=c.code;check.checked=state.selected.includes(c.code);check.onchange=updateChoiceCount;label.append(check,document.createTextNode(flag(c.code)+' '+countryName(c.code)+(c.source==='gdelt'?t('localSuffix'):'')));options.append(label);});group.append(options);$('country-options').append(group);});updateChoiceCount();$('country-dialog').showModal();}
 function chosen(){return [...$('country-options').querySelectorAll('input:checked')].map(n=>n.value);}
 function updateChoiceCount(){const n=chosen().length;$('country-message').textContent=t('countryCount',{n});$('apply-countries').disabled=n<1||n>8;}
-async function applyCountries(){$('apply-countries').disabled=true;try{const data=await api('/api/preferences',{countries:chosen()});state.selected=data.selected;state.expanded.clear();state.region='내 국가';state.view='home';$('country-dialog').close();render();loadFeeds();if(mapLoaded)paintMap();}catch(e){$('country-message').textContent=e.message;}finally{$('apply-countries').disabled=false;}}
+async function applyCountries(){$('apply-countries').disabled=true;try{const data=await api('/api/preferences',{countries:chosen()});state.selected=data.selected;state.expanded.clear();state.region='내 국가';state.view='home';$('country-dialog').close();render();loadFeeds();if(mapLoaded){paintMap();renderMapCountries();}}catch(e){$('country-message').textContent=e.message;}finally{$('apply-countries').disabled=false;}}
 let mapLoaded=false;
 let globe=null;
 let mapNames = new Map();
@@ -199,9 +259,7 @@ async function showMap() {
     } catch(e) {
         $('map-status').textContent=t('지구본을 불러오지 못했습니다. 아래 국가 버튼으로 탐색할 수 있습니다.');
     }
-    const box=$('map-countries');
-    box.replaceChildren();
-    state.countries.forEach(c=>box.append(button(flag(c.code)+' '+countryName(c.code),()=>selectMapCountry(c),state.selected.includes(c.code)?'selected':'')));
+    renderMapCountries();
 }
 function paintMap(){globe?.highlight(state.selected);}
 function selectMapCountry(c){state.focusedCountry=c.code;state.expanded.clear();state.region=c.region;state.view='home';$('filter').value='';render();loadFeeds();if(c.source==='gdelt')loadNews(c.code);$('country-'+c.code)?.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -237,7 +295,7 @@ function applyLanguage(language){
     rebuildMapNames();render();
     $('map-toggle').textContent=t($('map-panel').hidden?'◎ 지구본 보기':'◎ 지구본 접기');
     if(globe){globe.localize();}
-    $('map-countries').replaceChildren(...state.countries.map(c=>button(flag(c.code)+' '+countryName(c.code),()=>selectMapCountry(c),state.selected.includes(c.code)?'selected':'')));
+    renderMapCountries();
     if($('story-dialog').open)openStory(state.story);
 }
 $('settings-tab').onclick=()=>{state.view='settings';render();};
