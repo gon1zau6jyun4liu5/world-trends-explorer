@@ -121,9 +121,3 @@
 .country-list summary:focus-visible { outline: 3px solid #de9e3a; outline-offset: 4px; border-radius: 4px; }
 .country-list:not([open]) .when-open,.country-list[open] .when-closed { display: none; }
 .country-list .map-countries { border-top: 0; padding-top: 10px; }
-
-.card-translation { margin: 6px 0 10px; padding: 7px 10px; border-left: 2px solid #afcbb9; background: #f2f6f3; border-radius: 0 5px 5px 0; overflow-wrap: anywhere; }
-.card-translation p { margin: 3px 0; color: #335347; font-size: 12px; line-height: 1.65; }
-.card-translation .translation-label { font-size: 9px; }
-.card-translation a,.card-translation .translation-retry { font-size: 10px; }
-.card-translation .translation-retry { padding: 3px 6px; margin: 4px 0 0 8px; }
