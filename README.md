@@ -1,396 +1,126 @@
-# 🌍 World Trends Explorer v1.0.6
+# World Trends Explorer 2.0
 
-**Real-time Google Trends explorer with interactive world map and comprehensive testing suite**
+각국에서 지금 어떤 이야기가 화제인지 한 화면에서 살펴보는 개인 대시보드입니다.
+`world-trends-explorer`를 유지하고 `trendViewer`의 대륙별 탐색·관련 뉴스·외부 검색 흐름을 통합했습니다.
 
-![World Trends Explorer](https://img.shields.io/badge/Status-Ready%20to%20Run-brightgreen)
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
-![Flask](https://img.shields.io/badge/Flask-Latest-orange)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-yellow)
-![D3.js](https://img.shields.io/badge/D3.js-v7-purple)
-![Testing](https://img.shields.io/badge/Tests-Comprehensive-green)
+## 실행
 
-## ✨ What's New in v1.0.6
+Python 3.10 이상만 필요합니다. 패키지 설치, API 키, 결제, 브라우저 쿠키가 필요하지 않습니다.
 
-### 🧪 **Enhanced Testing Suite**
-- **Comprehensive Frontend Unit Tests**: Interactive HTML test runner with 25+ test cases
-- **Automated Test Execution**: Python-based comprehensive test runner
-- **Visual Test Reports**: Beautiful HTML reports with success rate analysis
-- **Quality Assessment**: Automated quality rating system (Excellent/Good/Needs Improvement)
-- **Developer Experience**: Enhanced debugging tools and test coverage
-
-### 📊 **Testing Framework Features**
-- Real-time test progress visualization
-- Component-level testing (API, Utils, Charts, Maps)
-- Integration testing with mock data
-- Test result export (JSON format)
-- Auto-expanding failed test details
-- Browser-based test execution
-
-## 🚀 Core Features
-
-### 🔍 **Trend Analysis**
-- **Real-time Google Trends data** via Pytrends API
-- **Interactive time-series charts** showing interest over time
-- **Multi-keyword comparison** (up to 5 keywords)
-- **Historical data analysis** with customizable timeframes
-
-### 🗺️ **Interactive World Map**
-- **Real-world geographic visualization** using D3.js and TopoJSON
-- **Country-level interest mapping** with color-coded intensity
-- **Interactive tooltips** showing detailed trend information
-- **Click-to-explore** functionality for country-specific analysis
-
-### 📊 **Rich Data Visualization**
-- **Regional interest rankings** with top countries display
-- **Related queries analysis** (top & rising searches)
-- **Real-time trending topics** by country
-- **Export capabilities** for data and charts
-
-### 🧪 **Quality Assurance (v1.0.6)**
-- **Frontend Unit Tests**: 25+ test cases covering all components
-- **Backend API Tests**: Comprehensive API endpoint testing
-- **Integration Tests**: End-to-end workflow validation
-- **Automated Quality Assessment**: Success rate-based quality ratings
-
-## 📋 Prerequisites
-
-- **Python 3.8+** with pip
-- **Internet connection** (for Google Trends API access)
-- **Modern web browser** (Chrome, Firefox, Safari, Edge)
-
-## 🚀 Quick Start
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/gon1zau6jyun4liu5/world-trends-explorer.git
-cd world-trends-explorer
-```
-
-### 2. Start the Backend (Automated)
-```bash
-chmod +x start.sh
+```sh
 ./start.sh
+# 또는
+python3 backend/desk_server.py --port 49480
 ```
 
-The script will:
-- Create a virtual environment
-- Install Python dependencies
-- Start the Flask server on `http://localhost:5000`
+브라우저에서 `http://127.0.0.1:49480`을 엽니다. 화면과 데이터 API는 같은 서버에서 제공합니다.
 
-### 3. Open the Frontend
-```bash
-# Option 1: Open directly in browser
-open frontend/index.html
+## 기능
 
-# Option 2: Use Python's built-in server
-cd frontend
-python -m http.server 8000
-# Then visit http://localhost:8000
+- 전세계가 기본 화면이며 나라당 화제 1개 표시, 국가별 1·3·5·10개·전체 선택
+- 화제가 없는 국가는 기본으로 숨기고, 필요할 때 수신 상태·현지 뉴스 조회 표시
+- 관심 국가의 초기 선택은 한국·일본·미국
+- 처음부터 펼쳐지는 대형 회전 지구본, 드래그·방향키·자동 회전·확대/축소
+- 처음 위치로 복귀하거나 지구본을 다시 펼치면 회전 재시작
+- 국가 이름과 대표 도시 시각을 마우스 오버·키보드 포커스 시 표시
+- 현재 태양 위치에 따른 낮/밤 음영, 낮쪽·밤쪽 이동, 30초 시계 갱신
+- 주요 도시의 현지 시각·날짜·UTC 시차, 서머타임 및 30분/45분 시차 반영
+- 실제 RSS 응답을 확인한 125개 국가·지역, 5개 대륙 탐색, 지도 선택
+- 관심 국가 1~8개 선택, 제목·기사 검색, 전체 피드 펼치기
+- 모든 화제에 관련 뉴스 썸네일과 출처 표시: Google RSS 기사 순서를 우선하며 이미지 실패 시 다음 후보로 전환
+- 관련 기사 원문과 Google 번역 연결, Google·뉴스·YouTube 검색
+- 화제 저장 및 기기 간 동일한 국가 설정·저장 목록
+- 화면이 열려 있는 동안 10분마다 확인, 국가별 요청 중복 방지와 10분 캐시
+- 수집 실패 시 마지막 수신 목록·시각과 오류 표시, 1분 재시도 간격
+- 모바일 화면 대응, 키보드 조작, 로컬 지도 라이브러리
+
+## 데이터 소스 결정 — 2026-10-02
+
+기본 소스는 Google이 제공하는 **Trending Now RSS**입니다:
+`https://trends.google.com/trending/rss?geo=KR`
+
+Google이 공식 안내하는 RSS 내보내기이며, 정식 Google Trends JSON API와는 별개입니다.
+무료·인증 키 없이 현재 국가별 화제와 관련 기사를 받아보는 용도에 적합합니다.
+2026-10-02에 250개 국가·지역 코드를 점검해 125곳에서 비어 있지 않은 RSS를 받았습니다. 이는 관측 결과이며 개수·갱신 주기·서비스 지속을 보장하지 않습니다.
+전체 인기 순위, 정확한 검색량, 모든 급상승 검색어, 카테고리·활성 상태, 과거 시계열은 제공하지 않습니다.
+화면은 제공 순서를 유지하며 검색량은 근사치로 표시합니다. 앱의 수신 시각과 항목 시각을 구분합니다.
+
+검토한 대안:
+
+- Google Trends API: 공식 안내상 승인형 알파. 과거 검색 관심도 분석 중심이므로 즉시 사용 가능한 기본 소스로 채택하지 않았습니다.
+- Pytrends: 2025-04-17 저장소 보관. 이전 앱의 `dailytrends` 및 `realtimetrends` 주소는 직접 호출 시 404였습니다.
+- SerpAPI: 무료 월 250회, 시간당 50회. 여러 국가를 자주 살피는 기본 소스로는 한도가 작아 사용하지 않습니다.
+
+출처:
+- https://support.google.com/trends/answer/3076011?hl=en-au
+- https://developers.google.com/search/apis/trends
+- https://developers.google.com/search/blog/2025/07/trends-api
+- https://github.com/GeneralMills/pytrends
+- https://serpapi.com/pricing
+
+## 데이터 및 접속
+
+선택 국가·저장 항목·마지막 피드는 `.local/desk.sqlite3`에 보관하며 Git에서 제외합니다.
+`--data-dir`로 저장 위치를 바꿀 수 있습니다. 사용자 설정을 옮기려면 서버를 중지하고 해당 디렉터리를 복사합니다.
+
+기본 실행은 루프백 전용입니다. 기존 개인 앱 포털과 연결하려면 `LOCAL_APPS_PORTAL`에 포털 디렉터리를 지정합니다.
+포털의 `network.json`에서 Tailscale 주소를 읽어 그 주소에만 추가 리스너를 열고,
+`access.py`의 기존 기기 허용 목록·암호 로그인·IP에 결합된 세션을 재사용합니다.
+원격 리스너 생성에 실패하면 설정된 원격 접속이 동작하는 것처럼 실행하지 않고 종료합니다.
+
+모든 원격 화면·정적 파일·API에 인증을 적용합니다. 변경 API는 동일 Origin과 CSRF 토큰을 모두 요구합니다.
+API는 상대 경로이며 포털 링크는 현재 호스트를 사용합니다. 새 계정·공개 배포·추가 허용 기기를 만들지 않습니다.
+
+## 검증
+
+```sh
+python3 -m unittest discover -s tests -p test_desk.py -v
+node --check frontend/desk/desk.js
+node --test tests/globe.test.cjs
 ```
 
-### 4. Start Exploring! 🎉
-- Enter any keyword (e.g., "cryptocurrency", "climate change", "olympics")
-- Click on countries in the interactive map
-- Watch real-time data visualization
-- Explore trending topics by region
+회귀 검증은 피드 파싱·잘못된 링크 제거·캐시·통신 실패·잘못된 응답·영구 저장·CSRF/Origin·파일 노출 방지를 다룹니다.
+기존 SerpAPI용 테스트와 실행 설명은 새 대시보드와 별개입니다.
 
-## 🧪 Testing (v1.0.6)
+## 이전 앱과의 관계
 
-### Quick Test Execution
-```bash
-# Comprehensive test suite (All tests + HTML report)
-python run_comprehensive_tests.py
+기존 `backend/app.py`, `frontend/index.html`, 분석용 차트·지도 코드와 테스트는 보존합니다.
+새 기본 진입점은 `backend/desk_server.py`와 `frontend/desk/`입니다.
+이전 분석 화면과 SerpAPI 서버는 새 대시보드에서 서비스하지 않습니다.
+`trendViewer` 저장소 및 기존 DB는 수정하거나 삭제하지 않았습니다. 이전 데이터의 자동 이관은 수행하지 않습니다.
+과거 문서는 [LEGACY_README.md](docs/LEGACY_README.md)에 있습니다.
 
-# Frontend tests only (Browser-based)
-open frontend/tests/unit-tests.html
+지도는 기존 앱과 같은 D3·TopoJSON·world-atlas를 사용합니다.
+고정 버전의 로컬 파일과 각 라이선스는 `frontend/desk/vendor/`에 포함했습니다.
 
-# Backend API tests only
-cd backend
-python test_api_connection.py
-python verify_api.py
-```
+지구본은 D3 직교 투영으로 회전합니다. 낮·밤 경계는 NOAA의 근사 태양 위치식으로 계산하며
+대기 굴절이나 지형을 반영한 정확한 일출·일몰 예보는 아닙니다. 도시 시계는 브라우저의 IANA 시간대 데이터를 사용합니다.
+시간 표시는 대표 도시 기준이며 정치적 시간대 경계 지도를 뜻하지 않습니다.
+태양 계산 근거: https://gml.noaa.gov/grad/solcalc/solareqns.PDF
 
-### Test Features
-- **Real-time Progress**: Visual progress bars and live updates
-- **Quality Assessment**: 80%+ = Excellent, 60-80% = Good, <60% = Needs Improvement  
-- **Detailed Reports**: HTML reports with expandable failed tests
-- **Export Options**: JSON export for test results
-- **Mock Integration**: Offline testing with realistic mock data
+썸네일은 RSS에 포함된 Google 호스팅 이미지를 브라우저에서 직접 표시합니다. 관련도는 Google의 관련 뉴스 제공 순서를 사용하며 별도 점수를 추정하지 않습니다. 이미지가 없거나 모두 실패하면 대체 화면을 표시합니다.
 
-### Test Coverage
-- ✅ **API Module**: TrendsAPI initialization, caching, data validation
-- ✅ **Utilities**: Date formatting, text processing, data sorting
-- ✅ **Charts**: TrendsChart and RegionalChart components
-- ✅ **World Map**: Interactive map functionality and data binding
-- ✅ **Integration**: End-to-end workflow and error handling
 
-## 📁 Project Structure
+### 국가 범위 및 현지 뉴스 보완 (2026-10-02)
+- `backend/countries.json`: Google RSS 125곳 + 현지 뉴스 조회 대상 73곳 = 198개 국가·지역.
+- 국가 코드·한국어 이름·대륙: https://github.com/mledoze/countries (ODbL). RSS 지원 여부는 직접 조회해 기록. 재분배 데이터에도 원본 라이선스를 유지합니다.
+- Google 요청은 화면에서 최대 4개씩, 서버에서도 최대 4개씩 처리하며 10분 캐시를 공유합니다.
+- GDELT DOC API: 해당 국가 언론(sourcecountry)의 최근 24시간 기사. 국가에서 일어난 사건만을 뜻하거나 대중의 검색 인기를 뜻하지 않습니다.
+- 뉴스는 지도에서 국가 선택 또는 카드의 조회 버튼으로 요청합니다. 전체 국가 자동 뉴스 조회는 하지 않습니다. 최소 6초 간격, 제한 응답은 60초 후 재시도하며 기존 데이터를 보존합니다.
+- 유사한 제목(단어 집합 Jaccard 0.65 이상)을 보수적으로 묶습니다. 다국어 의미 분석이나 실제 인기 순위가 아닙니다. 시각은 기사 발행 시각이 아니라 GDELT 수집 시각입니다.
+- 실제 GDELT 연결은 요청 제한 응답을 받았습니다. 파서·캐시·제한 처리는 오프라인 테스트했으나 실시간 뉴스 수신은 미확인입니다.
+- 뉴스 썸네일은 GDELT가 제공하는 HTTPS 이미지가 있을 때 직접 표시하며 실패 시 대체 화면을 표시합니다.
 
-```
-world-trends-explorer/
-├── 🐍 backend/
-│   ├── app.py                    # Main Flask application
-│   ├── requirements.txt          # Python dependencies
-│   ├── test_api_connection.py    # API connectivity tests
-│   ├── test_api_unit.py         # Unit tests for API functions
-│   ├── test_backend_api.py      # Backend endpoint tests
-│   ├── verify_api.py            # Quick API verification
-│   └── mock_server.py           # Mock server for testing
-├── 🌐 frontend/
-│   ├── index.html               # Main HTML page (v1.0.6)
-│   ├── css/
-│   │   └── styles.css           # Enhanced CSS with test styles
-│   ├── js/
-│   │   ├── api.js               # API communication layer
-│   │   ├── worldmap.js          # D3.js world map component
-│   │   ├── chart.js             # Chart.js visualization
-│   │   └── app.js               # Main application logic
-│   └── tests/
-│       └── unit-tests.html      # Frontend test suite (v1.0.6)
-├── 📚 docs/
-│   ├── DOCKER.md               # Docker deployment guide
-│   ├── FEATURE_SPEC.md         # Feature specifications (v1.0.6)
-│   └── API.md                  # API documentation
-├── 🔧 scripts/
-│   └── deploy.sh               # Deployment automation
-├── 📋 Test Reports/
-│   ├── run_comprehensive_tests.py  # Comprehensive test runner
-│   └── RELEASE_NOTES.md            # Version history (v1.0.6)
-├── start.sh                    # Quick start script
-└── README.md                   # This file
-```
+국가 확대 직후 Google 재조회에서도 HTTP 429를 관측했습니다. 수신 확인과 앱 캐시는 별개이며, 신규 107곳의 앱 내 수신은 제한 해제 후 확인이 필요합니다. Google 429 시 전체 Google 조회를 15분간 중단하고 기존 캐시를 유지합니다.
 
-## 🔗 API Endpoints
 
-The backend provides a comprehensive REST API:
+### 화면 언어와 제목 번역
+설정 탭에서 한국어·일본어·영어를 선택합니다. 화면 문구, 국가·도시 이름, 날짜 및 기사 번역 링크가 선택한 언어를 따릅니다. 언어와 빈 국가 표시 설정은 SQLite에 저장되어 연결된 기기에서 재사용됩니다.
 
-### Core Endpoints
-- `GET /api/trends/health` - Health check
-- `GET /api/trends/search?keyword={term}&geo={country}` - Search trends
-- `GET /api/trends/trending?geo={country}` - Get trending searches
-- `GET /api/trends/suggestions?keyword={term}` - Keyword suggestions
-- `GET /api/trends/countries` - Available countries
-- `POST /api/trends/compare` - Compare multiple keywords
+상세 모달은 원문을 보존하고 제목별 기계 번역을 병기합니다. 공개된 제목만 MyMemory의 `get` API로 요청합니다. API 키 없이 사용하며 공개 무료 서비스의 사용량 제한과 품질·가용성 제약을 받습니다. 결과는 원문·목표 언어별로 로컬에 저장합니다. 긴 제목은 500바이트 이내로 나누므로 번역 문맥이 일부 손실될 수 있습니다. 실패 시 원문, 다시 시도, Google 번역 링크를 제공합니다. 번역문은 뉴스의 사실 확인이나 정확한 의미를 보장하지 않습니다.
 
-### Example API Usage
-```bash
-# Search for "artificial intelligence" trends in the US
-curl "http://localhost:5000/api/trends/search?keyword=artificial%20intelligence&geo=US"
+- 제공처: https://mymemory.translated.net/doc/spec.php
+- 사용량 안내: https://mymemory.translated.net/doc/usagelimits.php
+- 지구본은 기본 자동 회전을 유지하되 운영체제의 동작 줄이기 설정에서는 자동 시작하지 않습니다. 회전 버튼으로 직접 시작할 수 있습니다.
 
-# Get trending searches in Japan
-curl "http://localhost:5000/api/trends/trending?geo=JP"
-
-# Health check
-curl "http://localhost:5000/api/trends/health"
-```
-
-## 🛠️ Manual Installation
-
-### Backend Setup
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the server
-python app.py
-```
-
-### Frontend Setup
-```bash
-cd frontend
-
-# Method 1: Open directly
-open index.html
-
-# Method 2: Use local server
-python -m http.server 8000
-# Visit http://localhost:8000
-
-# Method 3: Use Node.js server (if you have Node.js)
-npx serve .
-```
-
-## 🐳 Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Backend will be available at http://localhost:5000
-# Frontend will be available at http://localhost:80
-```
-
-See [`docs/DOCKER.md`](docs/DOCKER.md) for detailed Docker configuration.
-
-## 🌟 Usage Examples
-
-### 1. **Technology Trends**
-Search for "artificial intelligence", "blockchain", or "quantum computing" to see global technology adoption patterns.
-
-### 2. **Cultural Events**
-Explore "olympics", "world cup", or "eurovision" to see international event interest.
-
-### 3. **Economic Indicators**
-Track "inflation", "stock market", or "cryptocurrency" for economic trend analysis.
-
-### 4. **Health & Wellness**
-Monitor "meditation", "fitness", or "mental health" trends globally.
-
-### 5. **Comparison Analysis**
-Compare multiple terms like "tesla vs bmw" or "python vs javascript" to see relative interest.
-
-## 🔧 Configuration
-
-### Environment Variables
-```bash
-# Backend configuration (optional)
-FLASK_DEBUG=True          # Enable debug mode
-FLASK_ENV=development     # Set environment
-PORT=5000                 # Server port
-```
-
-### API Configuration
-The frontend API URL can be configured in `frontend/js/api.js`:
-```javascript
-// Change the base URL for production deployment
-const baseURL = 'https://your-api-domain.com/api/trends';
-```
-
-## 📊 Quality Metrics (v1.0.6)
-
-### Test Suite Results
-- **Total Test Cases**: 25+ comprehensive tests
-- **Code Coverage**: Core functionality 80%+
-- **Success Rate Target**: 80% for excellent quality
-- **Performance**: API response <5s, Map rendering <2s
-- **Browser Support**: Chrome, Firefox, Safari, Edge (latest versions)
-
-### Quality Assurance Process
-1. **Pre-commit**: Unit tests execution
-2. **Feature Development**: Test-driven development
-3. **Integration**: End-to-end testing
-4. **Release**: Comprehensive test suite validation
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**1. "Failed to fetch trends data" Error**
-- Check if the backend server is running on `http://localhost:5000`
-- Verify internet connection for Google Trends API access
-- Try different keywords or regions
-
-**2. World Map Not Loading**
-- Ensure D3.js and TopoJSON are loaded correctly
-- Check browser console for JavaScript errors
-- Verify the world atlas data is accessible
-
-**3. Python Dependencies Issues**
-```bash
-# Update pip and try again
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-**4. CORS Issues**
-- Make sure Flask-CORS is installed: `pip install flask-cors`
-- Backend includes CORS headers for frontend integration
-
-**5. Tests Failing**
-```bash
-# Run comprehensive test diagnosis
-python run_comprehensive_tests.py
-
-# Check individual test components
-open frontend/tests/unit-tests.html
-```
-
-### Performance Tips
-- Use caching for repeated queries (built-in 5-minute cache)
-- Limit concurrent API requests
-- Consider rate limiting for production deployment
-
-### Test-Specific Troubleshooting (v1.0.6)
-- **Frontend Tests**: Ensure all CDN resources are loaded
-- **Backend Tests**: Verify Python environment and dependencies
-- **Integration Tests**: Check API connectivity and mock data
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
-
-### Development Workflow (v1.0.6)
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Write tests**: Add unit tests for new features
-4. **Run test suite**: `python run_comprehensive_tests.py`
-5. **Commit changes**: `git commit -m 'Add amazing feature'`
-6. **Push to branch**: `git push origin feature/amazing-feature`
-7. **Open a Pull Request**
-
-### Quality Guidelines
-- Maintain 80%+ test success rate
-- Add unit tests for new features
-- Update documentation for API changes
-- Follow existing code style
-
-## 📜 Version History
-
-### v1.0.6 (2025-07-13) 🧪
-**Major Feature: Comprehensive Testing Suite**
-- ✅ Interactive frontend unit test framework
-- ✅ Automated comprehensive test runner
-- ✅ Visual HTML test reports with quality assessment
-- ✅ Enhanced developer experience and debugging tools
-
-### v1.0.5 (2025-07-12) 🔧
-**Major Feature: API Testing & Verification System**
-- ✅ Google Trends API connection testing
-- ✅ Backend endpoint validation
-- ✅ Automated test execution scripts
-
-### v1.0.4 (2025-07-12) 🗺️
-**Major Feature: Interactive World Map**
-- ✅ D3.js + TopoJSON world map implementation
-- ✅ Country-level click interactions
-- ✅ Real-time data visualization
-
-### Previous Versions
-- **v1.0.3**: UI/UX improvements, mobile optimization
-- **v1.0.2**: API error handling, chart performance
-- **v1.0.1**: Bug fixes, documentation
-- **v1.0.0**: Initial release
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🙏 Acknowledgments
-
-- **[Pytrends](https://github.com/GeneralMills/pytrends)** - Unofficial Google Trends API
-- **[D3.js](https://d3js.org/)** - Data visualization library
-- **[Chart.js](https://www.chartjs.org/)** - Chart rendering library
-- **[Flask](https://flask.palletsprojects.com/)** - Python web framework
-- **[Natural Earth](https://www.naturalearthdata.com/)** - World map data
-
-## 📞 Support
-
-For questions or support:
-- 📧 Open an issue on GitHub
-- 💬 Check existing issues for solutions
-- 📖 Review the documentation in the `docs/` folder
-- 🧪 Run the test suite for diagnostics: `python run_comprehensive_tests.py`
-
----
-
-**Happy Trend Exploring! 🌍📈**
-
-*Built with ❤️ for data visualization and global insights*  
-*v1.0.6 - Enhanced with comprehensive testing suite for reliable, quality-assured trend analysis*
+국가 버튼과 화제 카드는 관심 국가를 먼저 표시하고 각 그룹에서 현재 화면 언어의 국가명순(`Intl.Collator`)으로 정렬합니다. 비동기 수신 순서가 국가 배치를 바꾸지 않습니다. 화제 카드에는 원문만 표시하며, 목록 조회나 스크롤은 번역 요청을 발생시키지 않습니다. 상세 모달을 열 때만 번역하며 같은 원문·언어의 결과는 재사용합니다.

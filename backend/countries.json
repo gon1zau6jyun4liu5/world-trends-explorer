@@ -1,0 +1,1784 @@
+[
+  {
+    "code": "KR",
+    "name": "한국",
+    "region": "아시아",
+    "mapId": "410",
+    "source": "google",
+    "newsCountry": "southkorea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "JP",
+    "name": "일본",
+    "region": "아시아",
+    "mapId": "392",
+    "source": "google",
+    "newsCountry": "japan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "US",
+    "name": "미국",
+    "region": "아메리카",
+    "mapId": "840",
+    "source": "google",
+    "newsCountry": "unitedstates",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TW",
+    "name": "대만",
+    "region": "아시아",
+    "mapId": "158",
+    "source": "google",
+    "newsCountry": "taiwan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IN",
+    "name": "인도",
+    "region": "아시아",
+    "mapId": "356",
+    "source": "google",
+    "newsCountry": "india",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ID",
+    "name": "인도네시아",
+    "region": "아시아",
+    "mapId": "360",
+    "source": "google",
+    "newsCountry": "indonesia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SG",
+    "name": "싱가포르",
+    "region": "아시아",
+    "mapId": "702",
+    "source": "google",
+    "newsCountry": "singapore",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GB",
+    "name": "영국",
+    "region": "유럽",
+    "mapId": "826",
+    "source": "google",
+    "newsCountry": "unitedkingdom",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "FR",
+    "name": "프랑스",
+    "region": "유럽",
+    "mapId": "250",
+    "source": "google",
+    "newsCountry": "france",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DE",
+    "name": "독일",
+    "region": "유럽",
+    "mapId": "276",
+    "source": "google",
+    "newsCountry": "germany",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IT",
+    "name": "이탈리아",
+    "region": "유럽",
+    "mapId": "380",
+    "source": "google",
+    "newsCountry": "italy",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ES",
+    "name": "스페인",
+    "region": "유럽",
+    "mapId": "724",
+    "source": "google",
+    "newsCountry": "spain",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CA",
+    "name": "캐나다",
+    "region": "아메리카",
+    "mapId": "124",
+    "source": "google",
+    "newsCountry": "canada",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BR",
+    "name": "브라질",
+    "region": "아메리카",
+    "mapId": "076",
+    "source": "google",
+    "newsCountry": "brazil",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MX",
+    "name": "멕시코",
+    "region": "아메리카",
+    "mapId": "484",
+    "source": "google",
+    "newsCountry": "mexico",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AR",
+    "name": "아르헨티나",
+    "region": "아메리카",
+    "mapId": "032",
+    "source": "google",
+    "newsCountry": "argentina",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AU",
+    "name": "호주",
+    "region": "오세아니아",
+    "mapId": "036",
+    "source": "google",
+    "newsCountry": "australia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ZA",
+    "name": "남아프리카공화국",
+    "region": "아프리카",
+    "mapId": "710",
+    "source": "google",
+    "newsCountry": "southafrica",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GY",
+    "name": "가이아나",
+    "region": "아메리카",
+    "mapId": "328",
+    "source": "gdelt",
+    "newsCountry": "guyana",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GT",
+    "name": "과테말라",
+    "region": "아메리카",
+    "mapId": "320",
+    "source": "google",
+    "newsCountry": "guatemala",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GD",
+    "name": "그레나다",
+    "region": "아메리카",
+    "mapId": "308",
+    "source": "gdelt",
+    "newsCountry": "grenada",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NI",
+    "name": "니카라과",
+    "region": "아메리카",
+    "mapId": "558",
+    "source": "google",
+    "newsCountry": "nicaragua",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DM",
+    "name": "도미니카 연방",
+    "region": "아메리카",
+    "mapId": "212",
+    "source": "gdelt",
+    "newsCountry": "dominica",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DO",
+    "name": "도미니카 공화국",
+    "region": "아메리카",
+    "mapId": "214",
+    "source": "google",
+    "newsCountry": "dominicanrepublic",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BB",
+    "name": "바베이도스",
+    "region": "아메리카",
+    "mapId": "052",
+    "source": "gdelt",
+    "newsCountry": "barbados",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BS",
+    "name": "바하마",
+    "region": "아메리카",
+    "mapId": "044",
+    "source": "gdelt",
+    "newsCountry": "bahamas",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "VE",
+    "name": "베네수엘라",
+    "region": "아메리카",
+    "mapId": "862",
+    "source": "google",
+    "newsCountry": "venezuela",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BZ",
+    "name": "벨리즈",
+    "region": "아메리카",
+    "mapId": "084",
+    "source": "gdelt",
+    "newsCountry": "belize",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BO",
+    "name": "볼리비아",
+    "region": "아메리카",
+    "mapId": "068",
+    "source": "google",
+    "newsCountry": "bolivia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LC",
+    "name": "세인트루시아",
+    "region": "아메리카",
+    "mapId": "662",
+    "source": "gdelt",
+    "newsCountry": "saintlucia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "VC",
+    "name": "세인트빈센트 그레나딘",
+    "region": "아메리카",
+    "mapId": "670",
+    "source": "gdelt",
+    "newsCountry": "saintvincentandthegrenadines",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KN",
+    "name": "세인트키츠 네비스",
+    "region": "아메리카",
+    "mapId": "659",
+    "source": "gdelt",
+    "newsCountry": "saintkittsandnevis",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SR",
+    "name": "수리남",
+    "region": "아메리카",
+    "mapId": "740",
+    "source": "gdelt",
+    "newsCountry": "suriname",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "HT",
+    "name": "아이티",
+    "region": "아메리카",
+    "mapId": "332",
+    "source": "google",
+    "newsCountry": "haiti",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AG",
+    "name": "앤티가 바부다",
+    "region": "아메리카",
+    "mapId": "028",
+    "source": "gdelt",
+    "newsCountry": "antiguaandbarbuda",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "EC",
+    "name": "에콰도르",
+    "region": "아메리카",
+    "mapId": "218",
+    "source": "google",
+    "newsCountry": "ecuador",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SV",
+    "name": "엘살바도르",
+    "region": "아메리카",
+    "mapId": "222",
+    "source": "google",
+    "newsCountry": "elsalvador",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "HN",
+    "name": "온두라스",
+    "region": "아메리카",
+    "mapId": "340",
+    "source": "google",
+    "newsCountry": "honduras",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "UY",
+    "name": "우루과이",
+    "region": "아메리카",
+    "mapId": "858",
+    "source": "google",
+    "newsCountry": "uruguay",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "JM",
+    "name": "자메이카",
+    "region": "아메리카",
+    "mapId": "388",
+    "source": "google",
+    "newsCountry": "jamaica",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CL",
+    "name": "칠레",
+    "region": "아메리카",
+    "mapId": "152",
+    "source": "google",
+    "newsCountry": "chile",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CR",
+    "name": "코스타리카",
+    "region": "아메리카",
+    "mapId": "188",
+    "source": "google",
+    "newsCountry": "costarica",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CO",
+    "name": "콜롬비아",
+    "region": "아메리카",
+    "mapId": "170",
+    "source": "google",
+    "newsCountry": "colombia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CU",
+    "name": "쿠바",
+    "region": "아메리카",
+    "mapId": "192",
+    "source": "google",
+    "newsCountry": "cuba",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TT",
+    "name": "트리니다드 토바고",
+    "region": "아메리카",
+    "mapId": "780",
+    "source": "google",
+    "newsCountry": "trinidadandtobago",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PA",
+    "name": "파나마",
+    "region": "아메리카",
+    "mapId": "591",
+    "source": "google",
+    "newsCountry": "panama",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PY",
+    "name": "파라과이",
+    "region": "아메리카",
+    "mapId": "600",
+    "source": "google",
+    "newsCountry": "paraguay",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PE",
+    "name": "페루",
+    "region": "아메리카",
+    "mapId": "604",
+    "source": "google",
+    "newsCountry": "peru",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PR",
+    "name": "푸에르토리코",
+    "region": "아메리카",
+    "mapId": "630",
+    "source": "google",
+    "newsCountry": "puertorico",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NP",
+    "name": "네팔",
+    "region": "아시아",
+    "mapId": "524",
+    "source": "google",
+    "newsCountry": "nepal",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TL",
+    "name": "동티모르",
+    "region": "아시아",
+    "mapId": "626",
+    "source": "gdelt",
+    "newsCountry": "timor-leste",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LA",
+    "name": "라오스",
+    "region": "아시아",
+    "mapId": "418",
+    "source": "gdelt",
+    "newsCountry": "laos",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LB",
+    "name": "레바논",
+    "region": "아시아",
+    "mapId": "422",
+    "source": "google",
+    "newsCountry": "lebanon",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MY",
+    "name": "말레이시아",
+    "region": "아시아",
+    "mapId": "458",
+    "source": "google",
+    "newsCountry": "malaysia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MV",
+    "name": "몰디브",
+    "region": "아시아",
+    "mapId": "462",
+    "source": "gdelt",
+    "newsCountry": "maldives",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MN",
+    "name": "몽골",
+    "region": "아시아",
+    "mapId": "496",
+    "source": "gdelt",
+    "newsCountry": "mongolia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MM",
+    "name": "미얀마",
+    "region": "아시아",
+    "mapId": "104",
+    "source": "google",
+    "newsCountry": "myanmar",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BH",
+    "name": "바레인",
+    "region": "아시아",
+    "mapId": "048",
+    "source": "google",
+    "newsCountry": "bahrain",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BD",
+    "name": "방글라데시",
+    "region": "아시아",
+    "mapId": "050",
+    "source": "google",
+    "newsCountry": "bangladesh",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "VN",
+    "name": "베트남",
+    "region": "아시아",
+    "mapId": "704",
+    "source": "google",
+    "newsCountry": "vietnam",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BT",
+    "name": "부탄",
+    "region": "아시아",
+    "mapId": "064",
+    "source": "gdelt",
+    "newsCountry": "bhutan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KP",
+    "name": "북한",
+    "region": "아시아",
+    "mapId": "408",
+    "source": "gdelt",
+    "newsCountry": "northkorea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BN",
+    "name": "브루나이",
+    "region": "아시아",
+    "mapId": "096",
+    "source": "gdelt",
+    "newsCountry": "brunei",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SA",
+    "name": "사우디아라비아",
+    "region": "아시아",
+    "mapId": "682",
+    "source": "google",
+    "newsCountry": "saudiarabia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LK",
+    "name": "스리랑카",
+    "region": "아시아",
+    "mapId": "144",
+    "source": "google",
+    "newsCountry": "srilanka",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SY",
+    "name": "시리아",
+    "region": "아시아",
+    "mapId": "760",
+    "source": "google",
+    "newsCountry": "syria",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AE",
+    "name": "아랍에미리트",
+    "region": "아시아",
+    "mapId": "784",
+    "source": "google",
+    "newsCountry": "unitedarabemirates",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AM",
+    "name": "아르메니아",
+    "region": "아시아",
+    "mapId": "051",
+    "source": "google",
+    "newsCountry": "armenia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AZ",
+    "name": "아제르바이잔",
+    "region": "아시아",
+    "mapId": "031",
+    "source": "google",
+    "newsCountry": "azerbaijan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AF",
+    "name": "아프가니스탄",
+    "region": "아시아",
+    "mapId": "004",
+    "source": "gdelt",
+    "newsCountry": "afghanistan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "YE",
+    "name": "예멘",
+    "region": "아시아",
+    "mapId": "887",
+    "source": "google",
+    "newsCountry": "yemen",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "OM",
+    "name": "오만",
+    "region": "아시아",
+    "mapId": "512",
+    "source": "google",
+    "newsCountry": "oman",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "JO",
+    "name": "요르단",
+    "region": "아시아",
+    "mapId": "400",
+    "source": "google",
+    "newsCountry": "jordan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "UZ",
+    "name": "우즈베키스탄",
+    "region": "아시아",
+    "mapId": "860",
+    "source": "google",
+    "newsCountry": "uzbekistan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IQ",
+    "name": "이라크",
+    "region": "아시아",
+    "mapId": "368",
+    "source": "google",
+    "newsCountry": "iraq",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IR",
+    "name": "이란",
+    "region": "아시아",
+    "mapId": "364",
+    "source": "google",
+    "newsCountry": "iran",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IL",
+    "name": "이스라엘",
+    "region": "아시아",
+    "mapId": "376",
+    "source": "google",
+    "newsCountry": "israel",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GE",
+    "name": "조지아",
+    "region": "아시아",
+    "mapId": "268",
+    "source": "google",
+    "newsCountry": "georgia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CN",
+    "name": "중국",
+    "region": "아시아",
+    "mapId": "156",
+    "source": "gdelt",
+    "newsCountry": "china",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KZ",
+    "name": "카자흐스탄",
+    "region": "아시아",
+    "mapId": "398",
+    "source": "google",
+    "newsCountry": "kazakhstan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "QA",
+    "name": "카타르",
+    "region": "아시아",
+    "mapId": "634",
+    "source": "google",
+    "newsCountry": "qatar",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KH",
+    "name": "캄보디아",
+    "region": "아시아",
+    "mapId": "116",
+    "source": "google",
+    "newsCountry": "cambodia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KW",
+    "name": "쿠웨이트",
+    "region": "아시아",
+    "mapId": "414",
+    "source": "google",
+    "newsCountry": "kuwait",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KG",
+    "name": "키르기스스탄",
+    "region": "아시아",
+    "mapId": "417",
+    "source": "google",
+    "newsCountry": "kyrgyzstan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TJ",
+    "name": "타지키스탄",
+    "region": "아시아",
+    "mapId": "762",
+    "source": "gdelt",
+    "newsCountry": "tajikistan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TH",
+    "name": "태국",
+    "region": "아시아",
+    "mapId": "764",
+    "source": "google",
+    "newsCountry": "thailand",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TR",
+    "name": "튀르키예",
+    "region": "아시아",
+    "mapId": "792",
+    "source": "google",
+    "newsCountry": "türkiye",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TM",
+    "name": "투르크메니스탄",
+    "region": "아시아",
+    "mapId": "795",
+    "source": "google",
+    "newsCountry": "turkmenistan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PK",
+    "name": "파키스탄",
+    "region": "아시아",
+    "mapId": "586",
+    "source": "google",
+    "newsCountry": "pakistan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PS",
+    "name": "팔레스타인",
+    "region": "아시아",
+    "mapId": "275",
+    "source": "google",
+    "newsCountry": "palestine",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PH",
+    "name": "필리핀",
+    "region": "아시아",
+    "mapId": "608",
+    "source": "google",
+    "newsCountry": "philippines",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "HK",
+    "name": "홍콩",
+    "region": "아시아",
+    "mapId": "344",
+    "source": "google",
+    "newsCountry": "hongkong",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GH",
+    "name": "가나",
+    "region": "아프리카",
+    "mapId": "288",
+    "source": "google",
+    "newsCountry": "ghana",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GA",
+    "name": "가봉",
+    "region": "아프리카",
+    "mapId": "266",
+    "source": "gdelt",
+    "newsCountry": "gabon",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GM",
+    "name": "감비아",
+    "region": "아프리카",
+    "mapId": "270",
+    "source": "gdelt",
+    "newsCountry": "gambia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GN",
+    "name": "기니",
+    "region": "아프리카",
+    "mapId": "324",
+    "source": "gdelt",
+    "newsCountry": "guinea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GW",
+    "name": "기니비사우",
+    "region": "아프리카",
+    "mapId": "624",
+    "source": "gdelt",
+    "newsCountry": "guinea-bissau",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NA",
+    "name": "나미비아",
+    "region": "아프리카",
+    "mapId": "516",
+    "source": "gdelt",
+    "newsCountry": "namibia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NG",
+    "name": "나이지리아",
+    "region": "아프리카",
+    "mapId": "566",
+    "source": "google",
+    "newsCountry": "nigeria",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SS",
+    "name": "남수단",
+    "region": "아프리카",
+    "mapId": "728",
+    "source": "gdelt",
+    "newsCountry": "southsudan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NE",
+    "name": "니제르",
+    "region": "아프리카",
+    "mapId": "562",
+    "source": "gdelt",
+    "newsCountry": "niger",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LR",
+    "name": "라이베리아",
+    "region": "아프리카",
+    "mapId": "430",
+    "source": "gdelt",
+    "newsCountry": "liberia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LS",
+    "name": "레소토",
+    "region": "아프리카",
+    "mapId": "426",
+    "source": "gdelt",
+    "newsCountry": "lesotho",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "RW",
+    "name": "르완다",
+    "region": "아프리카",
+    "mapId": "646",
+    "source": "gdelt",
+    "newsCountry": "rwanda",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LY",
+    "name": "리비아",
+    "region": "아프리카",
+    "mapId": "434",
+    "source": "google",
+    "newsCountry": "libya",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MG",
+    "name": "마다가스카르",
+    "region": "아프리카",
+    "mapId": "450",
+    "source": "gdelt",
+    "newsCountry": "madagascar",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MW",
+    "name": "말라위",
+    "region": "아프리카",
+    "mapId": "454",
+    "source": "gdelt",
+    "newsCountry": "malawi",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ML",
+    "name": "말리",
+    "region": "아프리카",
+    "mapId": "466",
+    "source": "google",
+    "newsCountry": "mali",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MA",
+    "name": "모로코",
+    "region": "아프리카",
+    "mapId": "504",
+    "source": "google",
+    "newsCountry": "morocco",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MU",
+    "name": "모리셔스",
+    "region": "아프리카",
+    "mapId": "480",
+    "source": "gdelt",
+    "newsCountry": "mauritius",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MR",
+    "name": "모리타니",
+    "region": "아프리카",
+    "mapId": "478",
+    "source": "gdelt",
+    "newsCountry": "mauritania",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MZ",
+    "name": "모잠비크",
+    "region": "아프리카",
+    "mapId": "508",
+    "source": "google",
+    "newsCountry": "mozambique",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BJ",
+    "name": "베냉",
+    "region": "아프리카",
+    "mapId": "204",
+    "source": "google",
+    "newsCountry": "benin",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BW",
+    "name": "보츠와나",
+    "region": "아프리카",
+    "mapId": "072",
+    "source": "gdelt",
+    "newsCountry": "botswana",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BI",
+    "name": "부룬디",
+    "region": "아프리카",
+    "mapId": "108",
+    "source": "gdelt",
+    "newsCountry": "burundi",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BF",
+    "name": "부르키나파소",
+    "region": "아프리카",
+    "mapId": "854",
+    "source": "google",
+    "newsCountry": "burkinafaso",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ST",
+    "name": "상투메 프린시페",
+    "region": "아프리카",
+    "mapId": "678",
+    "source": "gdelt",
+    "newsCountry": "sãotoméandpríncipe",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SN",
+    "name": "세네갈",
+    "region": "아프리카",
+    "mapId": "686",
+    "source": "google",
+    "newsCountry": "senegal",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SC",
+    "name": "세이셸",
+    "region": "아프리카",
+    "mapId": "690",
+    "source": "gdelt",
+    "newsCountry": "seychelles",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SO",
+    "name": "소말리아",
+    "region": "아프리카",
+    "mapId": "706",
+    "source": "gdelt",
+    "newsCountry": "somalia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SD",
+    "name": "수단",
+    "region": "아프리카",
+    "mapId": "729",
+    "source": "gdelt",
+    "newsCountry": "sudan",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SL",
+    "name": "시에라리온",
+    "region": "아프리카",
+    "mapId": "694",
+    "source": "gdelt",
+    "newsCountry": "sierraleone",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DZ",
+    "name": "알제리",
+    "region": "아프리카",
+    "mapId": "012",
+    "source": "google",
+    "newsCountry": "algeria",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AO",
+    "name": "앙골라",
+    "region": "아프리카",
+    "mapId": "024",
+    "source": "google",
+    "newsCountry": "angola",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ER",
+    "name": "에리트레아",
+    "region": "아프리카",
+    "mapId": "232",
+    "source": "gdelt",
+    "newsCountry": "eritrea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SZ",
+    "name": "에스와티니",
+    "region": "아프리카",
+    "mapId": "748",
+    "source": "gdelt",
+    "newsCountry": "eswatini",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ET",
+    "name": "에티오피아",
+    "region": "아프리카",
+    "mapId": "231",
+    "source": "google",
+    "newsCountry": "ethiopia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "UG",
+    "name": "우간다",
+    "region": "아프리카",
+    "mapId": "800",
+    "source": "google",
+    "newsCountry": "uganda",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "EG",
+    "name": "이집트",
+    "region": "아프리카",
+    "mapId": "818",
+    "source": "google",
+    "newsCountry": "egypt",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ZM",
+    "name": "잠비아",
+    "region": "아프리카",
+    "mapId": "894",
+    "source": "google",
+    "newsCountry": "zambia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GQ",
+    "name": "적도 기니",
+    "region": "아프리카",
+    "mapId": "226",
+    "source": "gdelt",
+    "newsCountry": "equatorialguinea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CF",
+    "name": "중앙아프리카 공화국",
+    "region": "아프리카",
+    "mapId": "140",
+    "source": "gdelt",
+    "newsCountry": "centralafricanrepublic",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DJ",
+    "name": "지부티",
+    "region": "아프리카",
+    "mapId": "262",
+    "source": "gdelt",
+    "newsCountry": "djibouti",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ZW",
+    "name": "짐바브웨",
+    "region": "아프리카",
+    "mapId": "716",
+    "source": "google",
+    "newsCountry": "zimbabwe",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TD",
+    "name": "차드",
+    "region": "아프리카",
+    "mapId": "148",
+    "source": "gdelt",
+    "newsCountry": "chad",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CM",
+    "name": "카메룬",
+    "region": "아프리카",
+    "mapId": "120",
+    "source": "google",
+    "newsCountry": "cameroon",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CV",
+    "name": "카보베르데",
+    "region": "아프리카",
+    "mapId": "132",
+    "source": "gdelt",
+    "newsCountry": "capeverde",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KE",
+    "name": "케냐",
+    "region": "아프리카",
+    "mapId": "404",
+    "source": "google",
+    "newsCountry": "kenya",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KM",
+    "name": "코모로",
+    "region": "아프리카",
+    "mapId": "174",
+    "source": "gdelt",
+    "newsCountry": "comoros",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CI",
+    "name": "코트디부아르",
+    "region": "아프리카",
+    "mapId": "384",
+    "source": "google",
+    "newsCountry": "ivorycoast",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CG",
+    "name": "콩고",
+    "region": "아프리카",
+    "mapId": "178",
+    "source": "gdelt",
+    "newsCountry": "congo",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CD",
+    "name": "콩고 민주 공화국",
+    "region": "아프리카",
+    "mapId": "180",
+    "source": "google",
+    "newsCountry": "drcongo",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TZ",
+    "name": "탄자니아",
+    "region": "아프리카",
+    "mapId": "834",
+    "source": "google",
+    "newsCountry": "tanzania",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TG",
+    "name": "토고",
+    "region": "아프리카",
+    "mapId": "768",
+    "source": "gdelt",
+    "newsCountry": "togo",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TN",
+    "name": "튀니지",
+    "region": "아프리카",
+    "mapId": "788",
+    "source": "google",
+    "newsCountry": "tunisia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NR",
+    "name": "나우루",
+    "region": "오세아니아",
+    "mapId": "520",
+    "source": "gdelt",
+    "newsCountry": "nauru",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NZ",
+    "name": "뉴질랜드",
+    "region": "오세아니아",
+    "mapId": "554",
+    "source": "google",
+    "newsCountry": "newzealand",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MH",
+    "name": "마셜 제도",
+    "region": "오세아니아",
+    "mapId": "584",
+    "source": "gdelt",
+    "newsCountry": "marshallislands",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "FM",
+    "name": "미크로네시아",
+    "region": "오세아니아",
+    "mapId": "583",
+    "source": "gdelt",
+    "newsCountry": "micronesia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "VU",
+    "name": "바누아투",
+    "region": "오세아니아",
+    "mapId": "548",
+    "source": "gdelt",
+    "newsCountry": "vanuatu",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "WS",
+    "name": "사모아",
+    "region": "오세아니아",
+    "mapId": "882",
+    "source": "gdelt",
+    "newsCountry": "samoa",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SB",
+    "name": "솔로몬 제도",
+    "region": "오세아니아",
+    "mapId": "090",
+    "source": "gdelt",
+    "newsCountry": "solomonislands",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "KI",
+    "name": "키리바시",
+    "region": "오세아니아",
+    "mapId": "296",
+    "source": "gdelt",
+    "newsCountry": "kiribati",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TO",
+    "name": "통가",
+    "region": "오세아니아",
+    "mapId": "776",
+    "source": "gdelt",
+    "newsCountry": "tonga",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "TV",
+    "name": "투발루",
+    "region": "오세아니아",
+    "mapId": "798",
+    "source": "gdelt",
+    "newsCountry": "tuvalu",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PG",
+    "name": "파푸아뉴기니",
+    "region": "오세아니아",
+    "mapId": "598",
+    "source": "gdelt",
+    "newsCountry": "papuanewguinea",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PW",
+    "name": "팔라우",
+    "region": "오세아니아",
+    "mapId": "585",
+    "source": "gdelt",
+    "newsCountry": "palau",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "FJ",
+    "name": "피지",
+    "region": "오세아니아",
+    "mapId": "242",
+    "source": "gdelt",
+    "newsCountry": "fiji",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "GR",
+    "name": "그리스",
+    "region": "유럽",
+    "mapId": "300",
+    "source": "google",
+    "newsCountry": "greece",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NL",
+    "name": "네덜란드",
+    "region": "유럽",
+    "mapId": "528",
+    "source": "google",
+    "newsCountry": "netherlands",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "NO",
+    "name": "노르웨이",
+    "region": "유럽",
+    "mapId": "578",
+    "source": "google",
+    "newsCountry": "norway",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "DK",
+    "name": "덴마크",
+    "region": "유럽",
+    "mapId": "208",
+    "source": "google",
+    "newsCountry": "denmark",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LV",
+    "name": "라트비아",
+    "region": "유럽",
+    "mapId": "428",
+    "source": "google",
+    "newsCountry": "latvia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "RU",
+    "name": "러시아",
+    "region": "유럽",
+    "mapId": "643",
+    "source": "google",
+    "newsCountry": "russia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "RO",
+    "name": "루마니아",
+    "region": "유럽",
+    "mapId": "642",
+    "source": "google",
+    "newsCountry": "romania",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LU",
+    "name": "룩셈부르크",
+    "region": "유럽",
+    "mapId": "442",
+    "source": "gdelt",
+    "newsCountry": "luxembourg",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LT",
+    "name": "리투아니아",
+    "region": "유럽",
+    "mapId": "440",
+    "source": "google",
+    "newsCountry": "lithuania",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "LI",
+    "name": "리히텐슈타인",
+    "region": "유럽",
+    "mapId": "438",
+    "source": "gdelt",
+    "newsCountry": "liechtenstein",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MC",
+    "name": "모나코",
+    "region": "유럽",
+    "mapId": "492",
+    "source": "gdelt",
+    "newsCountry": "monaco",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "ME",
+    "name": "몬테네그로",
+    "region": "유럽",
+    "mapId": "499",
+    "source": "gdelt",
+    "newsCountry": "montenegro",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MD",
+    "name": "몰도바",
+    "region": "유럽",
+    "mapId": "498",
+    "source": "google",
+    "newsCountry": "moldova",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MT",
+    "name": "몰타",
+    "region": "유럽",
+    "mapId": "470",
+    "source": "gdelt",
+    "newsCountry": "malta",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "VA",
+    "name": "바티칸",
+    "region": "유럽",
+    "mapId": "336",
+    "source": "gdelt",
+    "newsCountry": "vaticancity",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BE",
+    "name": "벨기에",
+    "region": "유럽",
+    "mapId": "056",
+    "source": "google",
+    "newsCountry": "belgium",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BY",
+    "name": "벨라루스",
+    "region": "유럽",
+    "mapId": "112",
+    "source": "google",
+    "newsCountry": "belarus",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BA",
+    "name": "보스니아 헤르체고비나",
+    "region": "유럽",
+    "mapId": "070",
+    "source": "google",
+    "newsCountry": "bosniaandherzegovina",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "MK",
+    "name": "북마케도니아",
+    "region": "유럽",
+    "mapId": "807",
+    "source": "google",
+    "newsCountry": "northmacedonia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "BG",
+    "name": "불가리아",
+    "region": "유럽",
+    "mapId": "100",
+    "source": "google",
+    "newsCountry": "bulgaria",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SM",
+    "name": "산마리노",
+    "region": "유럽",
+    "mapId": "674",
+    "source": "gdelt",
+    "newsCountry": "sanmarino",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "RS",
+    "name": "세르비아",
+    "region": "유럽",
+    "mapId": "688",
+    "source": "google",
+    "newsCountry": "serbia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SE",
+    "name": "스웨덴",
+    "region": "유럽",
+    "mapId": "752",
+    "source": "google",
+    "newsCountry": "sweden",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CH",
+    "name": "스위스",
+    "region": "유럽",
+    "mapId": "756",
+    "source": "google",
+    "newsCountry": "switzerland",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SK",
+    "name": "슬로바키아",
+    "region": "유럽",
+    "mapId": "703",
+    "source": "google",
+    "newsCountry": "slovakia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "SI",
+    "name": "슬로베니아",
+    "region": "유럽",
+    "mapId": "705",
+    "source": "google",
+    "newsCountry": "slovenia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IS",
+    "name": "아이슬란드",
+    "region": "유럽",
+    "mapId": "352",
+    "source": "gdelt",
+    "newsCountry": "iceland",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "IE",
+    "name": "아일랜드",
+    "region": "유럽",
+    "mapId": "372",
+    "source": "google",
+    "newsCountry": "ireland",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AD",
+    "name": "안도라",
+    "region": "유럽",
+    "mapId": "020",
+    "source": "gdelt",
+    "newsCountry": "andorra",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AL",
+    "name": "알바니아",
+    "region": "유럽",
+    "mapId": "008",
+    "source": "google",
+    "newsCountry": "albania",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "EE",
+    "name": "에스토니아",
+    "region": "유럽",
+    "mapId": "233",
+    "source": "google",
+    "newsCountry": "estonia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "AT",
+    "name": "오스트리아",
+    "region": "유럽",
+    "mapId": "040",
+    "source": "google",
+    "newsCountry": "austria",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "UA",
+    "name": "우크라이나",
+    "region": "유럽",
+    "mapId": "804",
+    "source": "google",
+    "newsCountry": "ukraine",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CZ",
+    "name": "체코",
+    "region": "유럽",
+    "mapId": "203",
+    "source": "google",
+    "newsCountry": "czechia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "HR",
+    "name": "크로아티아",
+    "region": "유럽",
+    "mapId": "191",
+    "source": "google",
+    "newsCountry": "croatia",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "CY",
+    "name": "키프로스",
+    "region": "유럽",
+    "mapId": "196",
+    "source": "google",
+    "newsCountry": "cyprus",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PT",
+    "name": "포르투갈",
+    "region": "유럽",
+    "mapId": "620",
+    "source": "google",
+    "newsCountry": "portugal",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "PL",
+    "name": "폴란드",
+    "region": "유럽",
+    "mapId": "616",
+    "source": "google",
+    "newsCountry": "poland",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "FI",
+    "name": "핀란드",
+    "region": "유럽",
+    "mapId": "246",
+    "source": "google",
+    "newsCountry": "finland",
+    "checked": "2026-10-02"
+  },
+  {
+    "code": "HU",
+    "name": "헝가리",
+    "region": "유럽",
+    "mapId": "348",
+    "source": "google",
+    "newsCountry": "hungary",
+    "checked": "2026-10-02"
+  }
+]

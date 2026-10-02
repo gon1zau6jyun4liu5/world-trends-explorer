@@ -1,16 +1,18 @@
 {
   "name": "world-trends-explorer",
-  "version": "1.0.0",
-  "description": "🌍 Real-time Google Trends explorer with interactive world map",
+  "version": "2.0.0",
+  "description": "Country-by-country trending topics and news using free Google Trends RSS",
   "main": "frontend/index.html",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "start": "python3 backend/app.py",
+    "start": "python3 backend/desk_server.py",
     "start:mock": "python3 backend/mock_server.py",
     "serve": "python3 -m http.server 8000 --directory frontend",
-    "dev": "concurrently \"npm run start:mock\" \"npm run serve\""
+    "dev": "concurrently \"npm run start:mock\" \"npm run serve\"",
+    "start:legacy": "python3 backend/app.py",
+    "test:desk": "python3 -m unittest discover -s tests -p test_desk.py -v"
   },
   "repository": {
     "type": "git",
