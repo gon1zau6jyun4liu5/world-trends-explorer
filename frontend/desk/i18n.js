@@ -1,6 +1,7 @@
 'use strict';
 window.I18n = (() => {
  const messages = {
+  "Google이 빈 목록을 반환했습니다. 이전에 받은 화제를 표시합니다.": ["Google이 빈 목록을 반환했습니다. 이전에 받은 화제를 표시합니다.", "Googleから空の一覧が返されました。以前取得した話題を表示します。", "Google returned an empty list. Showing previously received stories."],
   "낮·밤 표시: 켜짐": ["낮·밤 표시: 켜짐", "昼夜表示: オン", "Day/night: on"],
   "낮·밤 표시: 꺼짐": ["낮·밤 표시: 꺼짐", "昼夜表示: オフ", "Day/night: off"],
   "국가 목록 펼치기": ["국가 목록 펼치기", "国の一覧を開く", "Show country list"],

@@ -33,6 +33,29 @@ class DeskFixture:
 
 
 class DeskTests(DeskFixture, unittest.TestCase):
+    def test_slow_failure_starts_backoff_at_failure_time(self):
+        with patch.object(app.time,'time',side_effect=[1000,1090]), patch.object(self.desk,'fetch_items',side_effect=OSError('timeout')):
+            self.desk.feed('KR')
+        self.assertEqual(self.desk.retry_after['KR'],1150)
+        with patch.object(app.time,'time',return_value=1149), patch.object(self.desk,'fetch_items') as fetch:
+            self.desk.feed('KR')
+            fetch.assert_not_called()
+
+    def test_empty_google_refresh_preserves_previous_items_and_timestamp(self):
+        items=app.parse_feed(FEED,'KR')
+        with self.desk.db() as db:
+            db.execute('INSERT INTO feeds VALUES (?,?,?)',('KR',1000,json.dumps(items)))
+        with patch.object(app.time,'time',return_value=1700), patch.object(self.desk,'fetch_items',return_value=[]):
+            result=self.desk.feed('KR')
+        self.assertTrue(result['stale'])
+        self.assertIn('error',result)
+        self.assertEqual(result['items'],items)
+        self.assertEqual(result['fetched'],1000)
+        with self.desk.db() as db:
+            self.assertEqual(db.execute("SELECT fetched FROM feeds WHERE country='KR'").fetchone()[0],1000)
+        with patch.object(app.time,'time',return_value=1761), patch.object(self.desk,'fetch_items',return_value=items):
+            self.assertFalse(self.desk.feed('KR')['stale'])
+
     def test_provider_cooldown_poll_allows_retry_at_provider_deadline(self):
         for geo, body in [('KR', FEED), ('CN', b'{"articles":[]}')]:
             with self.subTest(geo=geo):

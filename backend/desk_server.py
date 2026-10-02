@@ -309,6 +309,8 @@ class Desk:
                             error=self.last_error.get(geo, '잠시 후 다시 확인해 주세요.'))
             try:
                 items = self.fetch_items(geo)
+                if not items and COUNTRY_INFO[geo]['source'] == 'google' and row and json.loads(row[1]):
+                    raise NewsUnavailable('Google이 빈 목록을 반환했습니다. 이전에 받은 화제를 표시합니다.')
                 fetched = time.time()
                 with self.db() as db:
                     db.execute('INSERT OR REPLACE INTO feeds VALUES (?,?,?)',
@@ -324,7 +326,7 @@ class Desk:
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=fetched, stale=False, items=items)
             except Exception as exc:
                 if not isinstance(exc, ProviderCooldown):
-                    self.retry_after[geo] = now + 60
+                    self.retry_after[geo] = time.time() + 60
                 self.last_error[geo] = str(exc) if isinstance(exc, NewsUnavailable) else '최신 소식을 가져오지 못했습니다. 잠시 후 다시 확인해 주세요.'
                 return dict(country=geo, source=COUNTRY_INFO[geo]['source'], fetched=row[0] if row else None, stale=bool(row),
                             items=json.loads(row[1]) if row else [],
